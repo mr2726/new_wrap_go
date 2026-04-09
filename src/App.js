@@ -80,6 +80,7 @@ function App() {
   }
   return (
     <div className="App">
+      {console.log(user)}
       {/* {user ? <Content data={data.content} /> : renderPage()} */}
       {renderPage()}
     </div>

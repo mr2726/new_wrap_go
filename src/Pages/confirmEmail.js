@@ -1,7 +1,5 @@
 import "../App.css";
 import { MdLockReset } from "react-icons/md";
-import { useState } from "react";
-import { supabase } from "../data/supabase";
 
 function ConfirmEmail ({setPage, email}){
     return (

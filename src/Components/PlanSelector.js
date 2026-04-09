@@ -2,7 +2,7 @@ import "../App.css";
 import { useState } from "react";
 
 export default function PlanSelector({setRoute, route}) {
-  const [selected, setSelected] = useState("3m");
+  // const [selected, setSelected] = useState("3m");
 
   const options = [
     { id: "1m", label: "1 Month" },
