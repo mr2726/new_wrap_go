@@ -1,0 +1,386 @@
+{
+    "signup" : {
+        "tag" : "Enterprise Solution",
+        "title" : ["Turn your fleet into a ", "revenue engine."],
+        "description" : "Join thousands of businesses using WrapGo to manage vehicle advertising campaigns with precision tracking and analytics.",
+        "blocks" : [
+            {
+                "title" : "Real-time GPS Tracking",
+                "description" : "Monitor your vehicles in real-time with our advanced GPS tracking system."
+            },
+            {
+                "title" : "Smart Analytics",
+                "description" : "Convert impressions into actionable data."
+            }
+        ],
+        "signup_form" : {
+            "title" : "Create your account",
+            "description" : "Join the leading vehicle advertising platform",
+            "signup_form_inputs" : [
+                {
+                    "name" : "email",
+                    "lable" : "Work Email",
+                    "placeholder": "Enter your email",
+                    "type" : "email"
+                },
+                {
+                    "name" : "password",
+                    "lable" : "Password",
+                    "placeholder": "Enter your password",
+                    "type" : "password"
+                },
+                {
+                    "name" : "confirmpassword",
+                    "lable" : "Confirm Password",
+                    "placeholder": "Confirm your password",
+                    "type" : "password"
+                }
+            ],
+            "inputErrors" : {
+                "passwordisnotsame" : "The password is not same",
+                "notvalidPassword" : "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special symbol."
+            },
+            "checkbox" : ["By signing up, you agree to our ", "\u00A0Terms of Service\u00A0", "and\u00A0", "Privacy Policy."],
+            "button" : "Create Account",
+            "account" : ["Already have account? ", "Sign in"]
+        }
+    },
+    "signin" : {
+        "title" : "Sign in to your account",
+        "description" : "Enter your details to access your dashboard",
+        "inputs" : [
+            {
+                "lable" : "Email Address",
+                "placeholder" : "name@company.com",
+                "type" : "email",
+                "name" : "email"
+            },
+            {
+                "lable" : "Password",
+                "placeholder" : "Enter your password",
+                "type" : "password",
+                "name" : "password"
+            }
+        ],
+        "forgot" : "Forgot password ?",
+        "button" : "Sign in",
+        "accoutn" : ["Don't have an account? " , "Sign up for free"],
+        "terms" : [" Privacy Policy", " Terms of Service"]
+    },
+    "terms" : {
+        "title" : "Terms of Service",
+        "description" : "Last updated: October 24, 2023. These terms govern your access to and use of WrapGo's vehicle advertising ecosystem.",
+        "tag" : "Legal Center",
+        "backBTN" : "← Go back",
+        "content" : [
+            {
+                "id" : "acceptance",
+                "link" : "1. Acceptance",
+                "title" : ["01", "Acceptance of Terms"],
+                "body" : "By accessing or using the WrapGo platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or\n\nWrapGo provides a bridge between advertisers and drivers. Our service allows for the tracking of vehicle advertisements and facilitates payments between parties."
+            },
+            {
+                "id" : "conduct",
+                "link" : "2. User Conduct",
+                "title" : ["02", "User Conduct"],
+                "body" : "As a condition of use, you promise not to use the Services for any purpose that is prohibited by these Terms of Service. You are responsible for all of your activity in connection with the Services.\n\nYou shall not use the platform for any illegal or unauthorized purpose.\n\nDrivers must maintain valid insurance and registration as required by local laws.\n\nAdvertisers must provide truthful and non-misleading marketing materials.\n\nInterference with the tracking technology is strictly prohibited."
+            },
+            {
+                "id" : "usage",
+                "link" : "3. Platform Usage",
+                "title" : ["03", "Platform Usage"],
+                "body" : "WrapGo grants you a limited, non-exclusive, non-transferable, and revocable license to use our platform strictly in accordance with these terms. We reserve the right to modify or terminate the platform at any time without notice.\n\nOur platform utilizes GPS tracking via our mobile application to verify campaign impressions. By using the service as a driver, you consent to this data collection during active campaign hours."
+            },
+            {
+                "id" : "property",
+                "link" : "4. Intellectual Property",
+                "title" : ["04", "Intellectual Property"],
+                "body" : "All content included on the platform, such as text, graphics, logos, images, and software, is the property of WrapGo or its content suppliers and protected by international copyright laws.\n\nYou may not reproduce, distribute, or create derivative works from any part of our service without express written permission."
+            },
+            {
+                "id" : "liability",
+                "link" : "5. Liability",
+                "title" : ["05", "Limitation of Liability"],
+                "body" : "In no event shall WrapGo, its directors, employees, or partners, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, or other intangible losses.\n\nWrapGo is not responsible for physical damage to vehicles, accidents occurring during campaigns, or disputes between advertisers and drivers beyond the scope of our facilitated platform agreements."
+            },
+            {
+                "id" : "governing",
+                "link" : "6. Governing Law",
+                "title" : ["06", "Governing Law"],
+                "body" : "These terms shall be governed and construed in accordance with the laws of the jurisdiction in which WrapGo is headquartered, without regard to its conflict of law provisions.\n\nOur failure to enforce any right or provision of these Terms will not be considered a waiver of those rights."
+            }
+        ]
+    },
+    "privacy" : {
+        "title" : "Privacy & Policy",
+        "description" : "Last updated: October 24, 2023. These terms govern your access to and use of WrapGo's vehicle advertising ecosystem.",
+        "tag" : "Legal Center",
+        "backBTN" : "← Go back",
+        "content" : [
+            {
+                "id" : "acceptance",
+                "link" : "1. Acceptance",
+                "title" : ["01", "Acceptance of Terms"],
+                "body" : "By accessing or using the WrapGo platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or\n\nWrapGo provides a bridge between advertisers and drivers. Our service allows for the tracking of vehicle advertisements and facilitates payments between parties."
+            },
+            {
+                "id" : "conduct",
+                "link" : "2. User Conduct",
+                "title" : ["02", "User Conduct"],
+                "body" : "As a condition of use, you promise not to use the Services for any purpose that is prohibited by these Terms of Service. You are responsible for all of your activity in connection with the Services.\n\nYou shall not use the platform for any illegal or unauthorized purpose.\n\nDrivers must maintain valid insurance and registration as required by local laws.\n\nAdvertisers must provide truthful and non-misleading marketing materials.\n\nInterference with the tracking technology is strictly prohibited."
+            },
+            {
+                "id" : "usage",
+                "link" : "3. Platform Usage",
+                "title" : ["03", "Platform Usage"],
+                "body" : "WrapGo grants you a limited, non-exclusive, non-transferable, and revocable license to use our platform strictly in accordance with these terms. We reserve the right to modify or terminate the platform at any time without notice.\n\nOur platform utilizes GPS tracking via our mobile application to verify campaign impressions. By using the service as a driver, you consent to this data collection during active campaign hours."
+            },
+            {
+                "id" : "property",
+                "link" : "4. Intellectual Property",
+                "title" : ["04", "Intellectual Property"],
+                "body" : "All content included on the platform, such as text, graphics, logos, images, and software, is the property of WrapGo or its content suppliers and protected by international copyright laws.\n\nYou may not reproduce, distribute, or create derivative works from any part of our service without express written permission."
+            },
+            {
+                "id" : "liability",
+                "link" : "5. Liability",
+                "title" : ["05", "Limitation of Liability"],
+                "body" : "In no event shall WrapGo, its directors, employees, or partners, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, or other intangible losses.\n\nWrapGo is not responsible for physical damage to vehicles, accidents occurring during campaigns, or disputes between advertisers and drivers beyond the scope of our facilitated platform agreements."
+            },
+            {
+                "id" : "governing",
+                "link" : "6. Governing Law",
+                "title" : ["06", "Governing Law"],
+                "body" : "These terms shall be governed and construed in accordance with the laws of the jurisdiction in which WrapGo is headquartered, without regard to its conflict of law provisions.\n\nOur failure to enforce any right or provision of these Terms will not be considered a waiver of those rights."
+            }
+        ]
+    },
+    "resetPass" : {
+        "otpLink" : {
+            "title" : "Reset your password",
+            "description" : "Enter your email address below and we'll send you a link to reset your password.",
+            "input" : {
+                "lable" : "Email Addresss",
+                "placeholder" : "name@company.com",
+                "id" : "email",
+                "type" : "email"
+            },
+            "btn" : "Send Reset Link →",
+            "back_to" : "← Back to Sign In"
+        },
+        "resetPasswordForm" : {
+            "title" : "Create New Password",
+            "description" : "Your new password must be different from previous used passwords.",
+            "inputs" : [
+                {
+                    "lable" : "New Password",
+                    "id" : "password",
+                    "type" : "password",
+                    "placeholder" : "New password"
+                },
+                {
+                    "lable" : "Confirm New Password",
+                    "id" : "confirm_password",
+                    "type" : "password",
+                    "placeholder" : "Confirm new password"
+                }
+            ],
+            "btn" : "Update Password",
+            "back_to" : "← Go back to Sign In"
+        },
+        "resetPasswordStatus" : {
+            "title" : "Password Reset Successfully",
+            "description" : "Your password has been updated. You can now sign in with your new credentials.",
+            "btn" : "Back to Sign In",
+            "security" : "Secure authentication by wrapgo"
+        },
+        "resetPasswordEmail" : {
+            "title" : "Check your Email",
+            "description" : "We've sent a password reset link to your email address. Please click the link in the email to continue.",
+            "btn1" : "Back to Sign In",
+            "btn2" : "Resend Email"
+        }
+    },
+    "content": {
+        "sidebar" : {
+            "sidebar_pages" : [
+                {
+                    "id" : "overview",
+                    "title" : "Overview"
+                },
+                {
+                    "id" : "live-map",
+                    "title" : "Live Map (soon)"
+                },
+                {
+                    "id" : "analytics",
+                    "title" : "Analytics"
+                }
+            ],
+            "sidebar_settings" : [
+                {
+                    "id" : "billing",
+                    "title" : "Billing"
+                },
+                {
+                    "id" : "settings",
+                    "title" : "settings"
+                },
+                {
+                    "id" : "logout",
+                    "title": "Logout"
+                }
+            ]
+        },
+        "overview" : {
+            "title": "Campaign Overview",
+            "description" : "Real-time performance metrics for your vehicle fleet.",
+            "btn" : "Launch New Campaign",
+            "overview_stats" : [
+                {
+                    "title" : "Active Vehicles",
+                    "aditions" : "Cars",
+                    "id" : 0
+                },
+                {
+                    "title" : "Distance Covered",
+                    "aditions" : "Km",
+                    "id" : 1
+                },
+                {
+                    "title" : "Est. Impressions",
+                    "aditions" : "Views",
+                    "id" : 2
+                },
+                {
+                    "title" : "Average CPM",
+                    "aditions" : "AMD",
+                    "id" : 3
+                }
+            ],
+            "budgetOverview" : {
+                "title" : "Budget Overview",
+                "loadbarTitle" : "Campaign Spend",
+                "budgetIfon" : [
+                    {
+                        "title":"Total",
+                        "article" : "AMD"
+                    },
+                    {
+                        "title":"Left",
+                        "article" : "AMD"
+                    }
+                ],
+                "budgetDays" : {
+                    "title" : "Estimated Days Left",
+                    "days" : "Days"
+                }
+            },
+            "campaignTable" : {
+                "title" : "",
+                "tableInfo" : [
+                    {
+                        "id" : 0,
+                        "title" : "CAMPAIGN NAME"
+                    },
+                    {
+                        "id" : 1,
+                        "title" : "CITY"
+                    },
+                    {
+                        "id" : 2,
+                        "title" : "VEHICLES"
+                    },
+                    {
+                        "id" : 3,
+                        "title" : "MONTHLY BUDGET"
+                    },
+                    {
+                        "id" : 4,
+                        "title" : "STATUS"
+                    }
+                ]
+            }
+        },
+        "campaigns": {
+            "title" : "Select Vehicle Tiers",
+            "discription" : "Choose the type of cars that will carry your message. You can mix and match.",
+            "commingSoon" : "Coming Soon",
+            "campaigns" : [
+                {
+                    "title": "Standart",
+                    "img" : "https://rentacarbaku.az/wp-content/uploads/2025/04/chevrolet-cobalt-2023-rentacarbaku.webp",
+                    "price" : "AMD/mo",
+                    "info" : {
+                        "title" : "Est. Impressions:",
+                        "data" : "12k/day"
+                    },
+                    "quantity" : "Quantity",
+                    "active" : true
+                },
+                {
+                    "title": "Business",
+                    "img" : "https://rentacarbaku.az/wp-content/uploads/2025/04/chevrolet-cobalt-2023-rentacarbaku.webp",
+                    "price" : "",
+                    "info" : {
+                        "title" : "Est. Impressions:",
+                        "data" : ""
+                    },
+                    "quantity" : "Quantity",
+                    "active" : false
+                }
+            ],
+            "image" : {
+                "title" : "Drop your logo or design here",
+                "description" : "Supports AI, SVG, PNG or PDF (Max 50MB)",
+                "btn" : "Upload Design"
+            },
+            "builder" : {
+                "title" : "Budget Calculator",
+                "btn" : "Launch Campaign",
+                "start" : "Standart Tier x",
+                "sufix" : "AMD",
+                "calc" : "Total Estimate",
+                "discount" : "Discount",
+                "subtotal" : "Subtotal"
+            },
+            "modal" : {
+                "title" : "Campaign Created Successfully",
+                "description" : "Your campaign is in review. Our team will contact with you within 24 hours",
+                "btn" : "Close Popup",
+                "security" : "Secure authentication by wrapgo"
+            }
+        },
+        "analitics" : {
+            "table": {
+                "title" : "",
+                "tableInfo" : [
+                    {
+                        "id" : 0,
+                        "title" : "CAMPAIGN NAME"
+                    },
+                    {
+                        "id" : 1,
+                        "title" : "CITY"
+                    },
+                    {
+                        "id" : 2,
+                        "title" : "DURATION"
+                    },
+                    {
+                        "id" : 3,
+                        "title" : "MONTHLY BUDGET"
+                    },
+                    {
+                        "id" : 4,
+                        "title" : "VEHICLES"
+                    },
+                    {
+                        "id" : 5,
+                        "title": "STATUS"
+                    }
+                ]
+            }
+        }
+    }
+}

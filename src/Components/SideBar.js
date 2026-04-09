@@ -1,0 +1,79 @@
+import "../App.css";
+import { supabase } from "../data/supabase";
+import Logo from "./Logo";
+import { MdOutlineDashboard, MdAdd, MdOutlineMap,MdBarChart,MdCompareArrows, MdCreditCard, MdOutlineSettings, MdLogout } from "react-icons/md";
+
+
+function SideBar ({data, page, setPage}) {
+    const RenderIcons = ({pages}) => {
+        switch(pages.id){
+            case "overview":
+                return <MdOutlineDashboard className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+            case "campaign-builder":
+                return <MdAdd className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+            case "live-map":
+                return <MdOutlineMap className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+            case "analytics":
+                return <MdBarChart className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+            case "vehicles": 
+                return <MdCompareArrows className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+            case "billing": 
+                return <MdCreditCard />
+            case "settings": 
+                return <MdOutlineSettings />
+            case "logout" : 
+                return <MdLogout />
+            default:
+                return <MdOutlineDashboard className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+        }
+    }
+
+    const logoutCode = async () => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            console.log(error.message);
+            return;
+        }
+
+        setPage("signup"); // или "signup"
+        window.location.reload();
+    };
+    return (
+        <div className="sidebar">
+            <Logo setPage={setPage} transfer="overview" />
+            <div className="sidebar__links--space">
+                <ul className="sidebar__links">
+                    {
+                        data.sidebar_pages.map((pages, index) => (
+                            <li key={index} onClick={() => setPage(pages.id)} className={page === pages.id ? "sidebar__links--link--active" : ""}>
+                                <RenderIcons pages={pages} />
+                                <p>{pages.title}</p>
+                            </li>
+                        ))
+                    }
+                </ul>
+                
+                <ul className="sidebar__settings_links">
+                    <div className="get_otp__content--underline"></div>
+                    {
+                        data.sidebar_settings.map((pages, index) => (
+                            <li key={index} onClick={async () => {
+                                if (pages.id === "logout") {
+                                    await logoutCode();
+                                } else {
+                                    setPage(pages.id);
+                                }
+                            }}>
+                                <RenderIcons pages={pages} />
+                                <p>{pages.title}</p>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </div>
+        </div>
+    );
+}
+
+export default SideBar
