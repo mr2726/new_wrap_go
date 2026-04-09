@@ -42,7 +42,7 @@ function Analitics({ tableData }) {
         setCampaignData(campaigns || []);
     }
 
-    async function fetchChartData() {
+    async function fetchChartData(comp) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
         console.log(user.id);
@@ -50,7 +50,7 @@ function Analitics({ tableData }) {
             .from("analitics")
             .select("*")
             .eq("owner_id", user.id)
-            .eq("campaign_id", choosedCampaign)
+            .eq("campaign_id", comp)
 
         if (_analiticsDataError) {
             console.log(_analiticsDataError.message)
@@ -66,7 +66,7 @@ function Analitics({ tableData }) {
 
     useEffect(() => {
         
-        fetchChartData(); // Fetching Analitics Chart Data
+        fetchChartData(choosedCampaign); // Fetching Analitics Chart Data
     }, [choosedCampaign])
 
     return (
