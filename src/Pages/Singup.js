@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import { MdCheckCircleOutline  } from "react-icons/md";
-import { supabase } from "../data/supabase";
-
-function Signup({data, setPage, setEmail}) {
+function Signup({data, setPage, setCredentials}) {
     const [formData, setFormData] = useState({});
     const [error, setError] = useState("");
     const [passNotValid, setPassNotValid] = useState(false);
@@ -34,7 +32,7 @@ function Signup({data, setPage, setEmail}) {
     };
 
     // submit Handler
-    const handleSubmite = async (e) => {
+    const handleSubmite = (e) => {
         e.preventDefault();
 
         if (!validationPassword(formData.password)) {
@@ -43,52 +41,14 @@ function Signup({data, setPage, setEmail}) {
             return;
         }
 
-        if (formData.password !== formData.confirmpassword){
+        if (formData.password !== formData.confirmpassword) {
             setError(data.signup_form.inputErrors.passwordisnotsame);
             setPassNotValid(true);
             return;
         }
 
-        // 1. Регистрация
-        const { data: signUpData, error } = await supabase.auth.signUp({
-            email: formData.email,
-            password: formData.password,
-            options: {
-                emailRedirectTo: "http://localhost:3000/confirm-email"
-            }
-        });
-
-        if (error) {
-            console.log("Signup Error:", error.message);
-            return;
-        }
-
-        const user = signUpData?.user;
-
-        if (!user) return;
-
-        // 2. Запись в БД
-        const { error: insertError } = await supabase
-            .from("profiles")
-            .insert([
-                {
-                    userId: user.id,
-                    name: null,
-                    email: formData.email,
-                    balance: 0
-                }
-            ]);
-
-        if (insertError) {
-            console.log("Insert Error:", insertError.message);
-        }
-
-        // ❗ 3. КЛЮЧЕВОЕ — убиваем сессию
-        await supabase.auth.signOut();
-
-        // 4. Редирект на confirm-email
-        if (setEmail) setEmail(formData.email);
-        setPage("confirm-email");
+        setCredentials({ email: formData.email, password: formData.password });
+        setPage("company-info");
     };
     const Blocks = ({block}) => {
         return (

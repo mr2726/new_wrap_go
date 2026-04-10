@@ -18,16 +18,25 @@ function App() {
   const [page, setPage] = useState("signup");
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
   useEffect(() => {
     const hash = window.location.hash;
-    console.log(window.location.href)
+    const href = window.location.href;
+    console.log(href);
 
     if (hash.includes("type=recovery")) {
       setPage("reset");
-    }
-
-    if (window.location.href.includes("confirm-email")) {
+    } else if (href.includes("confirm-email")) {
       setPage("company-info");
+    } else {
+      // Проверяем существующую сессию при загрузке
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user?.email_confirmed_at) {
+          setUser(session.user);
+          setEmail(session.user.email ?? "");
+          setPage("content");
+        }
+      });
     }
 
     const { data: listener } = supabase.auth.onAuthStateChange(
@@ -39,8 +48,8 @@ function App() {
           session?.user &&
           session.user.email_confirmed_at
         ) {
-          // setPage("company-info");
           setEmail(session.user.email ?? "");
+          setPage("content");
         }
       }
     );
@@ -53,7 +62,7 @@ function App() {
   const renderPage = () => {
     switch(page){
       case "signup":
-        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} />
+        return <Signup data={data.signup} setPage={setPage} setCredentials={setCredentials} />
       case "signin":
         return <Singin data={data.signin} setPage={setPage} />
       case "terms":
@@ -71,7 +80,7 @@ function App() {
       case "confirm-email":
         return <ConfirmEmail setPage={setPage} email={email} />
       case "company-info":
-        return <CompanyInfo setPage={setPage} email={email} />
+        return <CompanyInfo setPage={setPage} setEmail={setEmail} credentials={credentials} />
       case "content":
         return <Content data={data.content} />
       default:

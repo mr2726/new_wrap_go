@@ -2,7 +2,7 @@ import "../App.css";
 import Logo from "../Components/Logo";
 import { supabase } from "../data/supabase";
 
-function CompanyInfo ({setPage, email}) {
+function CompanyInfo ({setPage, setEmail, credentials}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -15,19 +15,31 @@ function CompanyInfo ({setPage, email}) {
             }
         });
 
-        console.log("Filled form values:", filledValues);
-        // send data to Supabase
-        const { data: { user } } = await supabase.auth.getUser();
+        // 1. Регистрация аккаунта
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: credentials.email,
+            password: credentials.password,
+            options: {
+                emailRedirectTo: `${process.env.REACT_APP_WEB_URL}/confirm-email`
+            }
+        });
+
+        if (signUpError) {
+            console.log("Signup Error:", signUpError.message);
+            return;
+        }
+
+        const user = signUpData?.user;
         if (!user) return;
 
-        // 2. Запись в БД
+        // 2. Полная запись профиля в БД
         const { error: insertError } = await supabase
             .from("profiles")
             .insert([
                 {
                     userid: user.id,
                     name: filledValues.fullname,
-                    email: email,
+                    email: credentials.email,
                     balance: 0,
                     country: filledValues.country,
                     industry: filledValues.industry,
@@ -35,14 +47,19 @@ function CompanyInfo ({setPage, email}) {
                     phone: filledValues.phone,
                     street: filledValues.street,
                     tax: filledValues.tax,
-                    web: filledValues.web, 
+                    web: filledValues.web,
                 }
             ]);
 
         if (insertError) {
             console.log("Insert Error:", insertError.message);
         }
-        setPage("content")
+
+        // 3. Убиваем сессию до подтверждения email
+        await supabase.auth.signOut();
+
+        if (setEmail) setEmail(credentials.email);
+        setPage("confirm-email");
     };
 
     return (
@@ -74,7 +91,7 @@ function CompanyInfo ({setPage, email}) {
                         name="email"
                         placeholder="Enter business contact email"
                         type="email"
-                        value={email}
+                        value={credentials.email}
                         required
                         disabled
                     />

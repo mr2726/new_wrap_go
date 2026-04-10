@@ -1593,3 +1593,130 @@ body{
   justify-content: center;
   align-items: center;
 }
+
+/* Settings */
+.settings{
+  width: 100%;
+  height: auto;
+  padding-left: 2em;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings__header{
+  width: 100%;
+  margin-bottom: 2em;
+}
+
+.settings__content{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.settings__menu{
+  width: 25%;
+  background-color: var(--block-bg);
+  border-radius: 1em;
+  padding: 2em;
+}
+
+.settings__menu li{
+  list-style: none;
+  font-size: 1.4em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  transition: .2s;
+  display: flex;
+  align-items: center;
+  color: var(--sign-secondary-color);
+}
+
+/* Profile */
+.settings__main{
+  flex: 1;
+  min-width: 0;
+  margin-left: 2em;
+}
+
+.settings__block{
+  width: 100%;
+}
+
+/* Change Image */
+.change-image{
+  width: 100% !important;
+  background-color: var(--block-bg);
+  padding: 2em;
+  border-radius: 2em;
+}
+
+.change-image__title{
+  font-size: 2em;
+}
+
+.change-image__description{
+  font-size: 1.2em;
+}
+
+.change-image__content{
+  display: flex;
+  align-items: center;
+  margin-top: 2em;
+}
+
+.image__{
+  width: 150px;
+  height: 150px;
+  border-radius: 1em;
+  background-color: var(--input-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 8em;
+  color: var(--sign-secondary-color);
+  margin-right: 20px;
+}
+
+.change-image__buttons{
+  margin-top: 1em;
+}
+
+.change-image__button{
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 0.5em;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  cursor: pointer;
+  transition: 0.2s;
+  
+  font-family: "lufgaBold";
+}
+
+.change-image__button:hover{
+  background-color: var(--primary-color-hover);
+}
+
+/* Settings Form */
+.settings__form{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.settings__form--input{
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  border-radius: 1em;
+  padding: 1em 1em;
+  margin-bottom: 1.5em;
+  outline: none;
+  transition: .2s;
+  color: var(--text-color); 
+}
+
+.settings__form--input:focus{
+  border: 1px solid var(--primary-color);
+}
+

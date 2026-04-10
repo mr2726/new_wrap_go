@@ -118,7 +118,43 @@ function CampaignBuilder({data}) {
 
             console.log("SUCCESS:", data);
 
-            // ===== 5. Сброс данных =====
+            // ===== 5. Запись в таблицу аналитики =====
+            const newCampaignId = data[0]?.id;
+            if (newCampaignId) {
+                const defaultToday = Array.from({ length: 24 }, (_, i) => ({
+                    name: `${String(i).padStart(2, "0")}:00`,
+                    distance: 0,
+                    impressions: 0,
+                }));
+                const defaultWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(name => ({
+                    name, distance: 0, impressions: 0,
+                }));
+                const defaultMonth = Array.from({ length: 30 }, (_, i) => ({
+                    name: String(i + 1),
+                    distance: 0,
+                    impressions: 0,
+                }));
+                const defaultYear = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map(name => ({
+                    name, distance: 0, impressions: 0,
+                }));
+
+                const { error: analyticsError } = await supabase
+                    .from("analitics")
+                    .insert([{
+                        campaign_id: newCampaignId,
+                        owner_id: userId,
+                        today: defaultToday,
+                        week: defaultWeek,
+                        month: defaultMonth,
+                        year: defaultYear,
+                    }]);
+
+                if (analyticsError) {
+                    console.error("Analytics insert error:", analyticsError);
+                }
+            }
+
+            // ===== 6. Сброс данных =====
             setStandartValue(0);
             setEconomValue(0);
             setRoute("3m");

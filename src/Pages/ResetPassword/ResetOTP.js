@@ -19,7 +19,7 @@ function ResetOTP({data, setPage, setSender}) {
         const { error } = await supabase.auth.resetPasswordForEmail(
             email,
             {
-                redirectTo: "http://localhost:3000/reset-password" // ← Rederect link 
+                redirectTo: `${process.env.REACT_APP_WEB_URL}/reset-password` // ← Rederect link 
             }
         );
 

@@ -5,6 +5,7 @@ import Overview from "./Overview";
 import CampaignBuilder from "./CampaignBuilder";
 import Map from "../../Components/MapBox";
 import Analitics from "./Analitics";
+import Settings from "./Settings";
 
 function Content({data}) {
     const [page, setPage] = useState("analytics");
@@ -24,7 +25,7 @@ function Content({data}) {
             case "billing":
                 return <h1>Billing</h1>
             case "settings":
-                return <h1>Settings</h1>
+                return <Settings />
             default:
                 return <Overview data={data.overview} />
         }
