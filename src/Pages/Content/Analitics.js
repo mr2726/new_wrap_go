@@ -1,6 +1,7 @@
 import "../../App.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../../data/supabase";
+import Loader from "../../Components/Loader";
 /* Pages */
 import Active from "./Analitics/Active";
 import History from "./Analitics/History";
@@ -13,6 +14,7 @@ function Analitics({ tableData }) {
     const [campaignData, setCampaignData] = useState([]);
     const [analyticsData, setAnaliticsData] = useState([]);
     const [choosedCampaign, setChoosedCampaign] = useState(6);
+    const [loading, setLoading] = useState(true);
 
     function Rendering() {
         switch (currentPage){
@@ -40,6 +42,7 @@ function Analitics({ tableData }) {
         }
 
         setCampaignData(campaigns || []);
+        setLoading(false);
     }
 
     async function fetchChartData(comp) {
@@ -71,6 +74,7 @@ function Analitics({ tableData }) {
 
     return (
         <div className="analitics">
+            {loading && <Loader />}
             <div className="analitics__header">
                 <h1 className="analitics__header--title title">Analitics</h1>
                 <p className="analitics__header--description description">Detailed campaign performance and insights</p>

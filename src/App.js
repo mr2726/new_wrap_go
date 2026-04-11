@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import data from "./data/data.json";
 import { supabase } from './data/supabase';
+import Loader from './Components/Loader';
 import Signup from './Pages/Singup';
 import Singin from './Pages/Singin';
 import Terms from './Pages/Terms';
@@ -19,6 +20,7 @@ function App() {
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const hash = window.location.hash;
     const href = window.location.href;
@@ -36,6 +38,7 @@ function App() {
           setEmail(session.user.email ?? "");
           setPage("content");
         }
+        setLoading(false);
       });
     }
 
@@ -89,9 +92,7 @@ function App() {
   }
   return (
     <div className="App">
-      {console.log(user)}
-      {/* {user ? <Content data={data.content} /> : renderPage()} */}
-      {renderPage()}
+      {loading ? <Loader /> : renderPage()}
     </div>
   );
 }

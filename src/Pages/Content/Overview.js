@@ -2,6 +2,7 @@ import "../../App.css";
 import { supabase } from "../../data/supabase";
 import OverviewInfo from "../../Components/overviewInfo";
 import CampaignTable from "../../Components/CampaignTable";
+import Loader from "../../Components/Loader";
 import { useEffect, useState } from "react";
 
 // Parse duration strings like "3m", "7d", "2w"
@@ -33,9 +34,9 @@ const getCampaignDaysLeft = (campaign) => {
 function Overview ({data, setPage}) {
     const [campaignData, setCampaignData] = useState([]);
     const [profile, setProfile] = useState(null);
-    console.log(profile);
     const [totalDistance, setTotalDistance] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     // Format 
     const formatNumber = (num) => (num || 0).toLocaleString('en-US');
@@ -89,7 +90,7 @@ function Overview ({data, setPage}) {
             const { data: profileData, error: profileError } = await supabase
                 .from("profiles")
                 .select("*")
-                .eq("userId", user.id)
+                .eq("userid", user.id)
                 .single();
 
             if (profileError) {
@@ -116,6 +117,7 @@ function Overview ({data, setPage}) {
             }, 0);
 
             setTotalDistance(total);
+            setLoading(false);
         };
 
         fetchData();
@@ -123,6 +125,7 @@ function Overview ({data, setPage}) {
 
     return (
         <div className="overview">
+            {loading && <Loader />}
             <div className="overview__header">
                 <div className="overview__header--content">
                     <h1 className="content__title">{data.title}</h1>

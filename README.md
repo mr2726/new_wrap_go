@@ -1,14 +1,14 @@
 # WrapGO CRM pannel
 
-### v1.1.5 - 
+### v1.1.5
 > - Updated the signin and signup logic
 > - Added logic to create the analitics
 > - Added Settings page - [ NO COMPLITED ] 
 
-### v1.1.6 -
+### v1.1.6
 > - Update the Signin Error Message
 
-### c1.1.7
+### v1.1.7
 > - Remove Pendings from Analitics History
 > - Overview Table shows Pending and Live camaigns
 > - Budget Overview Change to Campaigns Progress
@@ -18,11 +18,18 @@
 > - Campaigns Progress add the View All button / Logic for showing all data 
 > - Campaignes Table Pay button forward to the billing 
 > - Overview Info blocks forwarding after click
+> - Change Budget Overview
+
+### v1.2.0
+> - Settings Front-end is done
+> - Settings Connected to the Supabase
+> - Loader Added
 
 ## TODO
-- [ ] Complite Settings FrontEnd
-- [ ] Connect Settigns to Supabase
-- [ ] Change Budget Overview
+- [x] Complite Settings FrontEnd
+- [x] Connect Settigns to Supabase
+- [ ] Upload IMG system
+- [x] Change Budget Overview
 - [x] Campaignes Table Pay button forward to the billing 
 - [x] Overview Info Forwarding 
 - [x] Budget Overview Change to Campaigns Progress
@@ -35,3 +42,5 @@
 - [ ] Create Billing Fron-end
 - [ ] Connect Billing to the API
 - [ ] Connect Billing to the Supabase
+- [x] Create Loader
+- [ ] Create Demo Login button 
