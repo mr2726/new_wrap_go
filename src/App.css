@@ -3,6 +3,10 @@
   --primary-color: #39FF14;
   --primary-color-hover: #2bb912;
   --primary-color-light: #39FF1420;
+  --pending-status-color: #FFB300;
+  --pending-status-color-light: #FFB30020;
+  --completed-status-color-light: #bd2e2e20;
+  --completed-status-color: #bd2e2e;
   --background-color: #0A0A0F;
   --text-color: #fff;
   --sign-secondary-color: #94A3B8;
@@ -806,6 +810,46 @@ body{
   margin-bottom: 1em;
 }
 
+.budget__title--row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.budget__title--row .budget__title{
+  margin-bottom: 0;
+}
+
+.budget__viewall{
+  font-size: 1.2em;
+  background: none;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 2em;
+  padding: 0.3em 1em;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.budget__viewall:hover{
+  background-color: var(--primary-color);
+  color: var(--background-color);
+}
+
+.campaign__row--clickable{
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+.campaign__row--clickable:hover{
+  background-color: var(--primary-color-light);
+}
+
+.campaign__row--selected{
+  background-color: var(--primary-color-light) !important;
+}
+
 .budget__left--info{
   display: flex;
   justify-content: space-between;
@@ -815,6 +859,9 @@ body{
 
 .budget__left--info--title{
   color: var(--sign-secondary-color);
+  margin-bottom: 10px;
+  font-size: 1.5em;
+  margin-top: 20px;
 }
 
 .budget__left--loader{
@@ -967,6 +1014,20 @@ body{
 .status--live {
   background-color: var(--primary-color-light);
   color: var(--primary-color);
+  text-transform: capitalize;
+}
+
+.status--pending {
+  background-color: var(--pending-status-color-light);
+  color: var(--pending-status-color);
+  text-transform: capitalize;
+  margin-right: 2em;
+}
+
+.status--completed {
+  background-color: var(--completed-status-color-light);
+  color: var(--completed-status-color);
+  text-transform: capitalize;
 }
 
 .article{

@@ -253,22 +253,22 @@
                     "id" : 2
                 },
                 {
-                    "title" : "Average CPM",
+                    "title" : "Average CPV",
                     "aditions" : "AMD",
                     "id" : 3
                 }
             ],
             "budgetOverview" : {
-                "title" : "Budget Overview",
-                "loadbarTitle" : "Campaign Spend",
+                "title" : "Campaigns Progress",
+                "loadbarTitle" : "",
                 "budgetIfon" : [
                     {
-                        "title":"Total",
+                        "title":"Campaign Spend",
                         "article" : "AMD"
                     },
                     {
                         "title":"Left",
-                        "article" : "AMD"
+                        "article" : "Days"
                     }
                 ],
                 "budgetDays" : {
@@ -277,7 +277,7 @@
                 }
             },
             "campaignTable" : {
-                "title" : "",
+                "title" : "Live Campaigns",
                 "tableInfo" : [
                     {
                         "id" : 0,

@@ -1,7 +1,7 @@
 import "../App.css";
 import { MdOutlineDirectionsCar, MdLocationPin, MdOutlineRemoveRedEye, MdAttachMoney } from "react-icons/md";
 
-function OverviewInfo ({data, driverCount, distance, totalBudget}) {
+function OverviewInfo ({data, driverCount, distance, totalBudget, setPage}) {
     const IconsRendr = ({id}) => {
         switch(id){
             case 0: 
@@ -47,8 +47,27 @@ function OverviewInfo ({data, driverCount, distance, totalBudget}) {
         }
     }
 
+    const forwarding = (id) => {
+        switch(id){
+            case 0:
+                setPage("live-map");
+                break;
+            case 1:
+                setPage("analytics");
+                break;
+            case 2:
+                setPage("analytics");
+                break;
+            case 3:
+                setPage("analytics");
+                break;
+            default:
+                setPage("live-map");
+        }
+    }
+
     return (
-        <div className="overview__content_blocks--block">
+        <div className="overview__content_blocks--block" onClick={() => forwarding(data.id)}>
             <div className="block__header">
                 <p className="block__header--title">{data.title}</p>
                 <div className="block__header--image" style={{backgroundColor: "#3B82F610"}}>
@@ -57,7 +76,6 @@ function OverviewInfo ({data, driverCount, distance, totalBudget}) {
             </div>
             <div className="block__data">
                 <p className="block__data--title"><AnalitictsInfo id={data.id} driverCount={driverCount} distance={distance} /></p>
-                {/* <p className="block__data--procent">+12%</p> */}
             </div>
             <p className="block__additional">{data.aditions}</p>
         </div>

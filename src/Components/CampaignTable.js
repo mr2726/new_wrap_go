@@ -1,6 +1,6 @@
 import "../App.css";
 
-function CampaignTable ({data, pageData, state}) {
+function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage}) {
     
     const formatNumber = (num) => num.toLocaleString('en-US');
     if (!Array.isArray(data)) {
@@ -26,8 +26,11 @@ function CampaignTable ({data, pageData, state}) {
 
                 {
                     data.map((item, index) => (
-                        item.status === "live" && <tbody key={index}>
-                            <tr>
+                        (item.status === "live" || item.status === "pending") && <tbody key={index}>
+                            <tr
+                                className={`${item.status === "live" ? "campaign__row--clickable" : ""} ${selectedId === item.id ? "campaign__row--selected" : ""}`}
+                                onClick={() => item.status === "live" && onRowClick && onRowClick(item)}
+                            >
                                 <td className="campaign__name">
                                     {item.name}
                                 </td>
@@ -39,8 +42,8 @@ function CampaignTable ({data, pageData, state}) {
                                 <td>
                                     <span className={`status status--${item.status}`}>{item.status}</span>
                                     {
-                                        state ? null : item.status === "pending" && (
-                                            <button className="payButton" onClick={() => console.log("Pay")}>Pay</button>
+                                        item.status === "pending" && (
+                                            <button className="payButton" onClick={(e) => { e.stopPropagation(); setPage("billing"); }}>Pay</button>
                                         )
                                     }
                                 </td>

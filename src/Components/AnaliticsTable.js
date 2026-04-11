@@ -53,7 +53,7 @@ function AnatiticTable ({data, pageData, state, page, setChoosedCampaign}) {
     const RenderTable = ({item}) => {
         switch (page) {
             case "history" : 
-                if (item.status !== "live") {
+                if (item.status === "completed") {
                     return (
                         <Table item={item} />
                     );
