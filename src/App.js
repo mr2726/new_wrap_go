@@ -18,7 +18,7 @@ import Content from './Pages/Content/Content';
 function App() {
   const [page, setPage] = useState("signup");
   const [email, setEmail] = useState("");
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -34,7 +34,7 @@ function App() {
       // Проверяем существующую сессию при загрузке
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user?.email_confirmed_at) {
-          setUser(session.user);
+          // setUser(session.user);
           setEmail(session.user.email ?? "");
           setPage("content");
         }
@@ -44,7 +44,7 @@ function App() {
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setUser(session?.user ?? null);
+        // setUser(session?.user ?? null);
 
         if (
           event === "SIGNED_IN" &&

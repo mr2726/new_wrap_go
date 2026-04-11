@@ -25,6 +25,9 @@
 > - Settings Connected to the Supabase
 > - Loader Added
 
+### v1.2.1 
+> - Fix for Versel
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase

@@ -33,7 +33,7 @@ const getCampaignDaysLeft = (campaign) => {
 
 function Overview ({data, setPage}) {
     const [campaignData, setCampaignData] = useState([]);
-    const [profile, setProfile] = useState(null);
+    // const [profile, setProfile] = useState(null);
     const [totalDistance, setTotalDistance] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -97,7 +97,8 @@ function Overview ({data, setPage}) {
                 console.log(profileError.message);
                 return;
             }
-            setProfile(profileData);
+            console.log(profileData);
+            // setProfile(profileData);
 
             // drivers
             const campaignIds = campaigns.map(c => c.id);

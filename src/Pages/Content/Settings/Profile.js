@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import "../../../App.css";
 import ChangeImage from "../../../Components/ChangeImage";
 import SettingsForm from "../../../Components/SettingsForm";
-import { supabase } from "../../../data/supabase";
+// import { supabase } from "../../../data/supabase";
 
 function Profile({_profileData}) {
     
