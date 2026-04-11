@@ -5,6 +5,7 @@ import Logo from "../Components/Logo";
 
 function Singin({data, setPage}) {
     const [formData, setFormData] = useState({});
+    const [error, setError] = useState("");
 
     // Get data from JSON file if it changed
     useEffect(() => {
@@ -34,9 +35,10 @@ function Singin({data, setPage}) {
         });
 
         if (error) {
-            console.log(error.message);
+            setError(error.message);
             return;
         }
+        setError("");
 
         if (authData?.user) {
             console.log("Logined");
@@ -70,6 +72,7 @@ function Singin({data, setPage}) {
                             </>
                         ))
                     }
+                    {error && <p className="signup_form__error">{error}</p>}
                     <p className="highlight forgot_pass" onClick={() => setPage("otplink")}>{data.forgot}</p>
                     <button type="submit" className="signup_form__form--button signin__button">
                         {data.button}

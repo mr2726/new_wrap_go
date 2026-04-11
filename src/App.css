@@ -222,6 +222,12 @@ body{
   font-size: 1.6em;
 }
 
+.signup_form__error {
+  color: #e53935;
+  font-size: 1.4em;
+  margin: 0;
+}
+
 .signup_form__form--label{
   font-size: 1.4em;
   color: var(--lables);
