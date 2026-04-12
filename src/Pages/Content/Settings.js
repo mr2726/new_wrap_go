@@ -4,6 +4,8 @@ import { supabase } from "../../data/supabase";
 import Profile from "./Settings/Profile";
 import Company from "./Settings/Company";
 import Loader from "../../Components/Loader";
+import { FaRegUser } from "react-icons/fa";
+import { BiSolidFactory } from "react-icons/bi";
 
 function Settings() {
     const [content, setContent] = useState("profile");
@@ -56,7 +58,8 @@ function Settings() {
             "title": "Industry",
             "dbKey": "industry",
             "article": "",
-            "value": profileData?.industry
+            "value": profileData?.industry,
+            "options": ["Automotive", "Marketing", "Logistics", "Transportation", "Retail", "Other"]
         },
         {
             "title": "Website (optional)",
@@ -68,7 +71,8 @@ function Settings() {
             "title": "Country",
             "dbKey": "country",
             "article": "",
-            "value": profileData?.country
+            "value": profileData?.country,
+            "options": ["Armenia", "Georgia", "UAE", "Other"]
         },
         {
             "title": "City",
@@ -99,16 +103,16 @@ function Settings() {
             <div className="settings__content">
                 <ul className="settings__menu">
                     <li>
-                        <p className={content === "profile" ? "highlight" : ""} onClick={() => setContent("profile")}>Profile</p>
+                        <p className={content === "profile" ? "highlight row_center" : "row_center"} onClick={() => setContent("profile")}><FaRegUser fontSize={20} /><span style={{marginLeft: 10}}>Profile</span></p>
                     </li>
                     <li>
-                        <p className={content === "company" ? "highlight" : ""} onClick={() => setContent("company")}>Company</p>
+                        <p className={content === "company" ? "highlight row_center" : "row_center"} onClick={() => setContent("company")}><BiSolidFactory fontSize={20} /><span style={{marginLeft: 10}}>Company</span></p>
                     </li>
                     {/* <li>
-                        <p className={content === "notifications" ? "highlight" : ""} onClick={() => setContent("notifications")}>Notifications</p>
+                        <p className={content === "notifications" ? "highlight" : ""} onClick={() => setContent("notifications")}><span>Notifications</span></p>
                     </li>
                     <li>
-                        <p className={content === "security" ? "highlight" : ""} onClick={() => setContent("security")}>Security</p>
+                        <p className={content === "security" ? "highlight" : ""} onClick={() => setContent("security")}><span>Security</span></p>
                     </li> */}
                 </ul>
                 <div className="settings__main">

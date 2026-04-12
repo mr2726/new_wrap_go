@@ -28,10 +28,17 @@
 ### v1.2.1 
 > - Fix for Versel
 
+### v1.2.2
+> - Fix the options for Industry and Country in Settings
+> - Upload image system is done
+> - Settings sidebar Icons is done
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
-- [ ] Upload IMG system
+- [x] Change industry and Coutry in Setting page to Select / Option
+- [x] Add icons to Settings Sidebar
+- [x] Upload IMG system
 - [x] Change Budget Overview
 - [x] Campaignes Table Pay button forward to the billing 
 - [x] Overview Info Forwarding 

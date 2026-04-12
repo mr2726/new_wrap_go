@@ -45,13 +45,28 @@ function SettingsForm({title, description, data}) {
                     data.map((item, index) => (
                         <div className="settings-form__group" key={index}>
                             <label className="settings-form__label signup_form__form--label">{item.title}</label>
-                            <input
-                                type="text"
-                                className="settings-form__input signup_form__form--input"
-                                placeholder={`Enter your ${item.title.toLowerCase()}`}
-                                value={formValues[item.dbKey] ?? ""}
-                                onChange={(e) => handleChange(item.dbKey, e.target.value)}
-                            />
+                            {item.options ? (
+                                <select
+                                    className="settings-form__input signup_form__form--input"
+                                    value={formValues[item.dbKey] ?? ""}
+                                    onChange={(e) => handleChange(item.dbKey, e.target.value)}
+                                >
+                                    <option value="">Select {item.title.toLowerCase()}</option>
+                                    {item.options.map((option, optIndex) => (
+                                        <option key={optIndex} value={option}>
+                                            {option}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    type="text"
+                                    className="settings-form__input signup_form__form--input"
+                                    placeholder={`Enter your ${item.title.toLowerCase()}`}
+                                    value={formValues[item.dbKey] ?? ""}
+                                    onChange={(e) => handleChange(item.dbKey, e.target.value)}
+                                />
+                            )}
                         </div>
                     ))
                 }
