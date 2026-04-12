@@ -4,11 +4,12 @@ import { MdOutlineCalculate, MdUploadFile  } from "react-icons/md";
 import PlanSelector from "../../Components/PlanSelector";
 import AdPlacement from "../../Components/AdPlacement";
 import Modal from "../../Components/Moda";
+import Loader from "../../Components/Loader";
 import { supabase } from "../../data/supabase";
 
 
 function CampaignBuilder({data}) {
-    const [standartValue, setStandartValue] = useState(1);
+    const [standartValue, setStandartValue] = useState(0);
     const [economValue, setEconomValue] = useState(1);
     const [route, setRoute] = useState("3m");
     const [adPlacement, setAdPlacement] = useState("side");
@@ -16,11 +17,12 @@ function CampaignBuilder({data}) {
     const [productName, setProductName] = useState("");
     const [productDescription, setProductDescription] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
+    const [isLaunching, setIsLaunching] = useState(false);
 
 
     const multiplier = route === "1m" ? 1 : route === "3m" ? 3 : route === "6m" ? 6 : 1;
-    const priceStandart = adPlacement === "side" ? 129000 : 179000;
-    const priceBusiness = 179000;
+    const priceStandart = adPlacement === "side" ? 119000 : 169000;
+    const priceBusiness = 175000;
     const baseTotal = ((economValue * priceStandart) + (standartValue * priceBusiness)) * multiplier;
     const discountPercent = route === "3m" ? 0.02 : route === "6m" ? 0.05 : 0;
     const discountAmount = baseTotal * discountPercent;
@@ -39,7 +41,37 @@ function CampaignBuilder({data}) {
         document.getElementById('fileInput').click();
     };
 
+    const generateInvoiceId = async () => {
+        const currentYear = new Date().getFullYear();
+        const prefix = `INV-${currentYear}-`;
+
+        const { data: invoiceRows, error } = await supabase
+            .from("invoices")
+            .select("invoiceid")
+            .ilike("invoiceid", `${prefix}%`)
+            .order("invoiceid", { ascending: false })
+            .limit(1);
+
+        if (error) {
+            console.error("Invoice id read error:", error);
+            return `${prefix}001`;
+        }
+
+        const lastInvoiceId = invoiceRows?.[0]?.invoiceid;
+        if (!lastInvoiceId) {
+            return `${prefix}001`;
+        }
+
+        const lastNumber = Number(lastInvoiceId.split("-")[2]);
+        const nextNumber = Number.isNaN(lastNumber) ? 1 : lastNumber + 1;
+        return `${prefix}${String(nextNumber).padStart(3, "0")}`;
+    };
+
     const handleLaunchCampaign = async () => {
+        if (isLaunching) {
+            return;
+        }
+
         // ===== Проверка обязательных полей =====
         if (!productName.trim()) {
             alert("Product Name is required!");
@@ -49,6 +81,8 @@ function CampaignBuilder({data}) {
             alert("Please upload a file!");
             return;
         }
+
+        setIsLaunching(true);
 
         try {
             let fileUrl = null;
@@ -152,9 +186,28 @@ function CampaignBuilder({data}) {
                 if (analyticsError) {
                     console.error("Analytics insert error:", analyticsError);
                 }
+
+                // ===== 6. Запись в таблицу инвойсов =====
+                const invoiceId = await generateInvoiceId();
+                const invoicePayload = {
+                    invoiceid: invoiceId,
+                    campaign_id: newCampaignId,
+                    owner_id: userId,
+                    amount: route === "custom" ? null : Math.round(discountedTotal),
+                    campaign_name: productName,
+                    status: "pending",
+                };
+
+                const { error: invoiceError } = await supabase
+                    .from("invoices")
+                    .insert([invoicePayload]);
+
+                if (invoiceError) {
+                    console.error("Invoice insert error:", invoiceError);
+                }
             }
 
-            // ===== 6. Сброс данных =====
+            // ===== 7. Сброс данных =====
             setStandartValue(0);
             setEconomValue(0);
             setRoute("3m");
@@ -166,11 +219,14 @@ function CampaignBuilder({data}) {
             setModalOpen(true);
         } catch (err) {
             console.error("Unexpected error:", err);
+        } finally {
+            setIsLaunching(false);
         }
     };
 
     return(
         <div className="campaign">
+            {isLaunching && <Loader />}
             <div className="campaign__content">
                 <div className="campaign__content--header">
                     <h2 className="campaign__content--header--title signup_form__title">{data.title}</h2>
@@ -325,8 +381,9 @@ function CampaignBuilder({data}) {
                         <button
                             className="campaign__builder--button overview__header--button"
                             onClick={handleLaunchCampaign}
+                            disabled={isLaunching}
                         >
-                            {data.builder.btn}
+                            {isLaunching ? "Launching..." : data.builder.btn}
                         </button>
                     </div>
                 </div>

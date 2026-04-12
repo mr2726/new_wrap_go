@@ -3,7 +3,7 @@
 ### v1.1.5
 > - Updated the signin and signup logic
 > - Added logic to create the analitics
-> - Added Settings page - [ NO COMPLITED ] 
+> - Added Settings page - [ NO COMPLITED (Complited on v1.2.0) ] 
 
 ### v1.1.6
 > - Update the Signin Error Message
@@ -33,6 +33,10 @@
 > - Upload image system is done
 > - Settings sidebar Icons is done
 
+### v1.3.0
+> - Billing page is done (Without Bank API)
+
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -49,8 +53,8 @@
 - [x] Campaigns Progress add the View All button / Logic for showing all data 
 - [x] Overview Table shows Pending and Live camaigns
 - [x] Remove Pendings from Analitics History ( It need show only completed )
-- [ ] Create Billing Fron-end
+- [x] Create Billing Fron-end
 - [ ] Connect Billing to the API
-- [ ] Connect Billing to the Supabase
+- [x] Connect Billing to the Supabase
 - [x] Create Loader
 - [ ] Create Demo Login button 

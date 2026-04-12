@@ -6,6 +6,7 @@ import CampaignBuilder from "./CampaignBuilder";
 import Map from "../../Components/MapBox";
 import Analitics from "./Analitics";
 import Settings from "./Settings";
+import Billing from "./Billing";
 
 function Content({data}) {
     const [page, setPage] = useState("analytics");
@@ -23,7 +24,7 @@ function Content({data}) {
             case "vehicles":
                 return <h1>Vehicles</h1>
             case "billing":
-                return <h1>Billing</h1>
+                return <Billing />
             case "settings":
                 return <Settings />
             default:
