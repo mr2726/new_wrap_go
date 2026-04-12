@@ -793,6 +793,7 @@ body{
 
 .budget{
   width: 30em;
+  height: 100%;
   background-color: var(--block-bg);
   border-radius: 2em;
   padding: 2em;
@@ -1167,6 +1168,15 @@ body{
 .campaign__builder--button{
   width: 100% !important;
   margin-top: 1em;
+}
+
+.campaign__settings{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-right: 2em;
+  gap: 1em;
 }
 
 /* Plan Selector */
@@ -1976,6 +1986,38 @@ select option{
   border: 2px solid var(--primary-color);
 }
 
+.billing_method--drawer{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6em;
+  margin-top: 1.25em;
+}
+
+.billing_method--drawer .billing_method__block{
+  width: 100%;
+  padding: 1em 0.6em;
+  gap: 0.45em;
+  align-items: center;
+  text-align: center;
+}
+
+.billing_method--drawer .billing_method__block h3{
+  font-size: 11px !important;
+}
+
+.billing_method--drawer .billing_method__block p{
+  font-size: 10px !important;
+}
+
+.billing_method--drawer .billing_method__block h4{
+  font-size: 10px !important;
+}
+
+.billing_method--drawer + .billing_method__details{
+  margin-top: 0.75em;
+  padding: 1.25em;
+}
+
 .billing_method__details{
   width: 100%;
   background-color: var(--block-bg);
@@ -2017,8 +2059,6 @@ select option{
 
 .qr_wrapper{
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-top: 2em;
 }
 
@@ -2213,4 +2253,89 @@ select option{
   grid-template-columns: 1fr 1fr;
   gap: 1.2em;
   margin-top: 0.5em;
+}
+
+.billing_method__details--drawer{
+  margin-top: 0.75em;
+  padding: 1.25em;
+  border-radius: 1em;
+}
+
+.card-form{
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.card-form__row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75em;
+}
+
+.card-form__field{
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.card-form__field--full{
+  grid-column: 1 / -1;
+}
+
+.card-form__label{
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sign-secondary-color);
+  font-family: 'LufgaBold';
+}
+
+.card-form__input{
+  width: 100%;
+  background-color: var(--background-color);
+  border: 1px solid var(--input-border);
+  border-radius: 0.6em;
+  padding: 0.75em 1em;
+  font-size: 1.4em;
+  color: var(--sign-color);
+  font-family: 'LufgaRegular', monospace;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.card-form__input:focus{
+  border-color: var(--primary-color);
+}
+
+.card-form__input::placeholder{
+  color: var(--sign-secondary-color);
+  opacity: 0.5;
+}
+
+.card-form__submit{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25em;
+}
+
+.no_pendings_invoices{
+  width: 100%;
+  background-color: var(--block-bg);
+  padding: 2em;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  margin-bottom: 2em;
+}
+
+.doneIcon{
+  padding: 1em;
+  background-color: var(--primary-color-light);
+  border-radius: 50%;
+  margin-right: 2em;
 }

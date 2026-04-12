@@ -294,7 +294,7 @@ function CampaignBuilder({data}) {
                             
 
                         </div>
-                        <div className="settings">
+                        <div className="campaign__settings">
                             <PlanSelector setRoute={setRoute} route={route} />
                             <AdPlacement setSelected={setAdPlacement} selected={adPlacement} />
                         </div>

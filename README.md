@@ -36,6 +36,10 @@
 ### v1.3.0
 > - Billing page is done (Without Bank API)
 
+### v1.3.1
+> - fixed Ui bag with the Campaign bilder pages 
+> - Update billing UI
+> - Change the payment system in the billing page 
 
 ## TODO
 - [x] Complite Settings FrontEnd
@@ -54,7 +58,7 @@
 - [x] Overview Table shows Pending and Live camaigns
 - [x] Remove Pendings from Analitics History ( It need show only completed )
 - [x] Create Billing Fron-end
-- [ ] Connect Billing to the API
+- [ ] Connect Billing to the API (NEED API FROM BANKS)
 - [x] Connect Billing to the Supabase
 - [x] Create Loader
 - [ ] Create Demo Login button 
