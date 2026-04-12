@@ -596,7 +596,7 @@ function Billing() {
                         <div className="invoice-drawer__separator" />
 
                         <div className="invoice-drawer__section">
-                            <p className="invoice-drawer__label">Campaigns Included</p>
+                            <p className="invoice-drawer__label">Campaign Name</p>
                             <div className="invoice-drawer__box">{selectedInvoice.campaignName || "-"}</div>
                         </div>
 
