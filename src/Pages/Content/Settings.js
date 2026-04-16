@@ -3,9 +3,13 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../data/supabase";
 import Profile from "./Settings/Profile";
 import Company from "./Settings/Company";
+import Notifications from "./Settings/Notification";
+import Security from "./Settings/Security";
 import Loader from "../../Components/Loader";
 import { FaRegUser } from "react-icons/fa";
 import { BiSolidFactory } from "react-icons/bi";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import { MdOutlineShield } from "react-icons/md";
 
 function Settings() {
     const [content, setContent] = useState("profile");
@@ -62,7 +66,13 @@ function Settings() {
             "options": ["Automotive", "Marketing", "Logistics", "Transportation", "Retail", "Other"]
         },
         {
-            "title": "Website (optional)",
+            "title" : "TAX",
+            "dbKey" : "tax",
+            "article" : "",
+            "value": profileData?.tax,
+        },
+        {
+            "title": "Website",
             "dbKey": "web",
             "article": "",
             "value": profileData?.web
@@ -108,19 +118,18 @@ function Settings() {
                     <li>
                         <p className={content === "company" ? "highlight row_center" : "row_center"} onClick={() => setContent("company")}><BiSolidFactory fontSize={20} /><span style={{marginLeft: 10}}>Company</span></p>
                     </li>
-                    {/* <li>
-                        <p className={content === "notifications" ? "highlight" : ""} onClick={() => setContent("notifications")}><span>Notifications</span></p>
+                    <li>
+                        <p className={content === "notifications" ? "highlight row_center" : "row_center"} onClick={() => setContent("notifications")}><IoMdNotificationsOutline fontSize={20} /><span style={{marginLeft: 10}}>Notifications</span></p>
                     </li>
                     <li>
-                        <p className={content === "security" ? "highlight" : ""} onClick={() => setContent("security")}><span>Security</span></p>
-                    </li> */}
+                        <p className={content === "security" ? "highlight row_center" : "row_center"} onClick={() => setContent("security")}><MdOutlineShield fontSize={20} /><span style={{marginLeft: 10}}>Security</span></p>
+                    </li>
                 </ul>
                 <div className="settings__main">
                     {content === "profile" && <Profile _profileData={_profileData} />}
                     {content === "company" && <Company _companyData={_companyData} />}
-                    {content === "notifications" && <p>Notifications Content</p>}
-                    {content === "security" && <p>Security Content</p>}
-
+                    {content === "notifications" && <Notifications />}
+                    {content === "security" && <Security />}
                 </div>
             </div>
         </div>

@@ -41,6 +41,13 @@
 > - Update billing UI
 > - Change the payment system in the billing page 
 
+### v1.3.2
+> - Added Tax Input in The Settings Page
+
+### v1.3.3
+> - Notifications is done
+> - Security is almost done
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -58,7 +65,10 @@
 - [x] Overview Table shows Pending and Live camaigns
 - [x] Remove Pendings from Analitics History ( It need show only completed )
 - [x] Create Billing Fron-end
-- [ ] Connect Billing to the API (NEED API FROM BANKS)
+- [ ] Connect Billing to the API ( NEED API FROM BANKS )
 - [x] Connect Billing to the Supabase
 - [x] Create Loader
-- [ ] Create Demo Login button 
+- [ ] Create Demo Login button
+- [x] Add Notifications to the Settings
+- [x] Add Security to the Settings
+- [ ] Lending Pagse

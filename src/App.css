@@ -1747,6 +1747,94 @@ select option{
   width: 100%;
 }
 
+.notification__block--wrapper{
+  width: 100%;
+  background-color: var(--block-bg);
+  border-radius: 2em;
+  padding: 2em;
+}
+
+.notification__list{
+  margin-top: 1.5em;
+}
+
+.notification__item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2em;
+  padding: 1.8em 0;
+  border-bottom: 1px solid #1e2630;
+}
+
+.notification__item:last-child{
+  border-bottom: none;
+}
+
+.notification__item--info h3{
+  font-size: 1.8em;
+  font-family: "LufgaMedium", sans-serif;
+  color: var(--text-color);
+}
+
+.notification__item--info p{
+  font-size: 1.8em;
+  color: var(--sign-secondary-color);
+  margin-top: 0.4em;
+}
+
+.notification__toggle{
+  width: 54px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background-color: #232a34;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.notification__toggle--thumb{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.notification__toggle--active{
+  background-color: var(--primary-color);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.35);
+}
+
+.notification__toggle--active .notification__toggle--thumb{
+  transform: translateX(22px);
+}
+
+.notification__toggle:focus-visible{
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px){
+  .notification__item{
+    padding: 1.4em 0;
+    gap: 1em;
+  }
+
+  .notification__item--info h3{
+    font-size: 2.2em;
+  }
+
+  .notification__item--info p{
+    font-size: 1.6em;
+  }
+}
+
 /* Change Image */
 .change-image{
   width: 100% !important;
@@ -2338,4 +2426,74 @@ select option{
   background-color: var(--primary-color-light);
   border-radius: 50%;
   margin-right: 2em;
+}
+
+.notification__block--wrapper{
+  width: 100%;
+  background-color: var(--block-bg);
+  padding: 2em;
+  border-radius: 1em;
+}
+
+.second__title{
+  font-size: 1.4em;
+}
+
+.changePassword{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2em;
+}
+
+.changePassword__button{
+  padding: 0.5em 1.5em;
+}
+
+.security-modal{
+  width: 460px;
+  max-width: calc(100% - 3em);
+}
+
+.security-modal__form{
+  margin-top: 1.5em;
+}
+
+.security-modal__group{
+  margin-bottom: 1.2em;
+}
+
+.security-modal__actions{
+  margin-top: 1.5em;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8em;
+}
+
+.security-modal__button{
+  min-width: 130px;
+}
+
+.security-modal__button--ghost{
+  border: 1px solid var(--input-border);
+  background-color: transparent;
+  color: var(--text-color);
+  border-radius: 5em;
+  padding: 0.5em 1.4em;
+  font-size: 1.5em;
+  font-family: 'LufgaBold';
+  cursor: pointer;
+  transition: .2s;
+}
+
+.security-modal__button--ghost:hover{
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.security-modal__button:disabled,
+.security-modal__button--ghost:disabled{
+  opacity: 0.7;
+  cursor: not-allowed;
 }
