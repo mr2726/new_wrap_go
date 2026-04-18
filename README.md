@@ -55,6 +55,10 @@
 > - Fix Vercel Error with UseEffect
 > - .env contains MapBox Links and Keys
 
+### v1.4.2
+> - MapBox data getting from DB 
+> - Driver GPS getting from DB
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -81,7 +85,10 @@
 - [ ] Lending Pagse
 - [x] MapBox add styles
 - [x] MapBox Active zone
-- [ ] MapBox Active zone come from db
+- [x] MapBox Active zone come from db
 - [x] MapBox Show the driver on the Map
 - [x] MapBox Show Driver Info
-- [ ] MapBox API's in .env
+- [x] MapBox API's in .env
+- [x] Driver GPS cordinates getting from DB 
+- [x] GPS Data getting every 15s or once it changes in db
+- [ ] 2FA in Settings

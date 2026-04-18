@@ -2,50 +2,90 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { FaMoon, FaSun  } from "react-icons/fa";
+import { supabase } from "../data/supabase";
 
-mapboxgl.accessToken = "pk.eyJ1Ijoid3JhcGdvMSIsImEiOiJjbW5kaXZ1azAxYTZ3MnFxd3A4MWF0NHV2In0.BRikUTLb_Z45crHjlh2bqg";
+const MAPBOX_ACCESS_TOKEN = (process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || "").trim();
+const DARK_MAP_STYLE = (process.env.REACT_APP_MAPBOX_STYLE_URL_DARK || "").trim();
+const LITE_MAP_STYLE = (process.env.REACT_APP_MAPBOX_STYLE_URL_LITE || "").trim();
+
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const SQUARE_SOURCE_ID = "active-zones-squares";
 const SQUARE_FILL_LAYER_ID = "active-zones-squares-fill";
 const SQUARE_LINE_LAYER_ID = "active-zones-squares-line";
-const DRIVER_COORDS = [44.51475588393247, 40.18299309990458];
-const DARK_MAP_STYLE = "mapbox://styles/wrapgo1/cmndum348001w01sablb71mkr";
-const LITE_MAP_STYLE = "mapbox://styles/wrapgo1/cmndjj97l001k01sf62cf8x99";
-const DRIVER_INFO = {
+const DRIVER_REFRESH_MS = 15000;
+const DEFAULT_DRIVER_COORDS = [44.51475588393247, 40.18299309990458];
+const DEFAULT_DRIVER_INFO = {
   fullName: "Alex Morgan",
   activeContractName: "Downtown Delivery Route",
   carPhotoLeft: "https://placehold.co/520x320/121722/39FF14?text=Car+Left+Side",
   carPhotoRight: "https://placehold.co/520x320/121722/39FF14?text=Car+Right+Side",
 };
 
-const squareZones = {
+const EMPTY_ZONES = {
   type: "FeatureCollection",
-  features: [
-    {
-      type: "Feature",
-      properties: { name: "Square Zone A", zoneType: "square" },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [44.51519659461416, 40.18721193708653],
-          [44.520837654182756, 40.18205867339929],
-          [44.51501188824191, 40.17859953898644],
-          [44.509477204799445, 40.182452182873725],
-          [44.51519659461416, 40.18721193708653],
-        ]],
-      },
-    }
-  ],
+  features: [],
 };
 
-function addOrUpdateZones(mapInstance) {
+function isValidCoordPair(value) {
+  return (
+    Array.isArray(value) &&
+    value.length === 2 &&
+    Number.isFinite(value[0]) &&
+    Number.isFinite(value[1])
+  );
+}
+
+function closeRing(coords) {
+  if (coords.length < 3) return null;
+
+  const [firstLng, firstLat] = coords[0];
+  const [lastLng, lastLat] = coords[coords.length - 1];
+  if (firstLng === lastLng && firstLat === lastLat) {
+    return coords;
+  }
+
+  return [...coords, [firstLng, firstLat]];
+}
+
+function buildZonesFeatureCollection(rows) {
+  const features = (rows || [])
+    .map((row, index) => {
+      const coords = Array.isArray(row?.activezone)
+        ? row.activezone.filter(isValidCoordPair)
+        : [];
+      const ring = closeRing(coords);
+      if (!ring) return null;
+
+      return {
+        type: "Feature",
+        properties: {
+          id: row?.id ?? `zone-${index + 1}`,
+          name: row?.name || `Active Zone ${index + 1}`,
+          zoneType: "square",
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [ring],
+        },
+      };
+    })
+    .filter(Boolean);
+
+  return {
+    type: "FeatureCollection",
+    features,
+  };
+}
+
+function addOrUpdateZones(mapInstance, zonesData) {
 
   if (mapInstance.getSource(SQUARE_SOURCE_ID)) {
-    mapInstance.getSource(SQUARE_SOURCE_ID).setData(squareZones);
+    mapInstance.getSource(SQUARE_SOURCE_ID).setData(zonesData);
   } else {
     mapInstance.addSource(SQUARE_SOURCE_ID, {
       type: "geojson",
-      data: squareZones,
+      data: zonesData,
     });
   }
 
@@ -77,9 +117,14 @@ function addOrUpdateZones(mapInstance) {
 export default function Map() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const driverMarker = useRef(null);
+  const driverMarkersRef = useRef([]);
+  const activeZonesRef = useRef(EMPTY_ZONES);
+  const driverCoordsRef = useRef(DEFAULT_DRIVER_COORDS);
+  const hasCenteredOnDriverRef = useRef(false);
   const [mode, setMode] = useState("dark");
   const [isDriverDrawerOpen, setIsDriverDrawerOpen] = useState(false);
+  const [driverInfo, setDriverInfo] = useState(DEFAULT_DRIVER_INFO);
+  const [driversData, setDriversData] = useState([]);
 
   const mapStyle =
     mode === "lite" ? LITE_MAP_STYLE : DARK_MAP_STYLE;
@@ -96,15 +141,16 @@ export default function Map() {
 
     const markerElement = document.createElement("div");
     markerElement.className = "driver-marker";
-    const handleDriverMarkerClick = () => setIsDriverDrawerOpen(true);
-    markerElement.addEventListener("click", handleDriverMarkerClick);
+    const defaultMarkerClick = () => setIsDriverDrawerOpen(true);
+    markerElement.addEventListener("click", defaultMarkerClick);
 
-    driverMarker.current = new mapboxgl.Marker({
+    const defaultMarker = new mapboxgl.Marker({
       element: markerElement,
       anchor: "center",
     })
-      .setLngLat(DRIVER_COORDS)
+      .setLngLat(driverCoordsRef.current)
       .addTo(map.current);
+    driverMarkersRef.current.push(defaultMarker);
 
     const handleResize = () => map.current && map.current.resize();
 
@@ -122,7 +168,7 @@ export default function Map() {
 
     const handleStyleLoad = () => {
       if (!map.current) return;
-      addOrUpdateZones(map.current);
+      addOrUpdateZones(map.current, activeZonesRef.current);
       handleResize();
     };
 
@@ -134,11 +180,9 @@ export default function Map() {
 
     return () => {
       window.removeEventListener("resize", handleResize);
-      markerElement.removeEventListener("click", handleDriverMarkerClick);
-      if (driverMarker.current) {
-        driverMarker.current.remove();
-        driverMarker.current = null;
-      }
+      markerElement.removeEventListener("click", defaultMarkerClick);
+      driverMarkersRef.current.forEach((marker) => marker.remove());
+      driverMarkersRef.current = [];
       if (map.current) {
         map.current.off("load", handleStyleLoad);
         map.current.off("style.load", handleStyleLoad);
@@ -153,6 +197,159 @@ export default function Map() {
   }, []);
 
   useEffect(() => {
+    let isActive = true;
+
+    const fetchActiveZones = async () => {
+      const { data, error } = await supabase
+        .from("active_zone")
+        .select("activezone");
+
+      if (!isActive) return;
+
+      if (error) {
+        console.error("Failed to load active zones:", error);
+        activeZonesRef.current = EMPTY_ZONES;
+      } else {
+        activeZonesRef.current = buildZonesFeatureCollection(data);
+      }
+
+      if (map.current && map.current.isStyleLoaded()) {
+        addOrUpdateZones(map.current, activeZonesRef.current);
+      }
+    };
+
+    fetchActiveZones();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
+    let isFetching = false;
+    let pollingId;
+
+    const fetchDriverData = async () => {
+      if (isFetching) return;
+      isFetching = true;
+
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData?.user) {
+        if (authError) {
+          console.error("Failed to get current user:", authError);
+        }
+        isFetching = false;
+        return;
+      }
+
+      const userId = authData.user.id;
+
+      const { data: campaignRows, error: campaignError } = await supabase
+        .from("campaigns")
+        .select("id, name")
+        .eq("ownerid", userId);
+
+      if (!isActive) return;
+
+      if (campaignError) {
+        console.error("Failed to load campaigns:", campaignError);
+        isFetching = false;
+        return;
+      }
+
+      const campaignIds = (campaignRows || []).map((campaign) => campaign.id);
+      if (!campaignIds.length) {
+        setDriversData([]);
+        isFetching = false;
+        return;
+      }
+
+      const campaignNameById = (campaignRows || []).reduce((acc, campaign) => {
+        acc[campaign.id] = campaign.name;
+        return acc;
+      }, {});
+
+      const { data: driverRows, error: driverError } = await supabase
+        .from("drivers")
+        .select("id, name, contractid, lat, lan")
+        .in("contractid", campaignIds)
+        .order("created_at", { ascending: false });
+
+      if (!isActive) return;
+
+      if (driverError || !driverRows?.length) {
+        if (driverError) {
+          console.error("Failed to load driver data:", driverError);
+        }
+        setDriversData([]);
+        isFetching = false;
+        return;
+      }
+
+      const normalizedDrivers = driverRows
+        .map((driver) => {
+          const lng = Number(driver?.lat);
+          const lat = Number(driver?.lan);
+          const hasCoords = Number.isFinite(lng) && Number.isFinite(lat);
+          if (!hasCoords) return null;
+
+          return {
+            id: driver.id,
+            fullName: driver?.name || DEFAULT_DRIVER_INFO.fullName,
+            activeContractName:
+              campaignNameById[driver.contractid] || DEFAULT_DRIVER_INFO.activeContractName,
+            coords: [lng, lat],
+            carPhotoLeft: DEFAULT_DRIVER_INFO.carPhotoLeft,
+            carPhotoRight: DEFAULT_DRIVER_INFO.carPhotoRight,
+          };
+        })
+        .filter(Boolean);
+
+      setDriversData(normalizedDrivers);
+
+      if (normalizedDrivers.length) {
+        driverCoordsRef.current = normalizedDrivers[0].coords;
+        setDriverInfo((prev) => ({ ...prev, ...normalizedDrivers[0] }));
+        if (map.current && !hasCenteredOnDriverRef.current) {
+          hasCenteredOnDriverRef.current = true;
+          map.current.easeTo({ center: driverCoordsRef.current, duration: 800 });
+        }
+      }
+
+      isFetching = false;
+    };
+
+    fetchDriverData();
+
+    pollingId = window.setInterval(fetchDriverData, DRIVER_REFRESH_MS);
+
+    const realtimeChannel = supabase
+      .channel("drivers-live-updates")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "drivers" },
+        () => {
+          fetchDriverData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "campaigns" },
+        () => {
+          fetchDriverData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      isActive = false;
+      window.clearInterval(pollingId);
+      supabase.removeChannel(realtimeChannel);
+    };
+  }, []);
+
+  useEffect(() => {
     if (map.current) {
       map.current.setStyle(mapStyle);
     }
@@ -162,6 +359,37 @@ export default function Map() {
     if (!map.current) return;
     map.current.resize();
   }, [isDriverDrawerOpen]);
+
+  useEffect(() => {
+    if (!map.current) return;
+
+    driverMarkersRef.current.forEach((marker) => marker.remove());
+    driverMarkersRef.current = [];
+
+    if (!driversData.length) {
+      return;
+    }
+
+    driversData.forEach((driver) => {
+      const markerElement = document.createElement("div");
+      markerElement.className = "driver-marker";
+      markerElement.addEventListener("click", () => {
+        setDriverInfo((prev) => ({ ...prev, ...driver }));
+        setIsDriverDrawerOpen(true);
+      });
+
+      const marker = new mapboxgl.Marker({ element: markerElement, anchor: "center" })
+        .setLngLat(driver.coords)
+        .addTo(map.current);
+
+      driverMarkersRef.current.push(marker);
+    });
+
+    return () => {
+      driverMarkersRef.current.forEach((marker) => marker.remove());
+      driverMarkersRef.current = [];
+    };
+  }, [driversData]);
 
   return (
     <div className="map-page">
@@ -186,17 +414,17 @@ export default function Map() {
 
         <div className="driver-drawer__group">
           <p className="driver-drawer__label">Full Name</p>
-          <p className="driver-drawer__value">{DRIVER_INFO.fullName}</p>
+          <p className="driver-drawer__value">{driverInfo.fullName}</p>
         </div>
 
         <div className="driver-drawer__group">
-          <p className="driver-drawer__label">Active contract name</p>
-          <p className="driver-drawer__value">{DRIVER_INFO.activeContractName}</p>
+          <p className="driver-drawer__label">Active campaing name</p>
+          <p className="driver-drawer__value">{driverInfo.activeContractName}</p>
         </div>
 
         <div className="driver-drawer__photos">
-          <img src={DRIVER_INFO.carPhotoLeft} alt="Car left side" />
-          <img src={DRIVER_INFO.carPhotoRight} alt="Car right side" />
+          <img src={driverInfo.carPhotoLeft} alt="Car left side" />
+          <img src={driverInfo.carPhotoRight} alt="Car right side" />
         </div>
       </aside>
 
