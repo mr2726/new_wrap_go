@@ -48,6 +48,9 @@
 > - Notifications is done
 > - Security is almost done
 
+### v1.4.0
+> - MapBox UI
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -72,3 +75,8 @@
 - [x] Add Notifications to the Settings
 - [x] Add Security to the Settings
 - [ ] Lending Pagse
+- [x] MapBox add styles
+- [x] MapBox Active zone
+- [ ] MapBox Active zone come from db
+- [x] MapBox Show the driver on the Map
+- [x] MapBox Show Driver Info

@@ -33,7 +33,7 @@ function Content({data}) {
     }
 
     return (
-        <div className="content">
+        <div className={`content ${page === "live-map" ? "content--live-map" : ""}`}>
             <SideBar data={data.sidebar} page={page} setPage={setPage} />
             {renderPages()}
         </div>
