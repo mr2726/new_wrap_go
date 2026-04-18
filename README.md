@@ -51,6 +51,10 @@
 ### v1.4.0
 > - MapBox UI
 
+### v1.4.1
+> - Fix Vercel Error with UseEffect
+> - .env contains MapBox Links and Keys
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -80,3 +84,4 @@
 - [ ] MapBox Active zone come from db
 - [x] MapBox Show the driver on the Map
 - [x] MapBox Show Driver Info
+- [ ] MapBox API's in .env

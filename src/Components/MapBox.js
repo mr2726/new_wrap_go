@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-// import { CiSun, CiMoon } from "react-icons/ci";
 import { FaMoon, FaSun  } from "react-icons/fa";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoid3JhcGdvMSIsImEiOiJjbW5kaXZ1azAxYTZ3MnFxd3A4MWF0NHV2In0.BRikUTLb_Z45crHjlh2bqg";
@@ -10,6 +9,8 @@ const SQUARE_SOURCE_ID = "active-zones-squares";
 const SQUARE_FILL_LAYER_ID = "active-zones-squares-fill";
 const SQUARE_LINE_LAYER_ID = "active-zones-squares-line";
 const DRIVER_COORDS = [44.51475588393247, 40.18299309990458];
+const DARK_MAP_STYLE = "mapbox://styles/wrapgo1/cmndum348001w01sablb71mkr";
+const LITE_MAP_STYLE = "mapbox://styles/wrapgo1/cmndjj97l001k01sf62cf8x99";
 const DRIVER_INFO = {
   fullName: "Alex Morgan",
   activeContractName: "Downtown Delivery Route",
@@ -36,8 +37,6 @@ const squareZones = {
     }
   ],
 };
-
-// 40.18299309990458, 44.51475588393247
 
 function addOrUpdateZones(mapInstance) {
 
@@ -83,16 +82,14 @@ export default function Map() {
   const [isDriverDrawerOpen, setIsDriverDrawerOpen] = useState(false);
 
   const mapStyle =
-    mode === "lite"
-      ? "mapbox://styles/wrapgo1/cmndjj97l001k01sf62cf8x99"
-      : "mapbox://styles/wrapgo1/cmndum348001w01sablb71mkr";
+    mode === "lite" ? LITE_MAP_STYLE : DARK_MAP_STYLE;
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: mapStyle,
+      style: DARK_MAP_STYLE,
       center: [44.514470867659284, 40.1811272387276],
       zoom: 14,
     });
