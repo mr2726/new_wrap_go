@@ -238,6 +238,7 @@ body{
 }
 
 .signup_form__form--input{
+  width: 100%;
   background-color: transparent;
   border: 1px solid var(--input-border);
   border-radius: 1em;

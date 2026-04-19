@@ -21,6 +21,29 @@ function App() {
   // const [user, setUser] = useState(null);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(true);
+
+  const resolveAuthPage = async (session) => {
+    if (!session?.user?.email_confirmed_at) {
+      return "signin";
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("auntufication")
+      .eq("userid", session.user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      return "signin";
+    }
+
+    if (!profile?.auntufication) {
+      return "content";
+    }
+
+    return "signin";
+  };
+
   useEffect(() => {
     const hash = window.location.hash;
     const href = window.location.href;
@@ -32,11 +55,13 @@ function App() {
       setPage("company-info");
     } else {
       // Проверяем существующую сессию при загрузке
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user?.email_confirmed_at) {
-          // setUser(session.user);
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
+        if (session?.user) {
           setEmail(session.user.email ?? "");
-          setPage("content");
+          const nextPage = await resolveAuthPage(session);
+          setPage(nextPage);
+        } else {
+          setPage("signin");
         }
         setLoading(false);
       });
@@ -46,13 +71,13 @@ function App() {
       (event, session) => {
         // setUser(session?.user ?? null);
 
-        if (
-          event === "SIGNED_IN" &&
-          session?.user &&
-          session.user.email_confirmed_at
-        ) {
+        if (event === "SIGNED_OUT") {
+          setPage("signin");
+          return;
+        }
+
+        if (event === "SIGNED_IN" && session?.user) {
           setEmail(session.user.email ?? "");
-          setPage("content");
         }
       }
     );

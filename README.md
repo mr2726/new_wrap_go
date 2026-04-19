@@ -59,6 +59,9 @@
 > - MapBox data getting from DB 
 > - Driver GPS getting from DB
 
+### v1.5.0
+> - 2FA
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -91,4 +94,4 @@
 - [x] MapBox API's in .env
 - [x] Driver GPS cordinates getting from DB 
 - [x] GPS Data getting every 15s or once it changes in db
-- [ ] 2FA in Settings
+- [x] 2FA in Settings
