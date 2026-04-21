@@ -105,7 +105,7 @@ function Singin({data, setPage}) {
         event.preventDefault();
 
         if (!factorId || !challengeId) {
-            setError("2FA challenge is missing. Please sign in again.");
+            setError(data.twoFactor.errors.missingChallenge);
             return;
         }
 
@@ -117,7 +117,7 @@ function Singin({data, setPage}) {
         });
 
         if (verifyError) {
-            setError(verifyError.message || "Invalid code.");
+            setError(verifyError.message || data.twoFactor.errors.invalidCode);
             setIsSubmitting(false);
             return;
         }
@@ -172,19 +172,19 @@ function Singin({data, setPage}) {
             {requires2FA && (
                 <div className="modal" onClick={() => !isSubmitting && setRequires2FA(false)}>
                     <div className="modal__content security-modal" onClick={(event) => event.stopPropagation()}>
-                        <h2 className="modal__title">Two-Factor Authentication</h2>
-                        <p className="modal__text">Enter the 6-digit code from Google Authenticator.</p>
+                        <h2 className="modal__title">{data.twoFactor.title}</h2>
+                        <p className="modal__text">{data.twoFactor.description}</p>
 
                         <form className="security-modal__form" onSubmit={handleVerify2FA}>
                             <div className="security-modal__group">
-                                <label className="signup_form__form--label" htmlFor="signinTotp">Authenticator Code</label>
+                                <label className="signup_form__form--label" htmlFor="signinTotp">{data.twoFactor.label}</label>
                                 <br />
                                 <input
                                     id="signinTotp"
                                     type="text"
                                     inputMode="numeric"
                                     className="signup_form__form--input"
-                                    placeholder="123456"
+                                    placeholder={data.twoFactor.placeholder}
                                     value={totpCode}
                                     style={{ width: "100%" }}
                                     onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -199,7 +199,7 @@ function Singin({data, setPage}) {
                                     onClick={() => setRequires2FA(false)}
                                     disabled={isSubmitting}
                                 >
-                                    Cancel
+                                    {data.twoFactor.cancel}
                                 </button>
                                 <button
                                     type="submit"
@@ -207,7 +207,7 @@ function Singin({data, setPage}) {
                                     disabled={isSubmitting}
                                     style={{ padding: "0.5em 1.5em" }}
                                 >
-                                    {isSubmitting ? "Verifying..." : "Verify"}
+                                    {isSubmitting ? data.twoFactor.verifying : data.twoFactor.verify}
                                 </button>
                             </div>
                         </form>

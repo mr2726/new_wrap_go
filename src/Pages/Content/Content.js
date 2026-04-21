@@ -7,6 +7,7 @@ import Map from "../../Components/MapBox";
 import Analitics from "./Analitics";
 import Settings from "./Settings";
 import Billing from "./Billing";
+import Contacts from "./Contacts";
 
 function Content({data}) {
     const [page, setPage] = useState("analytics");
@@ -21,8 +22,8 @@ function Content({data}) {
                 return <Map />
             case "analytics":
                 return <Analitics tableData={data.analitics.table} />
-            case "vehicles":
-                return <h1>Vehicles</h1>
+            case "contacts":
+                return <Contacts data={data.contacts} />
             case "billing":
                 return <Billing />
             case "settings":

@@ -2667,3 +2667,107 @@ select option{
   border-radius: 1em;
   border: 1px solid var(--input-border);
 }
+
+.contact{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 2em;
+}
+
+.contact__header--label{
+  font-size: 1.4em;
+  color: var(--primary-color);
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.contact__header--title{
+  font-size: 5em;
+  font-family: 'LufgaBold';
+}
+
+.contact__content{
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  margin-top: 2em;
+}
+
+.contact__content--form{
+  background-color: var(--block-bg);
+  padding: 2em;
+  border-radius: 2em;
+  width: 60%;
+}
+
+.contact__content--form form {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.contact__form--textarea{
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  border-radius: 1em;
+  padding: 1em 1em;
+  margin-bottom: 1em;
+  outline: none;
+  transition: .2s;
+  color: var(--text-color);
+  height: 100px;
+}
+
+.contact__form--textarea:focus-visible{
+  border: 1px solid var(--primary-color);
+}
+
+.contact__content--info{
+  width: 35%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  background-color: var(--block-bg);
+  border-radius: 2em;
+  padding: 2em;
+}
+
+.contact__content--info__item{
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.contact__content--info__item--image{
+  width: 50px;
+  height: 50px;
+  background-color: var(--input-border);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  color: var(--primary-color);
+}
+
+.contact__content--info__item--title{
+  font-size: 1.2em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sign-secondary-color);
+}
+
+.contact__content--info__item--email{
+  font-size: 2em;
+  color: var(--text-color);
+  font-family: 'LufgaBold'
+}
+
+.contact__content--info__item--workingtime{
+  font-size: 1.2em;
+  color: var(--sign-secondary-color);
+}

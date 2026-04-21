@@ -62,6 +62,9 @@
 ### v1.5.0
 > - 2FA
 
+### v1.6.0
+> - Contact Page
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -95,3 +98,4 @@
 - [x] Driver GPS cordinates getting from DB 
 - [x] GPS Data getting every 15s or once it changes in db
 - [x] 2FA in Settings
+- [x] Contact Page

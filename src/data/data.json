@@ -65,7 +65,20 @@
         "forgot" : "Forgot password ?",
         "button" : "Sign in",
         "accoutn" : ["Don't have an account? " , "Sign up for free"],
-        "terms" : [" Privacy Policy", " Terms of Service"]
+        "terms" : [" Privacy Policy", " Terms of Service"],
+        "twoFactor" : {
+            "title" : "Two-Factor Authentication",
+            "description" : "Enter the 6-digit code from Google Authenticator.",
+            "label" : "Authenticator Code",
+            "placeholder" : "123456",
+            "cancel" : "Cancel",
+            "verify" : "Verify",
+            "verifying" : "Verifying...",
+            "errors" : {
+                "missingChallenge" : "2FA challenge is missing. Please sign in again.",
+                "invalidCode" : "Invalid code."
+            }
+        }
     },
     "terms" : {
         "title" : "Terms of Service",
@@ -201,6 +214,69 @@
             "btn2" : "Resend Email"
         }
     },
+    "confirmEmail" : {
+        "title" : "Confirm Email",
+        "descriptionStart" : "We’ve sent a confirmation email to",
+        "descriptionEnd" : ". Please check your inbox and follow the link to verify your email address.",
+        "back" : "Go back"
+    },
+    "companyInfo" : {
+        "header" : {
+            "title" : "Company Info",
+            "description" : "Please fill all company info"
+        },
+        "sections" : {
+            "contact" : "Contact Info",
+            "company" : "Company Info",
+            "address" : "Address",
+            "additional" : "Additional Info"
+        },
+        "fields" : {
+            "fullName" : {
+                "label" : "Full Name",
+                "placeholder" : "Full Name"
+            },
+            "email" : {
+                "label" : "Business Email",
+                "placeholder" : "Enter business contact email"
+            },
+            "phone" : {
+                "label" : "Phone Number",
+                "placeholder" : "Enter phone number with country code"
+            },
+            "companyName" : {
+                "label" : "Company Name",
+                "placeholder" : "Enter your company name"
+            },
+            "industry" : {
+                "label" : "Industry",
+                "placeholder" : "Select your industry",
+                "options" : ["Automotive", "Marketing", "Logistics", "Transportation", "Retail", "Other"]
+            },
+            "street" : {
+                "label" : "Street Address",
+                "placeholder" : "Enter street address"
+            },
+            "country" : {
+                "label" : "Country",
+                "placeholder" : "Select country",
+                "options" : ["Armenia", "Georgia", "UAE", "Other"]
+            },
+            "website" : {
+                "label" : "Website URL (Optional)",
+                "placeholder" : "Enter website URL"
+            },
+            "tax" : {
+                "label" : "Tax ID or registration number (Optional)",
+                "placeholder" : "Enter Tax ID or registration number"
+            }
+        },
+        "button" : "Continue",
+        "footerLinks" : {
+            "terms" : "Terms of service",
+            "privacy" : "Privacy & Policy"
+        }
+    },
     "content": {
         "sidebar" : {
             "sidebar_pages" : [
@@ -215,6 +291,10 @@
                 {
                     "id" : "analytics",
                     "title" : "Analytics"
+                },
+                {
+                    "id" : "contacts",
+                    "title" : "Contacts"
                 }
             ],
             "sidebar_settings" : [
@@ -333,16 +413,34 @@
             "image" : {
                 "title" : "Drop your logo or design here",
                 "description" : "Supports AI, SVG, PNG or PDF (Max 50MB)",
-                "btn" : "Upload Design"
+                "btn" : "Upload Design",
+                "browse" : "Browse Files",
+                "uploadedPrefix" : "Uploaded:"
+            },
+            "infoForm" : {
+                "productNameLabel" : "Product Name",
+                "productNamePlaceholder" : "Product name",
+                "productDescriptionLabel" : "Product Description",
+                "productDescriptionPlaceholder" : "Product description"
+            },
+            "alerts" : {
+                "productNameRequired" : "Product Name is required!",
+                "fileRequired" : "Please upload a file!"
             },
             "builder" : {
                 "title" : "Budget Calculator",
                 "btn" : "Launch Campaign",
+                "btnLoading" : "Launching...",
                 "start" : "Standart Tier x",
                 "sufix" : "AMD",
                 "calc" : "Total Estimate",
                 "discount" : "Discount",
-                "subtotal" : "Subtotal"
+                "subtotal" : "Subtotal",
+                "customEstimate" : "Will contact with you",
+                "periodLabels" : {
+                    "3m" : "3 Months",
+                    "6m" : "6 Months"
+                }
             },
             "modal" : {
                 "title" : "Campaign Created Successfully",
@@ -381,6 +479,60 @@
                     }
                 ]
             }
+        },
+        "contacts" : {
+            "header" : {
+                "label" : "CONNECT WITH INTELLIGENCE",
+                "title" : "Contact Us",
+                "description" : "Have questions or need assistance? Our team is here to help. Reach out to us through any of the following channels, and we'll get back to you as soon as possible."
+            },
+            "form" : {
+                "fields" : {
+                    "name" : {
+                        "label" : "Name",
+                        "placeholder" : "Your Name"
+                    },
+                    "email" : {
+                        "label" : "Email",
+                        "placeholder" : "Your Email"
+                    },
+                    "subject" : {
+                        "label" : "Subject",
+                        "placeholder" : "Subject"
+                    },
+                    "message" : {
+                        "label" : "Message",
+                        "placeholder" : "Your Message"
+                    }
+                },
+                "send" : "Send Message",
+                "sending" : "Sending...",
+                "success" : "Message sent successfully. Our team will contact you soon.",
+                "error" : "Failed to send message. Please try again."
+            },
+            "info" : [
+                {
+                    "id" : "email",
+                    "icon" : "email",
+                    "title" : "Email support",
+                    "value" : "admin@wrapgo.com",
+                    "meta" : "Response time: < 2 hours"
+                },
+                {
+                    "id" : "phone",
+                    "icon" : "phone",
+                    "title" : "Direct Line",
+                    "value" : "+1 800-123-4567",
+                    "meta" : "Mon - Fri, 9am - 5pm EST"
+                },
+                {
+                    "id" : "office",
+                    "icon" : "location",
+                    "title" : "KINETIC LAB HQ",
+                    "value" : "101 Innovation Blvd,<br />Suite 400, Austin, TX",
+                    "meta" : "Mon - Fri, 9am - 5pm EST"
+                }
+            ]
         }
     }
 }

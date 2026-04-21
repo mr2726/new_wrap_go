@@ -2,6 +2,7 @@ import "../App.css";
 import { supabase } from "../data/supabase";
 import Logo from "./Logo";
 import { MdOutlineDashboard, MdAdd, MdOutlineMap,MdBarChart,MdCompareArrows, MdCreditCard, MdOutlineSettings, MdLogout } from "react-icons/md";
+import { FaInfoCircle } from "react-icons/fa";
 
 
 function SideBar ({data, page, setPage}) {
@@ -18,11 +19,13 @@ function SideBar ({data, page, setPage}) {
             case "vehicles": 
                 return <MdCompareArrows className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
             case "billing": 
-                return <MdCreditCard />
+                return <MdCreditCard className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
             case "settings": 
-                return <MdOutlineSettings />
+                return <MdOutlineSettings className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
             case "logout" : 
-                return <MdLogout />
+                return <MdLogout className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
+            case "contacts":
+                return <FaInfoCircle className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
             default:
                 return <MdOutlineDashboard className={page === pages.id ? "sidebar__links--link--active--icon" : ""}/>
         }

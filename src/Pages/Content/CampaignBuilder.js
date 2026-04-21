@@ -74,11 +74,11 @@ function CampaignBuilder({data}) {
 
         // ===== Проверка обязательных полей =====
         if (!productName.trim()) {
-            alert("Product Name is required!");
+            alert(data.alerts.productNameRequired);
             return;
         }
         if (!uploadedFile) {
-            alert("Please upload a file!");
+            alert(data.alerts.fileRequired);
             return;
         }
 
@@ -302,11 +302,11 @@ function CampaignBuilder({data}) {
                         {/* INFO */}
                         <div className="info">
                             <div className="inputandlable">
-                                <label htmlFor="productName" className="info__label">Product Name</label>
+                                <label htmlFor="productName" className="info__label">{data.infoForm.productNameLabel}</label>
                                 <input
                                     id="productName"
                                     name="productName"
-                                    placeholder="Product name"
+                                    placeholder={data.infoForm.productNamePlaceholder}
                                     className="info__input"
                                     required
                                     value={productName}
@@ -314,11 +314,11 @@ function CampaignBuilder({data}) {
                                 />
                             </div>
                             <div className="inputandlable">
-                                <label htmlFor="productDescription" className="info__label">Product Description</label>
+                                <label htmlFor="productDescription" className="info__label">{data.infoForm.productDescriptionLabel}</label>
                                 <textarea
                                     id="productDescription"
                                     name="productDescription"
-                                    placeholder="Product description"
+                                    placeholder={data.infoForm.productDescriptionPlaceholder}
                                     className="info__textarea"
                                     required
                                     value={productDescription}
@@ -330,9 +330,9 @@ function CampaignBuilder({data}) {
 
                         <div className="draganddrop">
                             <MdUploadFile className="dragIcon" />
-                            <p className="drag_title">Drop your logo or design here</p>
-                            <p className="description">Supports AI, SVG, PNG or PDF (Max 50MB)</p>
-                            <button className="brouseFile" onClick={handleBrowseClick}>Browse Files</button>
+                            <p className="drag_title">{data.image.title}</p>
+                            <p className="description">{data.image.description}</p>
+                            <button className="brouseFile" onClick={handleBrowseClick}>{data.image.browse}</button>
                             <input 
                                 type="file" 
                                 id="fileInput" 
@@ -340,7 +340,7 @@ function CampaignBuilder({data}) {
                                 onChange={handleFileChange} 
                                 accept=".ai,.svg,.png,.pdf"
                             />
-                            {uploadedFile && <p className="uploaded-file">Uploaded: {uploadedFile.name}</p>}
+                            {uploadedFile && <p className="uploaded-file">{data.image.uploadedPrefix} {uploadedFile.name}</p>}
                         </div>
                     </div>
 
@@ -364,7 +364,7 @@ function CampaignBuilder({data}) {
                         </div>
                         {discountPercent > 0 && (
                             <div className="campaign__builder--info">
-                                <p className="campaign__builder--info--title">{data.builder.discount} ({route === "3m" ? "3 Months" : "6 Months"})</p>
+                                <p className="campaign__builder--info--title">{data.builder.discount} ({route === "3m" ? data.builder.periodLabels["3m"] : data.builder.periodLabels["6m"]})</p>
                                 <p className="campaign__builder--info--data">-{formatNumber(Math.round(discountAmount))} {data.builder.sufix} ({discountPercent * 100}%)</p>
                             </div>
                         )}
@@ -372,7 +372,7 @@ function CampaignBuilder({data}) {
                             <p className="campaign__builder--total--title">{data.builder.calc}</p>
                             <p className="campaign__builder--total--data">
                                 {route === "custom"
-                                    ? "Will contact with you"
+                                    ? data.builder.customEstimate
                                     : `${formatNumber(Math.round(discountedTotal))} `}
                                 {route !== "custom" && <span className="campaign__builder--total--data--article">{data.builder.sufix}</span>}
                             </p>
@@ -383,7 +383,7 @@ function CampaignBuilder({data}) {
                             onClick={handleLaunchCampaign}
                             disabled={isLaunching}
                         >
-                            {isLaunching ? "Launching..." : data.builder.btn}
+                            {isLaunching ? data.builder.btnLoading : data.builder.btn}
                         </button>
                     </div>
                 </div>

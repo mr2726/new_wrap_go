@@ -2,7 +2,7 @@ import "../App.css";
 import Logo from "../Components/Logo";
 import { supabase } from "../data/supabase";
 
-function CompanyInfo ({setPage, setEmail, credentials}) {
+function CompanyInfo ({data, setPage, setEmail, credentials}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -69,104 +69,100 @@ function CompanyInfo ({setPage, setEmail, credentials}) {
                     
                     <Logo setPage={setPage} />
                     <div style={{marginTop: "20px"}}>
-                        <h1 className="title">Company Info</h1>
-                        <p className="description">Please fill all company Info</p>
+                        <h1 className="title">{data.header.title}</h1>
+                        <p className="description">{data.header.description}</p>
                     </div>
                 </div>
                 <form className="form" onSubmit={handleSubmit}>
-                    <h2 className="subtitle">Contact Info</h2>
-                    <label htmlFor="fullname" style={{marginLeft: 0}} className="signup_form__terms--label">Full Name</label>
+                    <h2 className="subtitle">{data.sections.contact}</h2>
+                    <label htmlFor="fullname" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.fullName.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="fullname"
                         name="fullname"
-                        placeholder="Full Name"
+                        placeholder={data.fields.fullName.placeholder}
                         required
                         type="text"
                     />
-                    <label htmlFor="email" style={{marginLeft: 0}} className="signup_form__terms--label">Business Email</label>
+                    <label htmlFor="email" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.email.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="email"
                         name="email"
-                        placeholder="Enter business contact email"
+                        placeholder={data.fields.email.placeholder}
                         type="email"
                         value={credentials.email}
                         required
                         disabled
                     />
-                    <label htmlFor="phone" style={{marginLeft: 0}} className="signup_form__terms--label">Phone Number</label>
+                    <label htmlFor="phone" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.phone.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="phone"
                         name="phone"
-                        placeholder="Enter phone number with country code"
+                        placeholder={data.fields.phone.placeholder}
                         type="numeric"
                         required
                     />
-                    <h2 className="subtitle">Company Info</h2>
-                    <label htmlFor="name" style={{marginLeft: 0}} className="signup_form__terms--label">Company Name</label>
+                    <h2 className="subtitle">{data.sections.company}</h2>
+                    <label htmlFor="name" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.companyName.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="name"
                         name="name"
-                        placeholder="Enter your company name"
+                        placeholder={data.fields.companyName.placeholder}
                         type="text"
                         required
                     />
-                    <label htmlFor="industry" style={{marginLeft: 0}} className="signup_form__terms--label">Industry</label>
-                    <select id="industry" name="industry" required>
-                        <option value="" selected disabled hidden>Select your industry</option>
-                        <option value="Automotive">Automotive</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Logistics">Logistics</option>
-                        <option value="Transportation">Transportation</option>
-                        <option value="Retail">Retail</option>
-                        <option value="Other">Other</option>
+                    <label htmlFor="industry" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.industry.label}</label>
+                    <select id="industry" name="industry" required defaultValue="">
+                        <option value="" disabled hidden>{data.fields.industry.placeholder}</option>
+                        {data.fields.industry.options.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
                     </select>
-                    <h2 className="subtitle">Address</h2>
-                    <label htmlFor="street" style={{marginLeft: 0}} className="signup_form__terms--label">Street Address</label>
+                    <h2 className="subtitle">{data.sections.address}</h2>
+                    <label htmlFor="street" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.street.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="street"
                         name="street"
-                        placeholder="Enter street address"
+                        placeholder={data.fields.street.placeholder}
                         type="text"
                         required
                     />
 
-                    <label htmlFor="country" style={{marginLeft: 0}} className="signup_form__terms--label">Country</label>
-                    <select id="country" name="country" required>
-                        <option value="" selected disabled hidden>Select country</option>
-                        <option value="Armenia">Armenia</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="UAE">UAE</option>
-                        <option value="Other">Other</option>
+                    <label htmlFor="country" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.country.label}</label>
+                    <select id="country" name="country" required defaultValue="">
+                        <option value="" disabled hidden>{data.fields.country.placeholder}</option>
+                        {data.fields.country.options.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
                     </select>
-                    <h2 className="subtitle">Additional Info</h2>
-                    <label htmlFor="web" style={{marginLeft: 0}} className="signup_form__terms--label">Website URL (Optional)</label>
+                    <h2 className="subtitle">{data.sections.additional}</h2>
+                    <label htmlFor="web" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.website.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="web"
                         name="web"
-                        placeholder="Enter website URL"
+                        placeholder={data.fields.website.placeholder}
                         type="text"
                     />
-                    <label htmlFor="tax" style={{marginLeft: 0}} className="signup_form__terms--label">Tax ID or registration number (Optional)</label>
+                    <label htmlFor="tax" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.tax.label}</label>
                     <input 
                         className="signup_form__form--input"
                         id="tax"
                         name="tax"
-                        placeholder="Enter Tax ID or registration number"
+                        placeholder={data.fields.tax.placeholder}
                         type="text"
                     />
 
                     <button type="submit" className="signup_form__form--button">
-                        Continue
+                        {data.button}
                     </button>
                     <div className="terms__block" style={{margin: "30px auto 0 auto", fontSize: "15px"}}>
-                        <p className="terms" onClick={() => setPage("privacy")}>Terms of service</p>
-                        <p className="terms" onClick={() => setPage("terms")}>Privacy & Policy</p>
+                        <p className="terms" onClick={() => setPage("privacy")}>{data.footerLinks.terms}</p>
+                        <p className="terms" onClick={() => setPage("terms")}>{data.footerLinks.privacy}</p>
                     </div>
                 </form>
             </div>

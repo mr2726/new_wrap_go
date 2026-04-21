@@ -106,9 +106,9 @@ function App() {
       case "check-email":
         return <ResetPasswordEmail data={data.resetPass.resetPasswordEmail} setPage={setPage} email={email}/>
       case "confirm-email":
-        return <ConfirmEmail setPage={setPage} email={email} />
+        return <ConfirmEmail data={data.confirmEmail} setPage={setPage} email={email} />
       case "company-info":
-        return <CompanyInfo setPage={setPage} setEmail={setEmail} credentials={credentials} />
+        return <CompanyInfo data={data.companyInfo} setPage={setPage} setEmail={setEmail} credentials={credentials} />
       case "content":
         return <Content data={data.content} />
       default:
