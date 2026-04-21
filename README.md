@@ -65,6 +65,9 @@
 ### v1.6.0
 > - Contact Page
 
+### v1.7.0
+> - Landing Page (Need to change)
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -88,7 +91,7 @@
 - [ ] Create Demo Login button
 - [x] Add Notifications to the Settings
 - [x] Add Security to the Settings
-- [ ] Lending Pagse
+- [x] Lending Pagse
 - [x] MapBox add styles
 - [x] MapBox Active zone
 - [x] MapBox Active zone come from db

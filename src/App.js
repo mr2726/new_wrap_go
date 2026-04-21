@@ -14,9 +14,10 @@ import ResetPasswordEmail from './Pages/ResetPassword/ResetPasswordEmail';
 import ConfirmEmail from './Pages/confirmEmail';
 import CompanyInfo from './Pages/CompanyInfoForm';
 import Content from './Pages/Content/Content';
+import Lending from './Pages/Lending';
 
 function App() {
-  const [page, setPage] = useState("signup");
+  const [page, setPage] = useState("landing");
   const [email, setEmail] = useState("");
   // const [user, setUser] = useState(null);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -51,8 +52,10 @@ function App() {
 
     if (hash.includes("type=recovery")) {
       setPage("reset");
+      setLoading(false);
     } else if (href.includes("confirm-email")) {
       setPage("company-info");
+      setLoading(false);
     } else {
       // Проверяем существующую сессию при загрузке
       supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -61,7 +64,7 @@ function App() {
           const nextPage = await resolveAuthPage(session);
           setPage(nextPage);
         } else {
-          setPage("signin");
+          setPage("landing");
         }
         setLoading(false);
       });
@@ -89,6 +92,8 @@ function App() {
 
   const renderPage = () => {
     switch(page){
+      case "landing":
+        return <Lending data={data} setPage={setPage} />
       case "signup":
         return <Signup data={data.signup} setPage={setPage} setCredentials={setCredentials} />
       case "signin":
@@ -112,7 +117,7 @@ function App() {
       case "content":
         return <Content data={data.content} />
       default:
-        return <Signup data={data.signup} setPage={setPage} />
+        return <Lending data={data} setPage={setPage} />
     }
   }
   return (
