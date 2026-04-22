@@ -14,7 +14,6 @@ import ResetPasswordEmail from './Pages/ResetPassword/ResetPasswordEmail';
 import ConfirmEmail from './Pages/confirmEmail';
 import CompanyInfo from './Pages/CompanyInfoForm';
 import Content from './Pages/Content/Content';
-import Lending from './Pages/Lending';
 
 /**
  * DashboardApp компонент
