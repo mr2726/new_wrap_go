@@ -1,0 +1,196 @@
+/* Thin */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaThin.woff2') format('woff2'),
+       url('./lufga/LufgaThin.woff') format('woff'),
+       url('./lufga/LufgaThin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaThinItalic.woff2') format('woff2'),
+       url('./lufga/LufgaThinItalic.woff') format('woff'),
+       url('./lufga/LufgaThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ExtraLight */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaExtraLight.woff2') format('woff2'),
+       url('./lufga/LufgaExtraLight.woff') format('woff'),
+       url('./lufga/LufgaExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaExtraLightItalic.woff2') format('woff2'),
+       url('./lufga/LufgaExtraLightItalic.woff') format('woff'),
+       url('./lufga/LufgaExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaLight.woff2') format('woff2'),
+       url('./lufga/LufgaLight.woff') format('woff'),
+       url('./lufga/LufgaLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaLightItalic.woff2') format('woff2'),
+       url('./lufga/LufgaLightItalic.woff') format('woff'),
+       url('./lufga/LufgaLightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaRegular.woff2') format('woff2'),
+       url('./lufga/LufgaRegular.woff') format('woff'),
+       url('./lufga/LufgaRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaItalic.woff2') format('woff2'),
+       url('./lufga/LufgaItalic.woff') format('woff'),
+       url('./lufga/LufgaItalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaMedium.woff2') format('woff2'),
+       url('./lufga/LufgaMedium.woff') format('woff'),
+       url('./lufga/LufgaMedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaMediumItalic.woff2') format('woff2'),
+       url('./lufga/LufgaMediumItalic.woff') format('woff'),
+       url('./lufga/LufgaMediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* SemiBold */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaSemiBold.woff2') format('woff2'),
+       url('./lufga/LufgaSemiBold.woff') format('woff'),
+       url('./lufga/LufgaSemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaSemiBoldItalic.woff2') format('woff2'),
+       url('./lufga/LufgaSemiBoldItalic.woff') format('woff'),
+       url('./lufga/LufgaSemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaBold.woff2') format('woff2'),
+       url('./lufga/LufgaBold.woff') format('woff'),
+       url('./lufga/LufgaBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaBoldItalic.woff2') format('woff2'),
+       url('./lufga/LufgaBoldItalic.woff') format('woff'),
+       url('./lufga/LufgaBoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ExtraBold */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaExtraBold.woff2') format('woff2'),
+       url('./lufga/LufgaExtraBold.woff') format('woff'),
+       url('./lufga/LufgaExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaExtraBoldItalic.woff2') format('woff2'),
+       url('./lufga/LufgaExtraBoldItalic.woff') format('woff'),
+       url('./lufga/LufgaExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaBlack.woff2') format('woff2'),
+       url('./lufga/LufgaBlack.woff') format('woff'),
+       url('./lufga/LufgaBlack.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./lufga/LufgaBlackItalic.woff2') format('woff2'),
+       url('./lufga/LufgaBlackItalic.woff') format('woff'),
+       url('./lufga/LufgaBlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+*{
+  font-family: 'Lufga';
+}
+
+body {
+  font-family: 'Lufga' !important;
+}

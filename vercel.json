@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "env": {},
+  "rewrites": [
+    {
+      "source": "/landing/(.*)",
+      "destination": "/landing/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
