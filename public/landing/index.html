@@ -1,347 +1,150 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WrapGo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header-bg-img"></div>
+    <header class="header">
+        <!-- Navigation Bar -->
+        <nav class="nav">
+            <div class="nav-inner row-center">
+                <div class="row">
+                    <a class="logo" href="#">Wrap<span>Go</span></a>
+                    <ul class="nav-links">
+                        <li><a href="#advertisers">Advertisers</a></li>
+                        <li><a href="#drivers">Drivers</a></li>
+                        <li><a href="#fleets">Fleets</a></li>
+                        <li><a href="#how-it-works">How it works</a></li>
+                        <li><a href="#about-us">About us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <a href="/auth/login" class="cta-link">Login</a>
+                    <a href="/app" class="cta">Get Started</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <section class="hero">
+        <div class="wrapper hero-content">
+            <h1>Turn Every Car Into a <span>Moving Billboard</span></h1>
+            <p>WrapGo connects brands with real-world visibility<br />through car-based advertising. <br />Choose your path below.</p>
+            <a href="/app" class="cta">Launch Campaign</a>
+        </div>
+    </section>
+    <section class="info wrapper">
+        <div class="info-block">
+                <i class="fa-regular fa-eye"></i>
+                <div class="info-block--content">
+                    <h2>High Visibility</h2>
+                    <p>Reach thousands of people every day across the city with moving ads.</p>
+                </div>
+            </div>
 
-<html class="dark" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>WrapGO | Kinetic Advertising</title>
-    <!-- Fonts -->
-    <link rel="stylesheet" href="font.css" />
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/> -->
-    <!-- Note: Using a close high-quality alternative for 'Lufga' since it's a premium font not on Google Fonts. 
-         Syne and Lexend often match the geometric, modern, and bold characteristics of Lufga. 
-         I will define it as 'Lufga' in the config but provide a fallback. -->
-    <!-- Material Symbols -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary-container": "#39FF14",
-              "on-primary-fixed": "#064200",
-              "on-tertiary-fixed-variant": "#005e63",
-              "on-surface": "#f9f5fd",
-              "tertiary": "#88f6ff",
-              "inverse-surface": "#fcf8ff",
-              "secondary-fixed": "#cfdef5",
-              "error": "#ff7351",
-              "outline": "#76747b",
-              "surface-dim": "#0e0e13",
-              "surface-variant": "#25252d",
-              "on-secondary-fixed": "#2e3d4e",
-              "tertiary-fixed-dim": "#00deea",
-              "secondary-fixed-dim": "#c1d0e6",
-              "tertiary-dim": "#00deea",
-              "on-error": "#450900",
-              "surface-container": "#19191f",
-              "primary-fixed-dim": "#2be800",
-              "surface-container-low": "#131319",
-              "surface-container-highest": "#25252d",
-              "on-secondary": "#414f62",
-              "tertiary-fixed": "#17eefa",
-              "on-secondary-fixed-variant": "#4a596c",
-              "on-error-container": "#ffd2c8",
-              "primary-fixed": "#2ff801",
-              "on-tertiary": "#005d62",
-              "error-container": "#b92902",
-              "on-secondary-container": "#c2d2e8",
-              "surface-tint": "#8eff71",
-              "on-tertiary-fixed": "#003f43",
-              "surface-bright": "#2c2b33",
-              "secondary-dim": "#c1d0e6",
-              "secondary-container": "#39485a",
-              "primary": "#8eff71",
-              "error-dim": "#d53d18",
-              "on-tertiary-container": "#005458",
-              "on-surface-variant": "#acaab1",
-              "surface": "#0e0e13",
-              "inverse-primary": "#106f00",
-              "on-primary-fixed-variant": "#0d6200",
-              "surface-container-high": "#1f1f26",
-              "primary-dim": "#2be800",
-              "background": "#0e0e13",
-              "tertiary-container": "#17eefa",
-              "secondary": "#cfdef5",
-              "on-background": "#f9f5fd",
-              "surface-container-lowest": "#000000",
-              "on-primary-container": "#0b5800",
-              "inverse-on-surface": "#55545b",
-              "outline-variant": "#48474d",
-              "on-primary": "#0d6100",
-            },
-            fontFamily: {
-              headline: ["Lufga", "sans-serif"],
-              body: ["Lufga", "sans-serif"],
-              label: ["Lufga", "sans-serif"],
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px",
-            },
-          },
-        },
-      };
+            <div class="info-block">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <div class="info-block--content">
+                    <h2>Cost-Effective</h2>
+                    <p>More affordable and efficient than traditional billboards and digital ads.</p>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <i class="fa-solid fa-crosshairs"></i>
+                <div class="info-block--content">
+                    <h2>Targeted Exposure</h2>
+                    <p>Show your brand in the right places where your audience lives and moves.</p>
+                </div>
+            </div>
+    </section>
+
+    <section class="section-block advertisers" id="advertisers">
+        <div class="section-block__content wrapper" style="justify-content: space-between;">
+            <div>
+                <p class="lable">for advertisers</p>
+                <h1 class="section-block__content--title">Launch high-impact campaigns</h1>
+                <p class="section-block__content--description">Advertise in the real world using moving vehicles.<br />Reach your audience where they live, work and travel.</p>
+                <div class="section-block__content-points">
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> City-wide coverage</li>
+                        <li><i class="fa-solid fa-check"></i> Measurable performance</li>
+                        <li><i class="fa-solid fa-check"></i> Flexible campaign setup</li>
+                    </ul>
+                </div>
+            </div>
+            <img src="./assets/dashboard.jpg" alt="Analitics">
+        </div>
+    </section>
+
+    <section class="section-block drivers" id="drivers" style="background-color: transparent;">
+        <div class="section-block__content wrapper">
+            <div class="img"></div>
+            <div>
+                <p class="lable">for drivers</p>
+                <h1 class="section-block__content--title">Earn with your car</h1>
+                <p class="section-block__content--description">Turn your daily driving into income. Join campaigns,<br />complete simple tasks, and get rewarded.</p>
+                <div class="section-block__content-points">
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> No upfront costs</li>
+                        <li><i class="fa-solid fa-check"></i> Flexible schedule</li>
+                        <li><i class="fa-solid fa-check"></i> Simple tasks, real rewards</li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="section-block fleet" id="fleet">
+        <div class="section-block__content wrapper">
+            <div>
+                <p class="lable">for fleet owners</p>
+                <h1 class="section-block__content--title">Manage your fleet and maximize earnings</h1>
+                <p class="section-block__content--description">Register your fleet, and drivers, and track performance<br />from one powerful dashboard.</p>
+                <div class="section-block__content-points">
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> City-wide coverage</li>
+                        <li><i class="fa-solid fa-check"></i> Measurable performance</li>
+                        <li><i class="fa-solid fa-check"></i> Flexible campaign setup</li>
+                    </ul>
+                </div>
+            </div>
+            <img src="https://placehold.co/700x500.png" alt="Analitics">
+        </div>
+    </section>
+    <script>
+        const nav = document.querySelector('.nav');
+
+        const toggleNavBackground = () => {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 24);
+        };
+
+        toggleNavBackground();
+        window.addEventListener('scroll', toggleNavBackground, { passive: true });
+
+        document.querySelectorAll('.nav-links a[href^="#"]').forEach((link) => {
+            link.addEventListener('click', (event) => {
+                const targetId = link.getAttribute('href');
+                if (!targetId) return;
+
+                const target = document.querySelector(targetId);
+                if (!target) return;
+
+                event.preventDefault();
+
+                const navHeight = nav.offsetHeight;
+                const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 8;
+
+                window.scrollTo({ top, behavior: 'smooth' });
+                history.replaceState(null, '', targetId);
+            });
+        });
     </script>
-    <style>
-      .material-symbols-outlined {
-        font-variation-settings:
-          "FILL" 0,
-          "wght" 400,
-          "GRAD" 0,
-          "opsz" 24;
-      }
-      .kinetic-glow {
-        box-shadow: 0 0 40px -10px rgba(142, 255, 113, 0.3);
-      }
-      .glass-panel {
-        background: rgba(37, 37, 45, 0.4);
-        backdrop-filter: blur(24px);
-      }
-    </style>
-  </head>
-  <body
-    class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary"
-  >
-    <!-- TopNavBar -->
-    <nav
-      class="fixed top-0 w-full z-50 bg-[#0e0e13]/40 backdrop-blur-2xl bg-[#131319]/50 shadow-[0_20_40px_rgba(142,255,113,0.08)]"
-    >
-      <div
-        class="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto"
-      >
-        <a
-          href="index.html"
-          class="text-2xl font-black tracking-tighter text-[#f9f5fd] font-headline"
-        >
-          Wrap<span style="color: #39FF14">GO</span>
-        </a>
-      </div>
-    </nav>
-    <main class="relative min-h-screen overflow-hidden">
-      <!-- Hero Section with Background Visual -->
-      <section
-        class="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 flex flex-col items-center justify-center"
-      >
-        <!-- Background Visual Layer -->
-        <div class="absolute inset-0 z-0">
-          <div
-            class="absolute inset-0 bg-gradient-to-b from-surface/0 via-surface/80 to-surface z-10"
-          ></div>
-          <img
-            alt="Futuristic urban city"
-            class="w-full h-full object-cover opacity-40 mix-blend-luminosity"
-            data-alt="Futuristic dark city with neon green light trails"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv5OzMPRjIRx8_Zx9E2j6BOrW9brnM6mSuTj8FX_X0yy7nkBhSbUlTXzZcJDgxt3QrBzghZ0EXcNT2HBA8SNoKvyAnILQR4jfiwwuvDeSHint2yKLCcm4JljO9nM25nvHWBb8gID4qdHwndwr_LxBoLkaoUFRsaVD7G0oSbGsLals9UPe9UqIbb1QmvBr_CHdKl-ThkDtMrN5Y93ELRsB3QESDlpCzBcs3c2Ht9qdXfRsaLWsCAowxRKa37oGBdmj5NyBMcZDczNsa"
-          />
-        </div>
-        <div class="relative z-20 max-w-5xl mx-auto text-center">
-          <span
-            class="inline-block px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-[0.2em] mb-8 uppercase animate-pulse font-label"
-          >
-            The Future of Outdoor Advertising
-          </span>
-          <h1
-            class="font-headline text-5xl md:text-8xl font-black text-on-surface leading-[0.95] tracking-tighter mb-8"
-          >
-            Turn Every Car Into a
-            <span
-              class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container"
-              >Moving Billboard</span
-            >
-          </h1>
-          <p
-            class="font-body text-xl md:text-2xl text-on-surface-variant max-w-3xl mx-auto mb-6 leading-relaxed"
-          >
-            WrapGO connects brands with real-world visibility through car-based
-            advertising.
-          </p>
-          <p
-            class="font-body text-lg text-on-surface-variant/60 max-w-2xl mx-auto mb-12"
-          >
-            Reach your audience across the city with high-impact mobile ads
-            placed on everyday vehicles.
-          </p>
-          <!-- Waitlist Form -->
-          <div class="max-w-md mx-auto mb-24">
-            <form
-  id="earlyForm"
-  class="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl sm:rounded-full bg-surface-container-highest/50 border border-outline-variant/20 kinetic-glow glass-panel"
->
-  <input
-    id="emailinput"
-    class="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 text-on-surface placeholder:text-on-surface-variant/40 font-body text-lg"
-    placeholder="Enter your email"
-    type="email"
-    required
-  />
-
-  <button
-    id="getaccess"
-    type="submit"
-    class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full hover:shadow-[0_0_20px_rgba(142,255,113,0.4)] active:scale-95 transition-all duration-300 whitespace-nowrap font-label-to-r from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full hover:shadow-[0_0_20px_rgba(142,255,113,0.4)] active:scale-95 transition-all duration-300 whitespace-nowrap font-label"
-  >
-    Get Early Access
-  </button>
-</form>
-            <!-- <div
-              class="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl sm:rounded-full bg-surface-container-highest/50 border border-outline-variant/20 kinetic-glow glass-panel"
-            >
-              <input
-                id="emailinput"
-                class="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 text-on-surface placeholder:text-on-surface-variant/40 font-body text-lg"
-                placeholder="Enter your email"
-                type="email"
-                required
-              />
-              <button
-                id="getaccess"
-                class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full hover:shadow-[0_0_20px_rgba(142,255,113,0.4)] active:scale-95 transition-all duration-300 whitespace-nowrap font-label-to-r from-primary to-primary-container text-on-primary font-bold px-8 py-4 rounded-full hover:shadow-[0_0_20px_rgba(142,255,113,0.4)] active:scale-95 transition-all duration-300 whitespace-nowrap font-label"
-              >
-                Get Early Access
-              </button>
-            </div> -->
-          </div>
-          <!-- Bento-style Highlights -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-            <div
-              class="p-8 rounded-3xl bg-surface-container-low border border-outline-variant/10 hover:border-primary/20 transition-all group"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors"
-              >
-                <span
-                  class="material-symbols-outlined text-primary"
-                  data-icon="visibility"
-                  >visibility</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold mb-3 text-on-surface">
-                High Visibility
-              </h3>
-              <p
-                class="font-body text-on-surface-variant text-sm leading-relaxed"
-              >
-                Dominate city streets with moving canvases that bypass the
-                clutter of static digital ads.
-              </p>
-            </div>
-            <div
-              class="p-8 rounded-3xl bg-surface-container-low border border-outline-variant/10 hover:border-primary/20 transition-all group"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors"
-              >
-                <span
-                  class="material-symbols-outlined text-primary"
-                  data-icon="payments"
-                  >payments</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold mb-3 text-on-surface">
-                Cost-Effective
-              </h3>
-              <p
-                class="font-body text-on-surface-variant text-sm leading-relaxed"
-              >
-                Unrivaled CPM compared to traditional billboards or fragmented
-                online channels.
-              </p>
-            </div>
-            <div
-              class="p-8 rounded-3xl bg-surface-container-low border border-outline-variant/10 hover:border-primary/20 transition-all group"
-            >
-              <div
-                class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors"
-              >
-                <span
-                  class="material-symbols-outlined text-primary"
-                  data-icon="my_location"
-                  >my_location</span
-                >
-              </div>
-              <h3 class="font-headline text-xl font-bold mb-3 text-on-surface">
-                Targeted Exposure
-              </h3>
-              <p
-                class="font-body text-on-surface-variant text-sm leading-relaxed"
-              >
-                AI-driven route optimization ensures your ads appear where your
-                audience lives and works.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- Secondary CTA Section -->
-      <section class="py-24 px-6 relative bg-surface-container-low/30">
-        <div class="max-w-3xl mx-auto text-center">
-          <div
-            class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/5 border border-primary/20 mb-8"
-          >
-            <span
-              class="material-symbols-outlined text-primary text-3xl"
-              data-icon="handshake"
-              >handshake</span
-            >
-          </div>
-          <h2 class="font-headline text-4xl font-bold mb-6">
-            Own a fleet or drive daily?
-          </h2>
-          <p class="font-body text-on-surface-variant mb-10 text-lg">
-            Partner with WrapGO to turn your vehicle into a revenue-generating
-            asset.
-          </p>
-          <a
-            href="partnerprogram.html"
-            class="px-10 py-4 rounded-full border border-outline-variant hover:border-primary hover:text-primary transition-all duration-300 font-bold active:scale-95 font-label"
-          >
-            Partner with us
-          </a>
-        </div>
-      </section>
-    </main>
-    <!-- Footer -->
-    <footer class="w-full border-t border-[#48474d]/20 bg-[#0e0e13]">
-      <div
-        class="flex flex-col md:flex-row justify-between items-center px-8 py-12 max-w-7xl mx-auto gap-6"
-      >
-        <div class="flex flex-col gap-2">
-          <span class="text-xl font-black text-[#f9f5fd] font-headline"
-            >WrapGO</span
-          >
-          <p class="font-body text-sm text-[#f9f5fd]/50">
-            © 2026 WrapGO. All rights reserved.
-          </p>
-        </div>
-        <div class="flex gap-8">
-          <a
-            class="font-body text-sm text-[#f9f5fd]/50 hover:text-[#8eff71] transition-colors"
-            href="privacy_policy.html"
-            >Privacy Policy</a
-          >
-          <a
-            class="font-body text-sm text-[#f9f5fd]/50 hover:text-[#8eff71] transition-colors"
-            href="termsofservice.html"
-            >Terms of Service</a
-          >
-          <a
-            class="font-body text-sm text-[#f9f5fd]/50 hover:text-[#8eff71] transition-colors"
-            href="index.html"
-            >Contact</a
-          >
-        </div>
-      </div>
-    </footer>
-
-    <script src="main.js"></script>
-  </body>
+    <script src="https://kit.fontawesome.com/35140eab1a.js" crossorigin="anonymous"></script>
+</body>
 </html>
