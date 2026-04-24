@@ -132,27 +132,87 @@
             <h2 class="title">How It Works</h2>
             <div class="line"></div>
             <p class="description">Simple steps, powerful impact</p>
+            <div class="how-it-works__switch">
+                <button class="switch-btn active" data-target="ads">Advertisers</button>
+                <button class="switch-btn" data-target="drivers">Drivers</button>
+                <button class="switch-btn" data-target="fleet">Fleet Owners</button>
+            </div>
+
+            <!-- ADVERTISERS -->
             <div class="how-it-works__steps" id="how-it-works__ads">
                 <div>
                     <div><i class="fa-solid fa-crosshairs"></i></div>
                     <h3>Create Campaign</h3>
-                    <p>Set your advertising goals, budget, locationand target audience.</p>
+                    <p>Set your goals, budget, and target audience.</p>
                 </div>
                 <div class="vertical-line"></div>
                 <div>
                     <div><i class="fa-solid fa-bullhorn"></i></div>
                     <h3>Launch & Go Live</h3>
-                    <p>We handle the wraps and get your campaign on the road.</p>
+                    <p>We install wraps and get your ads on the road.</p>
                 </div>
                 <div class="vertical-line"></div>
                 <div>
                     <div><i class="fa-solid fa-chart-area"></i></div>
                     <h3>Track & Optimize</h3>
-                    <p>Monitor real-time performance and optimize for better results.</p>
+                    <p>Monitor performance and improve results in real time.</p>
+                </div>
+            </div>
+
+            <!-- DRIVERS -->
+            <div class="how-it-works__steps" id="how-it-works__drivers" style="display:none;">
+                <div>
+                    <div><i class="fa-solid fa-user-plus"></i></div>
+                    <h3>Sign Up</h3>
+                    <p>Create your profile and add your car.</p>
+                </div>
+                <div class="vertical-line"></div>
+                <div>
+                    <div><i class="fa-solid fa-list-check"></i></div>
+                    <h3>Choose Campaign</h3>
+                    <p>Pick campaigns that fit your daily routes.</p>
+                </div>
+                <div class="vertical-line"></div>
+                <div>
+                    <div><i class="fa-solid fa-spray-can"></i></div>
+                    <h3>Install Wrap</h3>
+                    <p>Get your car wrapped professionally.</p>
+                </div>
+                <div class="vertical-line"></div>
+                <div>
+                    <div><i class="fa-solid fa-dollar-sign"></i></div>
+                    <h3>Drive & Earn</h3>
+                    <p>Earn money while driving as usual.</p>
+                </div>
+            </div>
+
+            <!-- FLEET OWNERS -->
+            <div class="how-it-works__steps" id="how-it-works__fleet" style="display:none;">
+                <div>
+                    <div><i class="fa-solid fa-truck"></i></div>
+                    <h3>Add Your Fleet</h3>
+                    <p>Register multiple vehicles in minutes.</p>
+                </div>
+                <div class="vertical-line"></div>
+                <div>
+                    <div><i class="fa-solid fa-handshake"></i></div>
+                    <h3>Get Campaigns</h3>
+                    <p>Receive offers from active advertisers.</p>
+                </div>
+                <div class="vertical-line"></div>
+                <div>
+                    <div><i class="fa-solid fa-gauge"></i></div>
+                    <h3>Manage Easily</h3>
+                    <p>Track vehicles, campaigns, and earnings.</p>
+                </div>
+                <div class="vertical-line"></div>
+                <div>
+                    <div><i class="fa-solid fa-coins"></i></div>
+                    <h3>Earn More</h3>
+                    <p>Turn your fleet into a steady income stream.</p>
                 </div>
             </div>
         </div>
-
     </section>
 
 
@@ -193,6 +253,25 @@
                 header.classList.remove('header-open');
                 burgerBtn.setAttribute('aria-expanded', 'false');
             }
+        });
+
+        // ── How It Works switch tabs ──
+        const switchBtns = document.querySelectorAll('.switch-btn');
+        const stepPanels = {
+            ads: document.getElementById('how-it-works__ads'),
+            drivers: document.getElementById('how-it-works__drivers'),
+            fleet: document.getElementById('how-it-works__fleet'),
+        };
+
+        switchBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                switchBtns.forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                const target = btn.getAttribute('data-target');
+                Object.entries(stepPanels).forEach(([key, panel]) => {
+                    panel.style.display = key === target ? 'flex' : 'none';
+                });
+            });
         });
 
         // ── Smooth scroll for anchor links ──
