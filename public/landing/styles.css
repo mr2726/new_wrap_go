@@ -217,7 +217,7 @@ body{
 }
 
 .wrapper{
-    width: min(120em, calc(100% - 2em));
+  width: min(132em, calc(100% - 2em));
     margin: 0 auto;
     padding: 0 1em;
 }
@@ -270,7 +270,7 @@ nav{
 }
 
 .nav-inner{
-  width: min(150em, calc(100% - 4em));
+  width: min(160em, calc(100% - 4em));
   margin: 0 auto;
   height: 7em;
   position: relative;
@@ -292,7 +292,7 @@ nav{
   align-items: center;
   gap: 2em;
   flex: 1;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .nav-links {
@@ -321,6 +321,7 @@ nav{
   align-items: center;
   gap: 1em;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* ── Burger button ── */
@@ -1038,5 +1039,39 @@ nav{
 
   .nav-inner {
     width: min(120em, calc(100% - 2em));
+  }
+}
+
+/* Большие экраны (1440px и выше) */
+@media (min-width: 1440px) {
+  * {
+    font-size: 11px;
+  }
+
+  .wrapper {
+    width: min(140em, calc(100% - 4em));
+  }
+
+  .nav-inner {
+    width: min(168em, calc(100% - 4em));
+  }
+
+  .hero-content h1 {
+    font-size: clamp(5rem, 5vw, 9rem);
+  }
+}
+
+/* Очень большие экраны (1800px и выше) */
+@media (min-width: 1800px) {
+  * {
+    font-size: 12px;
+  }
+
+  .wrapper {
+    width: min(150em, calc(100% - 6em));
+  }
+
+  .nav-inner {
+    width: min(180em, calc(100% - 6em));
   }
 }
