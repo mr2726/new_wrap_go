@@ -783,11 +783,100 @@ nav{
   margin-top: 0.8em;
 }
 
+.about-us__block{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(2em, 4vw, 6em);
+  padding: clamp(4em, 8vw, 12em) 1em;
+}
 
+.about-us__content h2, .about-us__content .description{
+  text-align: left;
+}
 
+.about-us__img{
+  width: min(700px, 100%) !important;
+  max-width: 700px;
+  height: auto !important;
+  aspect-ratio: 7 / 5;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 8px;
+  background-image: url(./assets/about-us.png);
+}
 
+.about-us__content--points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2em;
+  margin-top: 2em;
+}
 
+.about-us__content--points > div {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.2em;
+  border-radius: 12px;
+  padding: 1.4em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
 
+.about-us__content--points > div::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.about-us__content--points > div:hover {
+  border-color: rgba(57, 255, 20, 0.3);
+  transform: translateY(-3px);
+}
+
+.about-us__content--points > div > div {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-us__content--points > div > div i {
+  font-size: 1.6em;
+  color: var(--primary-color);
+}
+
+.about-us__content--points .sub-title {
+  font-size: 1.4em;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.4em;
+}
+
+.about-us__content--points .sub-description {
+  font-size: 1.1em;
+  color: var(--description-color);
+  line-height: 1.5;
+}
+
+.points-content{
+  display: flex !important; 
+  flex-direction: column !important; 
+  width: 100% !important;
+}
+
+.points-content p{
+  text-align: left !important;
+}
 
 
 
@@ -806,6 +895,24 @@ nav{
   .nav-inner {
     width: min(100%, calc(100% - 2em));
     padding: 0 1em;
+  }
+
+  .about-us__block {
+    flex-direction: column;
+  }
+
+  .about-us__img {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  .about-us__content h2,
+  .about-us__content .description {
+    text-align: center;
+  }
+
+  .about-us__content--points {
+    grid-template-columns: 1fr 1fr;
   }
 
   .nav-links {
@@ -1121,6 +1228,26 @@ nav{
     font-size: clamp(1em, 1.8vw, 1.2em);
     margin-right: 0;
     margin-bottom: 0.5em;
+  }
+
+  .about-us__block {
+    flex-direction: column;
+    padding: 4em 1em;
+  }
+
+  .about-us__img {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  .about-us__content h2,
+  .about-us__content .description {
+    text-align: center;
+  }
+
+  .about-us__content--points {
+    grid-template-columns: 1fr;
+    gap: 1em;
   }
 }
 
