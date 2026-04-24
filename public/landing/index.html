@@ -12,20 +12,27 @@
         <!-- Navigation Bar -->
         <nav class="nav">
             <div class="nav-inner row-center">
-                <div class="row">
+                <div class="nav-top-row">
                     <a class="logo" href="#">Wrap<span>Go</span></a>
+                    <button class="burger-btn" aria-label="Toggle menu" aria-expanded="false">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+                <div class="nav-menu">
                     <ul class="nav-links">
                         <li><a href="#advertisers">Advertisers</a></li>
                         <li><a href="#drivers">Drivers</a></li>
-                        <li><a href="#fleets">Fleets</a></li>
+                        <li><a href="#fleet">Fleets</a></li>
                         <li><a href="#how-it-works">How it works</a></li>
                         <li><a href="#about-us">About us</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
-                </div>
-                <div>
-                    <a href="/auth/login" class="cta-link">Login</a>
-                    <a href="/app" class="cta">Get Started</a>
+                    <div class="nav-cta">
+                        <a href="/auth/login" class="cta-link">Login</a>
+                        <a href="/app" class="cta">Get Started</a>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -39,28 +46,28 @@
     </section>
     <section class="info wrapper">
         <div class="info-block">
-                <i class="fa-regular fa-eye"></i>
-                <div class="info-block--content">
-                    <h2>High Visibility</h2>
-                    <p>Reach thousands of people every day across the city with moving ads.</p>
-                </div>
+            <i class="fa-regular fa-eye"></i>
+            <div class="info-block--content">
+                <h2>High Visibility</h2>
+                <p>Reach thousands of people every day across the city with moving ads.</p>
             </div>
+        </div>
 
-            <div class="info-block">
-                <i class="fa-solid fa-dollar-sign"></i>
-                <div class="info-block--content">
-                    <h2>Cost-Effective</h2>
-                    <p>More affordable and efficient than traditional billboards and digital ads.</p>
-                </div>
+        <div class="info-block">
+            <i class="fa-solid fa-dollar-sign"></i>
+            <div class="info-block--content">
+                <h2>Cost-Effective</h2>
+                <p>More affordable and efficient than traditional billboards and digital ads.</p>
             </div>
+        </div>
 
-            <div class="info-block">
-                <i class="fa-solid fa-crosshairs"></i>
-                <div class="info-block--content">
-                    <h2>Targeted Exposure</h2>
-                    <p>Show your brand in the right places where your audience lives and moves.</p>
-                </div>
+        <div class="info-block">
+            <i class="fa-solid fa-crosshairs"></i>
+            <div class="info-block--content">
+                <h2>Targeted Exposure</h2>
+                <p>Show your brand in the right places where your audience lives and moves.</p>
             </div>
+        </div>
     </section>
 
     <section class="section-block advertisers" id="advertisers">
@@ -77,13 +84,14 @@
                     </ul>
                 </div>
             </div>
-            <img src="./assets/dashboard.jpg" alt="Analitics">
+            <div class="img dashboard-img"></div>
+            <!-- <img src="./assets/dashboard.jpg" alt="Analitics"> -->
         </div>
     </section>
 
     <section class="section-block drivers" id="drivers" style="background-color: transparent;">
         <div class="section-block__content wrapper">
-            <div class="img"></div>
+            <div class="img app-img"></div>
             <div>
                 <p class="lable">for drivers</p>
                 <h1 class="section-block__content--title">Earn with your car</h1>
@@ -114,32 +122,58 @@
                     </ul>
                 </div>
             </div>
-            <img src="https://placehold.co/700x500.png" alt="Analitics">
+            <div class="img fleet-img"></div>
+            <!-- <img src="https://placehold.co/700x500.png" alt="Analitics"> -->
         </div>
     </section>
     <script>
         const nav = document.querySelector('.nav');
+        const header = document.querySelector('.header');
+        const burgerBtn = document.querySelector('.burger-btn');
+        const navMenu = document.querySelector('.nav-menu');
 
+        // ── Scroll background ──
         const toggleNavBackground = () => {
             nav.classList.toggle('nav-scrolled', window.scrollY > 24);
         };
-
         toggleNavBackground();
         window.addEventListener('scroll', toggleNavBackground, { passive: true });
 
+        // ── Burger toggle ──
+        burgerBtn.addEventListener('click', () => {
+            const isOpen = nav.classList.toggle('nav-open');
+            header.classList.toggle('header-open', isOpen);
+            burgerBtn.setAttribute('aria-expanded', isOpen);
+        });
+
+        // ── Close menu when a link is clicked ──
+        document.querySelectorAll('.nav-links a').forEach((link) => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('nav-open');
+                header.classList.remove('header-open');
+                burgerBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // ── Close menu on outside click ──
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target)) {
+                nav.classList.remove('nav-open');
+                header.classList.remove('header-open');
+                burgerBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // ── Smooth scroll for anchor links ──
         document.querySelectorAll('.nav-links a[href^="#"]').forEach((link) => {
             link.addEventListener('click', (event) => {
                 const targetId = link.getAttribute('href');
                 if (!targetId) return;
-
                 const target = document.querySelector(targetId);
                 if (!target) return;
-
                 event.preventDefault();
-
                 const navHeight = nav.offsetHeight;
                 const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 8;
-
                 window.scrollTo({ top, behavior: 'smooth' });
                 history.replaceState(null, '', targetId);
             });

@@ -1,4 +1,4 @@
-﻿/* Main CSS Settings */
+﻿﻿/* Main CSS Settings */
 :root{
   --primary-color: #39FF14;
   --primary-color-hover: #2bb912;
@@ -3284,4 +3284,3 @@ select option{
     width: 100%;
   }
 }
-
