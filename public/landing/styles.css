@@ -860,17 +860,20 @@ nav{
   font-weight: 700;
   color: var(--text-color);
   margin-bottom: 0.4em;
+  text-align: left;
 }
 
 .about-us__content--points .sub-description {
   font-size: 1.1em;
   color: var(--description-color);
   line-height: 1.5;
+  text-align: left;
 }
 
 .points-content{
   display: flex !important; 
   flex-direction: column !important; 
+  align-items: flex-start !important;
   width: 100% !important;
 }
 
@@ -878,6 +881,9 @@ nav{
   text-align: left !important;
 }
 
+.about-us__content--title{
+  margin: 0.2em 0;
+}
 
 
 
