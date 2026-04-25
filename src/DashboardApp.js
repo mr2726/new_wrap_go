@@ -49,9 +49,24 @@ function DashboardApp() {
     return "signin";
   };
 
+  const resolvePageFromQuery = () => {
+    const params = new URLSearchParams(window.location.search);
+    const view = (params.get("view") || "").toLowerCase();
+
+    const map = {
+      signin: "signin",
+      signup: "signup",
+      terms: "terms",
+      privacy: "privacy",
+    };
+
+    return map[view] || null;
+  };
+
   useEffect(() => {
     const hash = window.location.hash;
     const href = window.location.href;
+    const pageFromQuery = resolvePageFromQuery();
     console.log(href);
 
     if (hash.includes("type=recovery")) {
@@ -59,6 +74,9 @@ function DashboardApp() {
       setLoading(false);
     } else if (href.includes("confirm-email")) {
       setPage("company-info");
+      setLoading(false);
+    } else if (pageFromQuery) {
+      setPage(pageFromQuery);
       setLoading(false);
     } else {
       // Проверяем существующую сессию при загрузке

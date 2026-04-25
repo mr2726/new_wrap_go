@@ -30,8 +30,8 @@
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                     <div class="nav-cta">
-                        <a href="/auth/login" class="cta-link">Login</a>
-                        <a href="/app" class="cta">Get Started</a>
+                        <a href="/app?view=signin" class="cta-link">Login</a>
+                        <a href="/app" class="contact-submit cta">Get Started</a>
                     </div>
                 </div>
             </div>
@@ -41,7 +41,7 @@
         <div class="wrapper hero-content">
             <h1>Turn Every Car Into a <span>Moving Billboard</span></h1>
             <p>WrapGo connects brands with real-world visibility<br />through car-based advertising. <br />Choose your path below.</p>
-            <a href="/app" class="cta">Launch Campaign</a>
+            <a href="/app" class="cta contact-submit">Launch Campaign</a>
         </div>
     </section>
     <section class="info wrapper">
@@ -256,11 +256,133 @@
         </div>
     </section>
 
+    <section id="contact">
+        <div class="wrapper contact-layout">
+            <div class="contact-card">
+                <h2 class="section-block__content--title">Let's Work Together</h2>
+                <p class="section-block__content--description">Have a question or want to launch a campaign? We'd love to hear from you.</p>
+                <form class="contact-form" action="#" method="post">
+                    <div class="contact-form__row">
+                        <input id="name" type="text" name="name" placeholder="Full Name" required class="contact-input" />
+                        <input id="email" type="email" name="email" placeholder="Email Address" required class="contact-input" />
+                    </div>
+                    <select name="interest" class="contact-input contact-select" required>
+                        <option value="" selected disabled>I'm interested in</option>
+                        <option value="advertising">Advertising Campaign</option>
+                        <option value="driver">Becoming a Driver</option>
+                        <option value="fleet">Fleet Partnership</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <textarea name="message" placeholder="Message" required class="contact-textarea"></textarea>
+                    <button type="submit" class="contact-submit"><i class="fa-regular fa-paper-plane"></i>Send Message</button>
+                </form>
+            </div>
+            <div class="contact-details" aria-label="Contact details">
+                <div class="contact-details__item">
+                    <div class="contact-details__icon"><i class="fa-regular fa-envelope"></i></div>
+                    <div>
+                        <p class="contact-details__label">Email</p>
+                        <p class="contact-details__value">admin@wrapgo.am</p>
+                    </div>
+                </div>
+                <div class="contact-details__item">
+                    <div class="contact-details__icon"><i class="fa-solid fa-phone"></i></div>
+                    <div>
+                        <p class="contact-details__label">Phone</p>
+                        <p class="contact-details__value">+374 99 123 456</p>
+                    </div>
+                </div>
+                <div class="contact-details__item">
+                    <div class="contact-details__icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div>
+                        <p class="contact-details__label">Location</p>
+                        <p class="contact-details__value">Avetis Aharonyan 12/1<br />Yerevan, Armenia</p>
+                    </div>
+                </div>
+                <div class="contact-details__item">
+                    <div class="contact-details__icon"><i class="fa-regular fa-clock"></i></div>
+                    <div>
+                        <p class="contact-details__label">Working Hours</p>
+                        <p class="contact-details__value">Mon - Fri: 9:00 AM - 6:00 PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="contact-popup" id="contact-popup" role="status" aria-live="polite">
+        <p id="contact-popup-text">Message was sent successfully.</p>
+    </div>
+
+    <footer class="footer" id="footer">
+        <div class="wrapper footer__content">
+            <div class="footer__brand">
+                <a class="logo" href="#">Wrap<span>Go</span></a>
+                <p>We connect advertisers, drivers, and fleet owners to build measurable outdoor campaigns that move with your audience.</p>
+            </div>
+
+            <div class="footer__column">
+                <h4>Quick Links</h4>
+                <a href="#advertisers">Advertisers</a>
+                <a href="#drivers">Drivers</a>
+                <a href="#fleet">Fleet Owners</a>
+                <a href="#how-it-works">How It Works</a>
+            </div>
+
+            <div class="footer__column">
+                <h4>Company</h4>
+                <a href="#about-us">About Us</a>
+                <a href="#contact">Contact</a>
+                <a href="/app?view=privacy">Privacy Policy</a>
+                <a href="/app?view=terms">Terms of Service</a>
+            </div>
+
+            <div class="footer__column footer__contact">
+                <h4>Contact</h4>
+                <p><i class="fa-regular fa-envelope"></i> admin@wrapgo.am</p>
+                <p><i class="fa-solid fa-phone"></i> +374 99 123 456</p>
+                <p><i class="fa-solid fa-location-dot"></i> Avetis Aharonyan 12/1, Yerevan</p>
+            </div>
+        </div>
+
+        <div class="wrapper footer__bottom">
+            <p>© 2026 WrapGo. All rights reserved.</p>
+            <div class="footer__social">
+                <a href="#" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
     <script>
         const nav = document.querySelector('.nav');
         const header = document.querySelector('.header');
         const burgerBtn = document.querySelector('.burger-btn');
         const navMenu = document.querySelector('.nav-menu');
+        const contactForm = document.querySelector('.contact-form');
+        const contactPopup = document.getElementById('contact-popup');
+        const contactPopupText = document.getElementById('contact-popup-text');
+
+        // Set your Telegram bot settings here.
+        // IMPORTANT: For production use, send through your backend and keep token secret.
+        const TELEGRAM_BOT_TOKEN = '8204330335:AAF1r8x6amHYFOLN0jG11kzZdMkXs2vIoNs';
+        const TELEGRAM_CHAT_ID = '-1003837482797';
+
+        const showContactPopup = (message, type = 'success') => {
+            contactPopupText.textContent = message;
+            contactPopup.classList.remove('is-success', 'is-error', 'is-visible');
+            contactPopup.classList.add(type === 'error' ? 'is-error' : 'is-success');
+
+            requestAnimationFrame(() => {
+                contactPopup.classList.add('is-visible');
+            });
+
+            window.clearTimeout(showContactPopup.hideTimer);
+            showContactPopup.hideTimer = window.setTimeout(() => {
+                contactPopup.classList.remove('is-visible');
+            }, 3200);
+        };
 
         // ── Scroll background ──
         const toggleNavBackground = () => {
@@ -311,6 +433,61 @@
                     panel.style.display = key === target ? 'flex' : 'none';
                 });
             });
+        });
+
+        // ── Contact form -> Telegram ──
+        contactForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+                showContactPopup('Telegram is not configured yet. Add bot token and chat id in script.', 'error');
+                return;
+            }
+
+            const submitBtn = contactForm.querySelector('.contact-submit');
+            const formData = new FormData(contactForm);
+            const name = String(formData.get('name') || '').trim();
+            const email = String(formData.get('email') || '').trim();
+            const interest = String(formData.get('interest') || '').trim();
+            const message = String(formData.get('message') || '').trim();
+
+            const formattedMessage = [
+                'New message from WrapGo landing:',
+                '',
+                `Name: ${name}`,
+                `Email: ${email}`,
+                `Interested in: ${interest}`,
+                `Message: ${message}`,
+            ].join('\n');
+
+            submitBtn.disabled = true;
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>Sending...';
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: formattedMessage,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Telegram API request failed');
+                }
+
+                showContactPopup('Message was sent successfully.', 'success');
+                contactForm.reset();
+            } catch (error) {
+                showContactPopup('Failed to send message. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
         });
 
         // ── Smooth scroll for anchor links ──
