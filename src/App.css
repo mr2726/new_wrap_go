@@ -3208,6 +3208,81 @@ select option{
   animation: landingFadeIn 0.55s ease both;
 }
 
+/*  Fleet  */
+.fleet-signup{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.fleet-signup__content{
+  max-width: 800px;
+}
+
+.fleet-signup__title{
+  font-family: 'LufgaBold', sans-serif;
+  font-size: 4.5em;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Top Menu */
+.top-menu{
+  width: 100%;
+  height: 8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(22, 27, 34, 0.95), rgba(11, 14, 20, 0.94));
+  border-bottom: 1px solid rgba(57, 255, 25, 0.16);
+  box-shadow: 0 0.8em 2.4em rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  padding: 0 clamp(1.2em, 3vw, 2.8em);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 110;
+}
+
+.logout{
+  font-size: clamp(1.4em, 1.2vw, 1.7em);
+  color: #ff6b6b;
+  font-family: 'LufgaMedium', sans-serif;
+  letter-spacing: 0.04em;
+  padding: 0.45em 1em;
+  border: 1px solid rgba(255, 107, 107, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 107, 107, 0.08);
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.logout:hover{
+  color: #ffd2d2;
+  border-color: rgba(255, 107, 107, 0.8);
+  background: rgba(255, 107, 107, 0.16);
+  transform: translateY(-1px);
+}
+
+.logout:active{
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .top-menu {
+    height: 7em;
+    padding: 0 1.2em;
+  }
+
+  .logout {
+    padding: 0.4em 0.85em;
+  }
+}
+
 @keyframes landingFadeIn {
   from {
     opacity: 0;

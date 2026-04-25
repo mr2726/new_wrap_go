@@ -15,6 +15,10 @@ import ConfirmEmail from './Pages/confirmEmail';
 import CompanyInfo from './Pages/CompanyInfoForm';
 import Content from './Pages/Content/Content';
 
+
+/* ========================================================================== */
+import FleetContent from './Pages/Fleet/FleetContent';
+
 /**
  * DashboardApp компонент
  * Основное приложение с аутентификацией и навигацией
@@ -63,10 +67,21 @@ function DashboardApp() {
     return map[view] || null;
   };
 
+  const resolvePageFromPath = () => {
+    const path = (window.location.pathname || "").toLowerCase();
+
+    if (path === "/fleet/sigup" || path === "/fleet/signup") {
+      return "fleet-content";
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     const hash = window.location.hash;
     const href = window.location.href;
     const pageFromQuery = resolvePageFromQuery();
+    const pageFromPath = resolvePageFromPath();
     console.log(href);
 
     if (hash.includes("type=recovery")) {
@@ -74,6 +89,9 @@ function DashboardApp() {
       setLoading(false);
     } else if (href.includes("confirm-email")) {
       setPage("company-info");
+      setLoading(false);
+    } else if (pageFromPath) {
+      setPage(pageFromPath);
       setLoading(false);
     } else if (pageFromQuery) {
       setPage(pageFromQuery);
@@ -122,6 +140,8 @@ function DashboardApp() {
         return <Terms data={data.terms} setPage={setPage}/>
       case "privacy":
         return <PrivacyPolicy data={data.privacy} setPage={setPage}/>
+      case "fleet-content":
+        return <FleetContent setPage={setPage} />
       case "otplink":
         return <ResetOTP data={data.resetPass.otpLink} setPage={setPage} setSender={setEmail}/>
       case "reset":

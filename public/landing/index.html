@@ -121,9 +121,15 @@
                         <li><i class="fa-solid fa-check"></i> Flexible campaign setup</li>
                     </ul>
                 </div>
+                <form id="fleet-link-form" class="fleet-link-form">
+                    <label for="fleet-email" class="fleet-email-label">Get link for registration</label>
+                    <br />
+                    <input id="fleet-email" name="fleetEmail" type="email" placeholder="Enter Email" class="contact-input fleet__input" required />
+                    <br />
+                    <button type="submit" class="contact-submit fleet__btn">Get Link</button>
+                </form>
             </div>
             <div class="img fleet-img"></div>
-            <!-- <img src="https://placehold.co/700x500.png" alt="Analitics"> -->
         </div>
     </section>
 
@@ -355,12 +361,14 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const nav = document.querySelector('.nav');
         const header = document.querySelector('.header');
         const burgerBtn = document.querySelector('.burger-btn');
         const navMenu = document.querySelector('.nav-menu');
         const contactForm = document.querySelector('.contact-form');
+        const fleetLinkForm = document.getElementById('fleet-link-form');
         const contactPopup = document.getElementById('contact-popup');
         const contactPopupText = document.getElementById('contact-popup-text');
 
@@ -368,6 +376,14 @@
         // IMPORTANT: For production use, send through your backend and keep token secret.
         const TELEGRAM_BOT_TOKEN = '8204330335:AAF1r8x6amHYFOLN0jG11kzZdMkXs2vIoNs';
         const TELEGRAM_CHAT_ID = '-1003837482797';
+
+        const SUPABASE_URL = 'https://rshhhtxokegviwblosur.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaGhodHhva2Vndml3Ymxvc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTYwOTQsImV4cCI6MjA5MTA3MjA5NH0.H9ioTJIOA-baP00ugGkxGWhTP_67oQHu_ZPsuVF4fnc';
+
+        const supabaseClient =
+            window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY
+                ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+                : null;
 
         const showContactPopup = (message, type = 'success') => {
             contactPopupText.textContent = message;
@@ -484,6 +500,55 @@
                 contactForm.reset();
             } catch (error) {
                 showContactPopup('Failed to send message. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+
+        // ── Fleet email link -> Supabase ──
+        fleetLinkForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!supabaseClient) {
+                showContactPopup('Supabase is not configured. Add URL and ANON KEY in script.', 'error');
+                return;
+            }
+
+            const submitBtn = fleetLinkForm.querySelector('.fleet__btn');
+            const emailInput = fleetLinkForm.querySelector('#fleet-email');
+            const fleetEmail = String(emailInput.value || '').trim().toLowerCase();
+
+            if (!fleetEmail) {
+                showContactPopup('Please enter a valid email.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>Sending...';
+
+            try {
+                const { error } = await supabaseClient.auth.signInWithOtp({
+                    email: fleetEmail,
+                    options: {
+                        shouldCreateUser: true,
+                        emailRedirectTo: `${window.location.origin}/fleet/sigup`,
+                        data: {
+                            role: 'fleet-owner',
+                            source: 'landing-fleet-link',
+                        },
+                    },
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                showContactPopup('Registration link was sent successfully.', 'success');
+                fleetLinkForm.reset();
+            } catch (error) {
+                showContactPopup(error.message || 'Failed to send registration link.', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;

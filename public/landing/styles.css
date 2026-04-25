@@ -461,10 +461,10 @@ nav{
     background-size: cover;
     background-position: center right;
     position: absolute !important;
-    top: 0 ;
+    top: -250px;
     right: 0px;
     width: 100%;
-    height: calc(100vh + 20px);
+    height: calc(100vh + 250px);
     z-index: 0;
 }
 
@@ -633,7 +633,7 @@ nav{
   background-image: url(./assets/phone.PNG);
 }
 .dashboard-img{
-  background-image: url(./assets/dashboard.png);
+  background-image: url(./assets/dashboard.jpg);
 }
 .fleet-img{
   background-image: url(./assets/fleet.jpg);
@@ -924,6 +924,22 @@ nav{
 .contact-select:focus {
   border-color: rgba(57, 255, 20, 0.6);
   box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.12);
+}
+
+.fleet-email-label{
+  font-size: 1.5em;
+  color: var(--description-color);
+}
+
+.fleet__input{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 50% !important;
+  font-size: 1.5em !important;
+}
+
+.fleet__btn{
+  width: 50% !important;
 }
 
 .contact-select {
@@ -1912,6 +1928,13 @@ nav{
 
   .footer__bottom p {
     font-size: 1.25em;
+  }
+
+  .fleet__input{
+    width: 100% !important;
+  }
+  .fleet__btn{
+    width: 100% !important;
   }
 }
 

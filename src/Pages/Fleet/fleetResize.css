@@ -1,0 +1,94 @@
+.fleet-signup {
+	min-height: 100vh;
+	width: 100%;
+	padding: clamp(2.4em, 4vw, 4.8em) 1.6em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.fleet-signup__content {
+	width: min(96%, 92em);
+	background-color: var(--block-bg);
+	border: 1px solid var(--input-border);
+	border-radius: 2em;
+	padding: clamp(2em, 3.5vw, 3.6em);
+}
+
+.fleet-signup__logo {
+	width: fit-content;
+	margin: 0 auto;
+}
+
+.fleet-signup__title {
+	font-size: clamp(3em, 5vw, 4.6em);
+	margin: 0.5em 0 0.7em;
+}
+
+.fleet-signup__form {
+	width: 100%;
+}
+
+.fleet-signup__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0 1.6em;
+}
+
+.fleet-signup__field {
+	min-width: 0;
+}
+
+.fleet-signup__field .signup_form__form--input {
+	margin-bottom: 1.2em;
+}
+
+.fleet-signup__field--full {
+	grid-column: 1 / -1;
+}
+
+.fleet-signup__submit {
+	width: 100%;
+	margin-top: 0.4em;
+}
+
+.fleet-signup__status {
+	font-size: 1.4em;
+	margin: 0.2em 0 1em;
+}
+
+.fleet-signup__status--success {
+	color: var(--primary-color);
+}
+
+@media (max-width: 900px) {
+	.fleet-signup__content {
+		width: min(100%, 64em);
+	}
+
+	.fleet-signup__grid {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+
+	.fleet-signup__field--full {
+		grid-column: auto;
+	}
+}
+
+@media (max-width: 540px) {
+	.fleet-signup {
+		padding: 1.4em 1em;
+		align-items: flex-start;
+	}
+
+	.fleet-signup__content {
+		border-radius: 1.4em;
+		padding: 1.6em 1.4em;
+	}
+
+	.fleet-signup__title {
+		margin-top: 0.6em;
+		margin-bottom: 0.8em;
+	}
+}
