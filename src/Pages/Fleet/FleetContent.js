@@ -2,7 +2,7 @@ import FleetSignup from "./Fleet-signup";
 import Dashboard from "./Dashboard";
 import { useState } from "react";
 function FleetContent({ setPage }) {
-    const [fleetPage, setFleetPage] = useState("signup");
+    const [fleetPage, setFleetPage] = useState("dashboard");
 
     const RenderFleetPage = () => {
         switch (fleetPage) {

@@ -3272,6 +3272,121 @@ select option{
   transform: translateY(0);
 }
 
+.dashboard__content {
+  padding: 10em 2.4em 3em;
+  max-width: 160em;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dashboard__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2.4em;
+}
+
+.dashboard__title {
+  font-family: 'LufgaBold', sans-serif;
+  font-size: 3.2em;
+  margin-bottom: 0.3em;
+}
+
+/* Table wrapper — scrollable on small screens */
+.dashboard__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 1.4em;
+  border: 1px solid var(--input-border);
+  background-color: var(--block-bg);
+}
+
+.dashboard__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.4em;
+  white-space: nowrap;
+}
+
+.dashboard__table thead tr {
+  border-bottom: 1px solid var(--input-border);
+}
+
+.dashboard__table th {
+  padding: 1.4em 1.6em;
+  text-align: left;
+  font-family: 'LufgaMedium', sans-serif;
+  color: var(--sign-secondary-color);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+
+.dashboard__table td {
+  padding: 1.3em 1.6em;
+  color: var(--text-color);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+  vertical-align: middle;
+}
+
+.dashboard__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dashboard__table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.dashboard__table tbody tr:hover {
+  background-color: rgba(57, 255, 25, 0.04);
+}
+
+/* Vehicle ID chip */
+.dashboard__id {
+  font-family: 'LufgaMedium', sans-serif;
+  font-size: 0.9em;
+  color: var(--primary-color);
+  background: var(--primary-color-light);
+  border-radius: 999px;
+  padding: 0.25em 0.75em;
+  letter-spacing: 0.05em;
+}
+
+/* Status badges */
+.dashboard__badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.3em 0.9em;
+  font-size: 0.88em;
+  font-family: 'LufgaMedium', sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.dashboard__badge--active {
+  color: var(--primary-color);
+  background: var(--primary-color-light);
+  border: 1px solid rgba(57, 255, 25, 0.3);
+}
+
+.dashboard__badge--pending {
+  color: var(--pending-status-color);
+  background: var(--pending-status-color-light);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+}
+
+.dashboard__badge--inactive {
+  color: var(--completed-status-color);
+  background: var(--completed-status-color-light);
+  border: 1px solid rgba(189, 46, 46, 0.3);
+}
+
+@media (max-width: 768px) {
+  .dashboard__content {
+    padding: 9em 1.4em 2em;
+  }
+}
+
 @media (max-width: 640px) {
   .top-menu {
     height: 7em;
