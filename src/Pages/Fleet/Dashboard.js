@@ -7,6 +7,7 @@ function Dashboard({ setFleetPage }) {
     const [drivers, setDrivers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [addDriverFromVisible, setAddDriverFormVisible] = useState(false);
 
     const getStatusClassName = (status) => {
         const normalizedStatus = String(status || "").toLowerCase();
@@ -89,8 +90,27 @@ function Dashboard({ setFleetPage }) {
         fetchDrivers();
     }, []);
 
+    const AddDriverForm = () => {
+        return (
+            <div className="add-driver-form">
+                <div className="add-driver-form___block">
+                    <div className="popup__title">
+                        <h2>Add New Driver</h2>
+                        <p onClick={() => setAddDriverFormVisible(false)}>Close</p>
+                    </div>
+                    <form style={{width: 300}}>
+                        <label className="signup_form__form--label">Driver Email address</label>
+                        <input type="text" name="name" className="signup_form__form--input" placeholder="Enter Email Address" required />
+                        <button type="submit" className="signup_form__form--button">Add Driver</button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="dashboard">
+            {addDriverFromVisible && <AddDriverForm />}
             <TopMenu sendto="" setFleetPage={setFleetPage} />
             <div className="dashboard__content">
                 <div className="dashboard__header">
@@ -98,6 +118,7 @@ function Dashboard({ setFleetPage }) {
                         <h1 className="dashboard__title">Dashboard</h1>
                         <p className="description">Manage your fleet, track vehicles and campaign performance.</p>
                     </div>
+                    <button className="dashboard__button signup_form__form--button" onClick={() => setAddDriverFormVisible(true)}>Add driver</button>
                 </div>
                 <div className="dashboard__table-wrap">
                     <table className="dashboard__table">

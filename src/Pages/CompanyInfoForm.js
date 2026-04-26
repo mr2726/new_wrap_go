@@ -20,7 +20,7 @@ function CompanyInfo ({data, setPage, setEmail, credentials}) {
             email: credentials.email,
             password: credentials.password,
             options: {
-                emailRedirectTo: `${process.env.REACT_APP_WEB_URL}/confirm-email`
+                emailRedirectTo: `${process.env.REACT_APP_WEB_URL}/`
             }
         });
 
