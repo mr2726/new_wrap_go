@@ -7,6 +7,16 @@ import { supabase } from "../../data/supabase";
 function ResetOTP({data, setPage, setSender}) {
     const [email, setEmail] = useState("");
 
+    const resolveRedirectTo = () => {
+        const envBaseUrl = (process.env.REACT_APP_WEB_URL || "").trim();
+
+        if (envBaseUrl) {
+            return `${envBaseUrl.replace(/\/$/, "")}/app?view=reset-password`;
+        }
+
+        return `${window.location.origin}/app?view=reset-password`;
+    };
+
     /* Handler form submit */
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -16,18 +26,27 @@ function ResetOTP({data, setPage, setSender}) {
     // send link to the user email 
 
     const handleForgotPassword = async () => {
+        const normalizedEmail = email.trim().toLowerCase();
+
+        if (!normalizedEmail) {
+            alert("Please enter your email");
+            return;
+        }
+
         const { error } = await supabase.auth.resetPasswordForEmail(
-            email,
+            normalizedEmail,
             {
-                redirectTo: `${process.env.REACT_APP_WEB_URL}/reset-password` // ← Rederect link 
+                redirectTo: resolveRedirectTo()
             }
         );
 
         if (error) {
             console.log(error.message);
+            alert(error.message);
             return;
         }
-        setSender(email);
+
+        setSender(normalizedEmail);
         setPage("check-email");
     };
 

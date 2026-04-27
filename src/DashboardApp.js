@@ -14,7 +14,7 @@ import ResetPasswordEmail from './Pages/ResetPassword/ResetPasswordEmail';
 import ConfirmEmail from './Pages/confirmEmail';
 import CompanyInfo from './Pages/CompanyInfoForm';
 import Content from './Pages/Content/Content';
-
+import DriverAppNotice from './Pages/DriverAppNotice';
 
 /* ========================================================================== */
 import FleetContent from './Pages/Fleet/FleetContent';
@@ -27,30 +27,75 @@ import FleetContent from './Pages/Fleet/FleetContent';
 function DashboardApp() {
   const [page, setPage] = useState("landing");
   const [email, setEmail] = useState("");
-  // const [user, setUser] = useState(null);
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(true);
 
-  const resolveAuthPage = async (session) => {
-    if (!session?.user?.email_confirmed_at) {
-      return "signin";
-    }
+  const isMissingColumnError = (error) => {
+    const message = (error?.message || "").toLowerCase();
+    return message.includes("column") || message.includes("does not exist");
+  };
 
+  const getAccountDestination = async (user) => {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("auntufication")
-      .eq("userid", session.user.id)
+      .eq("userid", user.id)
       .maybeSingle();
 
-    if (profileError) {
-      return "signin";
-    }
-
-    if (!profile?.auntufication) {
+    if (!profileError && profile) {
       return "content";
     }
 
-    return "signin";
+    const { data: fleet, error: fleetError } = await supabase
+      .from("fleets")
+      .select("userid")
+      .eq("userid", user.id)
+      .maybeSingle();
+
+    if (!fleetError && fleet) {
+      return "fleet-content";
+    }
+
+    const { data: driverByUserId, error: driverByUserIdError } = await supabase
+      .from("drivers")
+      .select("id")
+      .eq("userid", user.id)
+      .maybeSingle();
+
+    if (!driverByUserIdError && driverByUserId) {
+      return "drivers-download";
+    }
+
+    if (driverByUserIdError && !isMissingColumnError(driverByUserIdError)) {
+      return "signin";
+    }
+
+    const { data: driverByEmail, error: driverByEmailError } = await supabase
+      .from("drivers")
+      .select("id")
+      .eq("email", (user.email || "").toLowerCase())
+      .maybeSingle();
+
+    if (!driverByEmailError && driverByEmail) {
+      return "drivers-download";
+    }
+
+    if (driverByEmailError && !isMissingColumnError(driverByEmailError)) {
+      return "signin";
+    }
+
+    return "company-info";
+  };
+
+  const resolveAuthPage = async (session) => {
+    if (!session?.user) {
+      return "signin";
+    }
+
+    if (!session.user.email_confirmed_at) {
+      return "confirm-email";
+    }
+
+    return getAccountDestination(session.user);
   };
 
   const resolvePageFromQuery = () => {
@@ -62,6 +107,12 @@ function DashboardApp() {
       signup: "signup",
       terms: "terms",
       privacy: "privacy",
+      "reset-password": "reset",
+      "company-info": "company-info",
+      "confirm-email": "confirm-email",
+      fleet: "fleet-content",
+      "fleet-content": "fleet-content",
+      "drivers-download": "drivers-download",
     };
 
     return map[view] || null;
@@ -79,16 +130,11 @@ function DashboardApp() {
 
   useEffect(() => {
     const hash = window.location.hash;
-    const href = window.location.href;
     const pageFromQuery = resolvePageFromQuery();
     const pageFromPath = resolvePageFromPath();
-    console.log(href);
 
     if (hash.includes("type=recovery")) {
       setPage("reset");
-      setLoading(false);
-    } else if (href.includes("confirm-email")) {
-      setPage("company-info");
       setLoading(false);
     } else if (pageFromPath) {
       setPage(pageFromPath);
@@ -121,6 +167,7 @@ function DashboardApp() {
 
         if (event === "SIGNED_IN" && session?.user) {
           setEmail(session.user.email ?? "");
+          resolveAuthPage(session).then((nextPage) => setPage(nextPage));
         }
       }
     );
@@ -133,7 +180,7 @@ function DashboardApp() {
   const renderPage = () => {
     switch(page){
       case "signup":
-        return <Signup data={data.signup} setPage={setPage} setCredentials={setCredentials} />
+        return <Signup data={data.signup} setPage={setPage} />
       case "signin":
         return <Singin data={data.signin} setPage={setPage} />
       case "terms":
@@ -153,11 +200,13 @@ function DashboardApp() {
       case "confirm-email":
         return <ConfirmEmail data={data.confirmEmail} setPage={setPage} email={email} />
       case "company-info":
-        return <CompanyInfo data={data.companyInfo} setPage={setPage} setEmail={setEmail} credentials={credentials} />
+        return <CompanyInfo data={data.companyInfo} setPage={setPage} />
+      case "drivers-download":
+        return <DriverAppNotice setPage={setPage} />
       case "content":
         return <Content data={data.content} />
       default:
-        return <Signup data={data.signup} setPage={setPage} setCredentials={setCredentials} />
+        return <Signup data={data.signup} setPage={setPage} />
     }
   }
   return (

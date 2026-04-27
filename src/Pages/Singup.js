@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import { MdCheckCircleOutline  } from "react-icons/md";
-function Signup({data, setPage, setCredentials}) {
+import { supabase } from "../data/supabase";
+
+function Signup({data, setPage}) {
     const [formData, setFormData] = useState({});
     const [error, setError] = useState("");
     const [passNotValid, setPassNotValid] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (!data?.signup_form?.signup_form_inputs) return;
@@ -15,6 +18,15 @@ function Signup({data, setPage, setCredentials}) {
 
         setFormData(initialState);
     }, [data]);
+
+    const resolveEmailRedirectTo = () => {
+        const envBaseUrl = (process.env.REACT_APP_WEB_URL || "").trim();
+        if (envBaseUrl) {
+            return `${envBaseUrl.replace(/\/$/, "")}/app?view=company-info`;
+        }
+
+        return `${window.location.origin}/app?view=company-info`;
+    };
 
     // Password validation
     const validationPassword = (password) => {
@@ -32,8 +44,10 @@ function Signup({data, setPage, setCredentials}) {
     };
 
     // submit Handler
-    const handleSubmite = (e) => {
+    const handleSubmite = async (e) => {
         e.preventDefault();
+        setError("");
+        setPassNotValid(false);
 
         if (!validationPassword(formData.password)) {
             setError(data.signup_form.inputErrors.notvalidPassword);
@@ -47,8 +61,24 @@ function Signup({data, setPage, setCredentials}) {
             return;
         }
 
-        setCredentials({ email: formData.email, password: formData.password });
-        setPage("company-info");
+        setIsSubmitting(true);
+
+        const { error: signUpError } = await supabase.auth.signUp({
+            email: (formData.email || "").trim().toLowerCase(),
+            password: formData.password,
+            options: {
+                emailRedirectTo: resolveEmailRedirectTo(),
+            },
+        });
+
+        setIsSubmitting(false);
+
+        if (signUpError) {
+            setError(signUpError.message || "Signup failed.");
+            return;
+        }
+
+        setPage("confirm-email");
     };
     const Blocks = ({block}) => {
         return (
@@ -117,8 +147,8 @@ function Signup({data, setPage, setCredentials}) {
 
                     </div>
 
-                    <button type="submit" className="signup_form__form--button">
-                        {data.signup_form.button}
+                    <button type="submit" className="signup_form__form--button" disabled={isSubmitting}>
+                        {isSubmitting ? "Creating account..." : data.signup_form.button}
                     </button>
 
                     <div className="formError">

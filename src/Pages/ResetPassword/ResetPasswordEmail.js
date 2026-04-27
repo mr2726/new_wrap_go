@@ -5,11 +5,21 @@ import { supabase } from "../../data/supabase";
 
 function ResetPasswordEmail ({data, setPage, email}) {
 
+    const resolveRedirectTo = () => {
+        const envBaseUrl = (process.env.REACT_APP_WEB_URL || "").trim();
+
+        if (envBaseUrl) {
+            return `${envBaseUrl.replace(/\/$/, "")}/app?view=reset-password`;
+        }
+
+        return `${window.location.origin}/app?view=reset-password`;
+    };
+
     const resendEmail = async () => {
         const { error } = await supabase.auth.resetPasswordForEmail(
             email,
             {
-                redirectTo: "http://localhost:3000/reset-password" // ← Rederect link 
+                redirectTo: resolveRedirectTo()
             }
         );
 

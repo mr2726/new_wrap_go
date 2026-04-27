@@ -47,58 +47,137 @@ function Singin({data, setPage}) {
             return;
         }
 
-        const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("auntufication")
-            .eq("userid", authData?.user?.id)
-            .maybeSingle();
-
-        if (profileError) {
-            setError(profileError.message || "Failed to load security settings.");
+        const user = authData?.user;
+        if (!user) {
+            setError("Failed to read authenticated user.");
             setIsSubmitting(false);
             return;
         }
 
-        if (profile?.auntufication) {
-            const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+        if (!user.email_confirmed_at) {
+            setError("Please confirm your email first.");
+            setIsSubmitting(false);
+            setPage("confirm-email");
+            return;
+        }
 
-            if (factorsError) {
-                setError(factorsError.message || "Failed to load authenticator factors.");
+        const isMissingColumnError = (queryError) => {
+            const message = (queryError?.message || "").toLowerCase();
+            return message.includes("column") || message.includes("does not exist");
+        };
+
+        const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("auntufication")
+            .eq("userid", user.id)
+            .maybeSingle();
+
+        if (profileError) {
+            setError(profileError.message || "Failed to load profile settings.");
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (profile) {
+            if (profile?.auntufication) {
+                const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+
+                if (factorsError) {
+                    setError(factorsError.message || "Failed to load authenticator factors.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                const verifiedFactor = (factorsData?.totp || []).find((factor) => factor.status === "verified");
+                if (!verifiedFactor) {
+                    setError("2FA is enabled, but no verified Google Authenticator factor was found.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
+                    factorId: verifiedFactor.id,
+                });
+
+                if (challengeError || !challengeData?.id) {
+                    setError(challengeError?.message || "Failed to create 2FA challenge.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                setFactorId(verifiedFactor.id);
+                setChallengeId(challengeData.id);
+                setRequires2FA(true);
                 setIsSubmitting(false);
                 return;
             }
 
-            const verifiedFactor = (factorsData?.totp || []).find((factor) => factor.status === "verified");
-            if (!verifiedFactor) {
-                setError("2FA is enabled, but no verified Google Authenticator factor was found.");
-                setIsSubmitting(false);
-                return;
-            }
+            setError("");
+            setIsSubmitting(false);
+            setPage("content");
+            return;
+        }
 
-            const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
-                factorId: verifiedFactor.id,
-            });
+        const { data: fleet, error: fleetError } = await supabase
+            .from("fleets")
+            .select("userid")
+            .eq("userid", user.id)
+            .maybeSingle();
 
-            if (challengeError || !challengeData?.id) {
-                setError(challengeError?.message || "Failed to create 2FA challenge.");
-                setIsSubmitting(false);
-                return;
-            }
+        if (fleetError) {
+            setError(fleetError.message || "Failed to load fleet account.");
+            setIsSubmitting(false);
+            return;
+        }
 
-            setFactorId(verifiedFactor.id);
-            setChallengeId(challengeData.id);
-            setRequires2FA(true);
+        if (fleet) {
+            setError("");
+            setIsSubmitting(false);
+            setPage("fleet-content");
+            return;
+        }
+
+        const { data: driverByUserId, error: driverByUserIdError } = await supabase
+            .from("drivers")
+            .select("id")
+            .eq("userid", user.id)
+            .maybeSingle();
+
+        if (!driverByUserIdError && driverByUserId) {
+            setError("");
+            setIsSubmitting(false);
+            setPage("drivers-download");
+            return;
+        }
+
+        if (driverByUserIdError && !isMissingColumnError(driverByUserIdError)) {
+            setError(driverByUserIdError.message || "Failed to load driver account.");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const { data: driverByEmail, error: driverByEmailError } = await supabase
+            .from("drivers")
+            .select("id")
+            .eq("email", (user.email || "").toLowerCase())
+            .maybeSingle();
+
+        if (!driverByEmailError && driverByEmail) {
+            setError("");
+            setIsSubmitting(false);
+            setPage("drivers-download");
+            return;
+        }
+
+        if (driverByEmailError && !isMissingColumnError(driverByEmailError)) {
+            setError(driverByEmailError.message || "Failed to load driver account.");
             setIsSubmitting(false);
             return;
         }
 
         setError("");
         setIsSubmitting(false);
-
-        if (authData?.user) {
-            console.log("Logined");
-            setPage("content"); // или нужная страница
-        }
+        setPage("company-info");
     };
 
     const handleVerify2FA = async (event) => {

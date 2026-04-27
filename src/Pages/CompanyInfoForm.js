@@ -1,10 +1,31 @@
 import "../App.css";
 import Logo from "../Components/Logo";
 import { supabase } from "../data/supabase";
+import { useState } from "react";
 
-function CompanyInfo ({data, setPage, setEmail, credentials}) {
+function CompanyInfo ({data, setPage}) {
+    const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError("");
+        setIsSubmitting(true);
+
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        const user = authData?.user;
+
+        if (authError || !user?.id) {
+            setError("Please sign in again to continue.");
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (!user.email_confirmed_at) {
+            setError("Please confirm your email first.");
+            setIsSubmitting(false);
+            return;
+        }
 
         const formData = new FormData(event.target);
         const filledValues = {};
@@ -15,31 +36,31 @@ function CompanyInfo ({data, setPage, setEmail, credentials}) {
             }
         });
 
-        // 1. Регистрация аккаунта
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: credentials.email,
-            password: credentials.password,
-            options: {
-                emailRedirectTo: `${process.env.REACT_APP_WEB_URL}/`
-            }
-        });
+        const { data: existingProfile, error: checkError } = await supabase
+            .from("profiles")
+            .select("userid")
+            .eq("userid", user.id)
+            .maybeSingle();
 
-        if (signUpError) {
-            console.log("Signup Error:", signUpError.message);
+        if (checkError) {
+            setError(checkError.message || "Failed to verify company profile.");
+            setIsSubmitting(false);
             return;
         }
 
-        const user = signUpData?.user;
-        if (!user) return;
+        if (existingProfile) {
+            setPage("content");
+            setIsSubmitting(false);
+            return;
+        }
 
-        // 2. Полная запись профиля в БД
         const { error: insertError } = await supabase
             .from("profiles")
             .insert([
                 {
                     userid: user.id,
                     name: filledValues.fullname,
-                    email: credentials.email,
+                    email: user.email,
                     balance: 0,
                     country: filledValues.country,
                     industry: filledValues.industry,
@@ -51,15 +72,14 @@ function CompanyInfo ({data, setPage, setEmail, credentials}) {
                 }
             ]);
 
+        setIsSubmitting(false);
+
         if (insertError) {
-            console.log("Insert Error:", insertError.message);
+            setError(insertError.message || "Failed to save company profile.");
+            return;
         }
 
-        // 3. Убиваем сессию до подтверждения email
-        await supabase.auth.signOut();
-
-        if (setEmail) setEmail(credentials.email);
-        setPage("confirm-email");
+        setPage("content");
     };
 
     return (
@@ -91,7 +111,7 @@ function CompanyInfo ({data, setPage, setEmail, credentials}) {
                         name="email"
                         placeholder={data.fields.email.placeholder}
                         type="email"
-                        value={credentials.email}
+                        value="Will be filled from your verified account"
                         required
                         disabled
                     />
@@ -157,8 +177,9 @@ function CompanyInfo ({data, setPage, setEmail, credentials}) {
                         type="text"
                     />
 
-                    <button type="submit" className="signup_form__form--button">
-                        {data.button}
+                    {error && <p className="signup_form__error">{error}</p>}
+                    <button type="submit" className="signup_form__form--button" disabled={isSubmitting}>
+                        {isSubmitting ? "Saving..." : data.button}
                     </button>
                     <div className="terms__block" style={{margin: "30px auto 0 auto", fontSize: "15px"}}>
                         <p className="terms" onClick={() => setPage("privacy")}>{data.footerLinks.terms}</p>
