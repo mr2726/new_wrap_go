@@ -1,7 +1,7 @@
 import "../../App.css";
 import "./fleetResize.css";
 import Logo from "../../Components/Logo";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../data/supabase";
 
 function FleetSignup({ setPage, setFleetPage }) {
@@ -17,6 +17,18 @@ function FleetSignup({ setPage, setFleetPage }) {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fromOtp, setFromOtp] = useState(false);
+
+    useEffect(() => {
+        const checkExistingSession = async () => {
+            const { data: authData } = await supabase.auth.getUser();
+            if (authData?.user?.email) {
+                setFromOtp(true);
+                setUserData(prev => ({ ...prev, contactEmail: authData.user.email }));
+            }
+        };
+        checkExistingSession();
+    }, []);
 
     const isPasswordValid = (password) => {
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
@@ -37,94 +49,99 @@ function FleetSignup({ setPage, setFleetPage }) {
         setSuccess("");
         setIsSubmitting(true);
 
-        // Validate passwords match
-        if (userData.password !== userData.confirmPassword) {
-            setError("Passwords do not match.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        // Validate password strength
-        if (!isPasswordValid(userData.password)) {
-            setError("Password must contain uppercase, lowercase, number, symbol and be at least 8 characters.");
-            setIsSubmitting(false);
-            return;
-        }
-
         try {
-            // Check if email already exists in fleets table
-            const { data: existingFleet, error: checkError } = await supabase
-                .from("fleets")
-                .select("email")
-                .eq("email", userData.contactEmail.toLowerCase())
-                .maybeSingle();
+            let userId;
+            let userEmail;
 
-            if (checkError && checkError.code !== "PGRST116") {
-                throw checkError;
-            }
-
-            if (existingFleet) {
-                setError("This email is already registered as a fleet.");
-                setIsSubmitting(false);
-                return;
-            }
-
-            // Check if email already exists in auth
-            const { data: existingAuth, error: authCheckError } = await supabase.auth.admin.listUsers();
-            if (!authCheckError && existingAuth?.users?.some(u => u.email === userData.contactEmail.toLowerCase())) {
-                setError("This email is already registered in the system.");
-                setIsSubmitting(false);
-                return;
-            }
-
-            // Proceed with signup
-            const { data, error: signupError } = await supabase.auth.signUp({
-                email: userData.contactEmail,
-                password: userData.password,
-                options: {
-                    data: {
-                        Phone: userData.contactPhone,
-                    }
-                }
-            });
-
-            if (signupError) {
-                setError(signupError.message || "Signup failed. Please try again.");
-                setIsSubmitting(false);
-                return;
-            }
-
-            // Insert into fleets table
-            if (data?.user?.id) {
-                const { error: insertError } = await supabase.from("fleets").insert([
-                    {
-                        userid: data.user.id,
-                        email: userData.contactEmail.toLowerCase(),
-                        phone: userData.contactPhone,
-                        fleetname: userData.fleetName,
-                        contactpersone: userData.contactPerson,
-                        fleetsize: parseInt(userData.fleetSize) || 0,
-                    }
-                ]);
-
-                if (insertError) {
-                    setError("Account created but failed to save fleet info: " + insertError.message);
+            if (fromOtp) {
+                // User came via magic link — already authenticated
+                const { data: authData, error: authError } = await supabase.auth.getUser();
+                if (authError || !authData?.user?.id) {
+                    setError("Session expired. Please request a new registration link.");
                     setIsSubmitting(false);
                     return;
                 }
+                userId = authData.user.id;
+                userEmail = authData.user.email;
+            } else {
+                // Manual signup — validate passwords first
+                if (userData.password !== userData.confirmPassword) {
+                    setError("Passwords do not match.");
+                    setIsSubmitting(false);
+                    return;
+                }
+                if (!isPasswordValid(userData.password)) {
+                    setError("Password must contain uppercase, lowercase, number, symbol and be at least 8 characters.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                // Check if email already in fleets
+                const { data: existingFleet, error: checkError } = await supabase
+                    .from("fleets")
+                    .select("email")
+                    .eq("email", userData.contactEmail.toLowerCase())
+                    .maybeSingle();
+
+                if (checkError && checkError.code !== "PGRST116") throw checkError;
+
+                if (existingFleet) {
+                    setError("This email is already registered as a fleet.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                const { data, error: signupError } = await supabase.auth.signUp({
+                    email: userData.contactEmail,
+                    password: userData.password,
+                });
+
+                if (signupError) {
+                    setError(signupError.message || "Signup failed. Please try again.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                userId = data?.user?.id;
+                userEmail = userData.contactEmail.toLowerCase();
             }
 
-            setSuccess("Signup successful! Check your email to confirm.");
-            setUserData({
-                fleetName: "",
-                contactPerson: "",
-                contactEmail: "",
-                contactPhone: "",
-                fleetSize: "",
-                password: "",
-                confirmPassword: ""
-            });
+            if (!userId) {
+                setError("Failed to get user account. Please try again.");
+                setIsSubmitting(false);
+                return;
+            }
 
+            // Check if fleet record already exists for this user
+            const { data: existingRecord } = await supabase
+                .from("fleets")
+                .select("userid")
+                .eq("userid", userId)
+                .maybeSingle();
+
+            if (existingRecord) {
+                if (setFleetPage) setFleetPage("dashboard");
+                return;
+            }
+
+            const { error: insertError } = await supabase.from("fleets").insert([
+                {
+                    userid: userId,
+                    email: (userEmail || "").toLowerCase(),
+                    phone: userData.contactPhone,
+                    fleetname: userData.fleetName,
+                    contactpersone: userData.contactPerson,
+                    fleetsize: parseInt(userData.fleetSize) || 0,
+                }
+            ]);
+
+            if (insertError) {
+                setError("Failed to save fleet info: " + insertError.message);
+                setIsSubmitting(false);
+                return;
+            }
+
+            setSuccess("Registration successful!");
             if (setFleetPage) {
                 setTimeout(() => setFleetPage("dashboard"), 1500);
             }
@@ -183,6 +200,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                                 placeholder="Enter the contact email address" 
                                 value={userData.contactEmail}
                                 onChange={handleChange}
+                                disabled={fromOtp}
                                 required 
                             />
                         </div>
@@ -217,33 +235,37 @@ function FleetSignup({ setPage, setFleetPage }) {
                             />
                         </div>
 
-                        <div className="fleet-signup__field">
-                            <label className="signup_form__form--label" htmlFor="password">Set Password</label>
-                            <input 
-                                className="signup_form__form--input" 
-                                id="password" 
-                                name="password"
-                                type="password" 
-                                placeholder="Create a password for your account" 
-                                value={userData.password}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
+                        {!fromOtp && (
+                            <>
+                                <div className="fleet-signup__field">
+                                    <label className="signup_form__form--label" htmlFor="password">Set Password</label>
+                                    <input 
+                                        className="signup_form__form--input" 
+                                        id="password" 
+                                        name="password"
+                                        type="password" 
+                                        placeholder="Create a password for your account" 
+                                        value={userData.password}
+                                        onChange={handleChange}
+                                        required 
+                                    />
+                                </div>
 
-                        <div className="fleet-signup__field">
-                            <label className="signup_form__form--label" htmlFor="confirm-password">Confirm Password</label>
-                            <input 
-                                className="signup_form__form--input" 
-                                id="confirm-password" 
-                                name="confirmPassword"
-                                type="password" 
-                                placeholder="Confirm your password" 
-                                value={userData.confirmPassword}
-                                onChange={handleChange}
-                                required 
-                            />
-                        </div>
+                                <div className="fleet-signup__field">
+                                    <label className="signup_form__form--label" htmlFor="confirm-password">Confirm Password</label>
+                                    <input 
+                                        className="signup_form__form--input" 
+                                        id="confirm-password" 
+                                        name="confirmPassword"
+                                        type="password" 
+                                        placeholder="Confirm your password" 
+                                        value={userData.confirmPassword}
+                                        onChange={handleChange}
+                                        required 
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {error && <p className="signup_form__error fleet-signup__status">{error}</p>}

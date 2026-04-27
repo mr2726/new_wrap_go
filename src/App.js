@@ -6,10 +6,25 @@ import DashboardApp from './DashboardApp';
 function App() {
   useEffect(() => {
     const isRootPath = window.location.pathname === '/';
-    const hasRecoveryHash = (window.location.hash || '').includes('type=recovery');
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
 
-    if (isRootPath && hasRecoveryHash) {
-      const nextUrl = `/app${window.location.search || ''}${window.location.hash || ''}`;
+    const hasAuthHash =
+      hash.includes('type=') ||
+      hash.includes('access_token=') ||
+      hash.includes('refresh_token=') ||
+      hash.includes('error=');
+
+    const hasAuthQuery =
+      search.includes('type=') ||
+      search.includes('code=') ||
+      search.includes('token=') ||
+      search.includes('token_hash=') ||
+      search.includes('access_token=') ||
+      search.includes('refresh_token=');
+
+    if (isRootPath && (hasAuthHash || hasAuthQuery)) {
+      const nextUrl = `/app${search}${hash}`;
       window.location.replace(nextUrl);
     }
   }, []);

@@ -18,6 +18,7 @@ import DriverAppNotice from './Pages/DriverAppNotice';
 
 /* ========================================================================== */
 import FleetContent from './Pages/Fleet/FleetContent';
+import FleetSignup from './Pages/Fleet/Fleet-signup';
 
 const isMissingColumnError = (error) => {
   const message = (error?.message || "").toLowerCase();
@@ -25,6 +26,16 @@ const isMissingColumnError = (error) => {
 };
 
 const getAccountDestination = async (user) => {
+  // Fleet-owner magic link fallback: user_metadata.role set in Landing OTP call
+  if (user.user_metadata?.role === "fleet-owner") {
+    const { data: existingFleet } = await supabase
+      .from("fleets")
+      .select("userid")
+      .eq("userid", user.id)
+      .maybeSingle();
+    return existingFleet ? "fleet-content" : "fleet-signup";
+  }
+
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("auntufication")
@@ -111,8 +122,8 @@ const resolvePageFromQuery = () => {
 const resolvePageFromPath = () => {
   const path = (window.location.pathname || "").toLowerCase();
 
-  if (path === "/fleet/sigup" || path === "/fleet/signup") {
-    return "fleet-content";
+  if (path === "/fleet/sigup" || path === "/fleet/signup" || path === "/fleet/singup") {
+    return "fleet-signup";
   }
 
   return null;
@@ -129,17 +140,27 @@ function DashboardApp() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const syncEmailFromSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.email) {
+        setEmail(session.user.email);
+      }
+    };
+
     const hash = window.location.hash;
     const pageFromQuery = resolvePageFromQuery();
     const pageFromPath = resolvePageFromPath();
 
     if (hash.includes("type=recovery")) {
+      syncEmailFromSession();
       setPage("reset");
       setLoading(false);
     } else if (pageFromPath) {
+      syncEmailFromSession();
       setPage(pageFromPath);
       setLoading(false);
     } else if (pageFromQuery) {
+      syncEmailFromSession();
       setPage(pageFromQuery);
       setLoading(false);
     } else {
@@ -180,13 +201,15 @@ function DashboardApp() {
   const renderPage = () => {
     switch(page){
       case "signup":
-        return <Signup data={data.signup} setPage={setPage} />
+        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} />
       case "signin":
         return <Singin data={data.signin} setPage={setPage} />
       case "terms":
         return <Terms data={data.terms} setPage={setPage}/>
       case "privacy":
         return <PrivacyPolicy data={data.privacy} setPage={setPage}/>
+      case "fleet-signup":
+        return <FleetSignup setPage={setPage} setFleetPage={() => setPage("fleet-content")} />
       case "fleet-content":
         return <FleetContent setPage={setPage} />
       case "otplink":
@@ -200,13 +223,13 @@ function DashboardApp() {
       case "confirm-email":
         return <ConfirmEmail data={data.confirmEmail} setPage={setPage} email={email} />
       case "company-info":
-        return <CompanyInfo data={data.companyInfo} setPage={setPage} />
+        return <CompanyInfo data={data.companyInfo} setPage={setPage} email={email} />
       case "drivers-download":
         return <DriverAppNotice setPage={setPage} />
       case "content":
         return <Content data={data.content} />
       default:
-        return <Signup data={data.signup} setPage={setPage} />
+        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} />
     }
   }
   return (

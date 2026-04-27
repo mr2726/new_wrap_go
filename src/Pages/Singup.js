@@ -3,7 +3,7 @@ import "../App.css";
 import { MdCheckCircleOutline  } from "react-icons/md";
 import { supabase } from "../data/supabase";
 
-function Signup({data, setPage}) {
+function Signup({data, setPage, setEmail}) {
     const [formData, setFormData] = useState({});
     const [error, setError] = useState("");
     const [passNotValid, setPassNotValid] = useState(false);
@@ -63,8 +63,10 @@ function Signup({data, setPage}) {
 
         setIsSubmitting(true);
 
+        const normalizedEmail = (formData.email || "").trim().toLowerCase();
+
         const { error: signUpError } = await supabase.auth.signUp({
-            email: (formData.email || "").trim().toLowerCase(),
+            email: normalizedEmail,
             password: formData.password,
             options: {
                 emailRedirectTo: resolveEmailRedirectTo(),
@@ -76,6 +78,10 @@ function Signup({data, setPage}) {
         if (signUpError) {
             setError(signUpError.message || "Signup failed.");
             return;
+        }
+
+        if (setEmail) {
+            setEmail(normalizedEmail);
         }
 
         setPage("confirm-email");

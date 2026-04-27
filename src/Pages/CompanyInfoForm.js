@@ -1,11 +1,28 @@
 import "../App.css";
 import Logo from "../Components/Logo";
 import { supabase } from "../data/supabase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function CompanyInfo ({data, setPage}) {
+function CompanyInfo ({data, setPage, email}) {
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [resolvedEmail, setResolvedEmail] = useState(email || "");
+
+    useEffect(() => {
+        if (email) {
+            setResolvedEmail(email);
+            return;
+        }
+
+        const loadUserEmail = async () => {
+            const { data: authData } = await supabase.auth.getUser();
+            if (authData?.user?.email) {
+                setResolvedEmail(authData.user.email);
+            }
+        };
+
+        loadUserEmail();
+    }, [email]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -111,7 +128,7 @@ function CompanyInfo ({data, setPage}) {
                         name="email"
                         placeholder={data.fields.email.placeholder}
                         type="email"
-                        value="Will be filled from your verified account"
+                        value={resolvedEmail}
                         required
                         disabled
                     />
