@@ -19,6 +19,105 @@ import DriverAppNotice from './Pages/DriverAppNotice';
 /* ========================================================================== */
 import FleetContent from './Pages/Fleet/FleetContent';
 
+const isMissingColumnError = (error) => {
+  const message = (error?.message || "").toLowerCase();
+  return message.includes("column") || message.includes("does not exist");
+};
+
+const getAccountDestination = async (user) => {
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("auntufication")
+    .eq("userid", user.id)
+    .maybeSingle();
+
+  if (!profileError && profile) {
+    return "content";
+  }
+
+  const { data: fleet, error: fleetError } = await supabase
+    .from("fleets")
+    .select("userid")
+    .eq("userid", user.id)
+    .maybeSingle();
+
+  if (!fleetError && fleet) {
+    return "fleet-content";
+  }
+
+  const { data: driverByUserId, error: driverByUserIdError } = await supabase
+    .from("drivers")
+    .select("id")
+    .eq("userid", user.id)
+    .maybeSingle();
+
+  if (!driverByUserIdError && driverByUserId) {
+    return "drivers-download";
+  }
+
+  if (driverByUserIdError && !isMissingColumnError(driverByUserIdError)) {
+    return "signin";
+  }
+
+  const { data: driverByEmail, error: driverByEmailError } = await supabase
+    .from("drivers")
+    .select("id")
+    .eq("email", (user.email || "").toLowerCase())
+    .maybeSingle();
+
+  if (!driverByEmailError && driverByEmail) {
+    return "drivers-download";
+  }
+
+  if (driverByEmailError && !isMissingColumnError(driverByEmailError)) {
+    return "signin";
+  }
+
+  return "company-info";
+};
+
+const resolveAuthPage = async (session) => {
+  if (!session?.user) {
+    return "signin";
+  }
+
+  if (!session.user.email_confirmed_at) {
+    return "confirm-email";
+  }
+
+  return getAccountDestination(session.user);
+};
+
+const resolvePageFromQuery = () => {
+  const params = new URLSearchParams(window.location.search);
+  const view = (params.get("view") || "").toLowerCase();
+
+  const map = {
+    signin: "signin",
+    signup: "signup",
+    terms: "terms",
+    privacy: "privacy",
+    "reset-password": "reset",
+    "company-info": "company-info",
+    "confirm-email": "confirm-email",
+    fleet: "fleet-content",
+    "fleet-content": "fleet-content",
+    "drivers-download": "drivers-download",
+  };
+
+  return map[view] || null;
+};
+
+const resolvePageFromPath = () => {
+  const path = (window.location.pathname || "").toLowerCase();
+
+  if (path === "/fleet/sigup" || path === "/fleet/signup") {
+    return "fleet-content";
+  }
+
+  return null;
+};
+
 /**
  * DashboardApp компонент
  * Основное приложение с аутентификацией и навигацией
@@ -28,105 +127,6 @@ function DashboardApp() {
   const [page, setPage] = useState("landing");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
-
-  const isMissingColumnError = (error) => {
-    const message = (error?.message || "").toLowerCase();
-    return message.includes("column") || message.includes("does not exist");
-  };
-
-  const getAccountDestination = async (user) => {
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("auntufication")
-      .eq("userid", user.id)
-      .maybeSingle();
-
-    if (!profileError && profile) {
-      return "content";
-    }
-
-    const { data: fleet, error: fleetError } = await supabase
-      .from("fleets")
-      .select("userid")
-      .eq("userid", user.id)
-      .maybeSingle();
-
-    if (!fleetError && fleet) {
-      return "fleet-content";
-    }
-
-    const { data: driverByUserId, error: driverByUserIdError } = await supabase
-      .from("drivers")
-      .select("id")
-      .eq("userid", user.id)
-      .maybeSingle();
-
-    if (!driverByUserIdError && driverByUserId) {
-      return "drivers-download";
-    }
-
-    if (driverByUserIdError && !isMissingColumnError(driverByUserIdError)) {
-      return "signin";
-    }
-
-    const { data: driverByEmail, error: driverByEmailError } = await supabase
-      .from("drivers")
-      .select("id")
-      .eq("email", (user.email || "").toLowerCase())
-      .maybeSingle();
-
-    if (!driverByEmailError && driverByEmail) {
-      return "drivers-download";
-    }
-
-    if (driverByEmailError && !isMissingColumnError(driverByEmailError)) {
-      return "signin";
-    }
-
-    return "company-info";
-  };
-
-  const resolveAuthPage = async (session) => {
-    if (!session?.user) {
-      return "signin";
-    }
-
-    if (!session.user.email_confirmed_at) {
-      return "confirm-email";
-    }
-
-    return getAccountDestination(session.user);
-  };
-
-  const resolvePageFromQuery = () => {
-    const params = new URLSearchParams(window.location.search);
-    const view = (params.get("view") || "").toLowerCase();
-
-    const map = {
-      signin: "signin",
-      signup: "signup",
-      terms: "terms",
-      privacy: "privacy",
-      "reset-password": "reset",
-      "company-info": "company-info",
-      "confirm-email": "confirm-email",
-      fleet: "fleet-content",
-      "fleet-content": "fleet-content",
-      "drivers-download": "drivers-download",
-    };
-
-    return map[view] || null;
-  };
-
-  const resolvePageFromPath = () => {
-    const path = (window.location.pathname || "").toLowerCase();
-
-    if (path === "/fleet/sigup" || path === "/fleet/signup") {
-      return "fleet-content";
-    }
-
-    return null;
-  };
 
   useEffect(() => {
     const hash = window.location.hash;
