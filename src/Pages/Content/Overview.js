@@ -151,11 +151,28 @@ function Overview ({data, setPage}) {
                             )}
                         </div>
                         <div className="budget__left">
-                            <div className="budget__left--info">
-                                <p className="budget__left--info--procent">{displayPercent}%</p>
-                            </div>
-                            <div className="budget__left--loader">
-                                <div className="budget__left--loader--fill" style={{width: `${displayPercent}%`}}></div>
+                            <div className="budget__circle-loader">
+                                <svg viewBox="0 0 100 100" className="budget__circle-svg">
+                                    <circle
+                                        className="budget__circle-bg"
+                                        cx="50" cy="50" r="42"
+                                        fill="none"
+                                        strokeWidth="8"
+                                    />
+                                    <circle
+                                        className="budget__circle-fill"
+                                        cx="50" cy="50" r="42"
+                                        fill="none"
+                                        strokeWidth="8"
+                                        strokeDasharray="263.89"
+                                        strokeDashoffset={263.89 * (1 - displayPercent / 100)}
+                                        strokeLinecap="round"
+                                        transform="rotate(-90 50 50)"
+                                    />
+                                </svg>
+                                <div className="budget__circle-label">
+                                    <p className="budget__left--info--procent">{displayPercent}%</p>
+                                </div>
                             </div>
                         </div>
                         <p className="budget__left--info--title">{data.budgetOverview.loadbarTitle}</p>
