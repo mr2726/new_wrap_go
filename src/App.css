@@ -1960,6 +1960,12 @@ select option{
   border: 1px solid var(--primary-color);
 }
 
+.billing__main_content{
+  width: 100%;
+  display: flex;
+  gap: 2em;
+}
+
 .next-title{
   display: flex;
   align-items: center;
@@ -2115,7 +2121,7 @@ select option{
   justify-content: center;
   gap: 0.5em;
   background-color: var(--block-bg);
-  width: calc(20% - 10px);
+  width: calc((100%/3) - 10px);
   padding: 2em;
   margin-top: 40px;
   border-radius: 2em;
@@ -2150,15 +2156,15 @@ select option{
 }
 
 .masterIcon{
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
   background: url("./assets/masterCardLogo.png") no-repeat center top / cover;
 }
 
 .arcaIcon{
   display: block;
-  width: 122px;
-  height: 32px;
+  width: 60px;
+  height: 15px;
   flex-shrink: 0;
   background-image: url("./assets/arca.png");
   background-repeat: no-repeat;
@@ -2175,6 +2181,45 @@ select option{
   background-color: var(--primary-color-light);
 }
 
+.billing__sidebar{
+  width: 350px;
+}
+
+.billing__sidebar--notes, .billing__sidebar--contact{
+  background-color: var(--block-bg);
+  padding: 2em;
+  border-radius: 1em;
+  margin-bottom: 2em;
+}
+
+.billing__sidebar--notes-p{
+  color: var(--sign-secondary-color);
+  font-size: 1.3em;
+  margin-top: 1em;
+}
+
+.checkwithtext{
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 1em;
+}
+
+.contact__button{
+  color: var(--text-color);
+  font-size: 1.2em;
+  border: 1px solid var(--input-border);
+  background-color: transparent;
+  border-radius: 1em;
+  padding: 1em 2em;
+  margin-top: 2em;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.contact__button:hover{
+  background-color: var(--input-border);
+}
 
 /* Invoice History */
 .invoice-history{

@@ -13,6 +13,7 @@ import { IoCard } from "react-icons/io5";
 import { RiBankFill } from "react-icons/ri";
 import { FaCheckCircle } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
+import { FaRegCheckCircle } from "react-icons/fa";
 
 function Billing() {
     const [loading, setLoading] = useState(true);
@@ -337,89 +338,107 @@ function Billing() {
                 <p className="description">Direct invoice payment and transaction history.</p>
             </div>
             
-            <div className="account__balance">
-                <div>
-                    <p className="label">Account balance</p>
-                    <h2 className="title">{formatAmount(balance)} ֏</h2>
-                    <p className="description">Available balance for campaigns</p>
-                </div>
-                <button className="cta">+ Add Funds</button>
-            </div>
-
-
-
-
-
-            {shouldShowTaxInfo && (
-                <div className="tax_info">
-                    <div className="tax_info__info">
-                        <div className="warn"><PiWarningOctagonBold fontSize={18} className="warn__icon"/></div>
+            <div className="billing__main_content">
+                <div style={{width: "100%"}}>
+                    <div className="account__balance">
                         <div>
-                            <p className="warn__title">Tax Information Required</p>
-                            <p className="description">Please confirm your Company TIN (ՀՎՀՀ) to generate your Tax Invoice.</p>
+                            <p className="label">Account balance</p>
+                            <h2 className="title">{formatAmount(balance)} ֏</h2>
+                            <p className="description">Available balance for campaigns</p>
+                        </div>
+                        <button className="cta">+ Add Funds</button>
+                    </div>
+
+                    {shouldShowTaxInfo && (
+                        <div className="tax_info">
+                            <div className="tax_info__info">
+                                <div className="warn"><PiWarningOctagonBold fontSize={18} className="warn__icon"/></div>
+                                <div>
+                                    <p className="warn__title">Tax Information Required</p>
+                                    <p className="description">Please confirm your Company TIN (ՀՎՀՀ) to generate your Tax Invoice.</p>
+                                </div>
+                            </div>
+                            <div style={{display: "flex"}}>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={10}
+                                    pattern="[0-9]*"
+                                    placeholder="Company TIN (ՀՎՀՀ)"
+                                    className="signup_form__form--input"
+                                    style={{margin: 0}}
+                                    value={taxInput}
+                                    onChange={handleTaxInputChange}
+                                />
+                                <button
+                                    className="tax__button"
+                                    disabled={!taxInput || isSavingTax}
+                                    onClick={handleConfirmTax}
+                                    type="button"
+                                >
+                                    {isSavingTax ? "Saving..." : "Confirm"}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="addfounds">
+                        <div className="addfounds__header">
+                            <h2 className="title" style={{fontSize: "1.8em"}}>Add Founds to Your Account</h2>
+                            <p className="description" style={{fontSize: "1.4em"}}>Top up your balance to run campaigns without interruptions.</p>
+                        </div>
+                        <div className="addfounds__methods">
+
+                            <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
+                                {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                                <div style={{width: 50}}><IoCard fontSize={50} /></div>
+                                <p className="addfounds__method--title">Card Payment</p>
+                                <p className="addfounds__method--description">Visa, MasterCard, ArCa</p>
+                                {/* Logic need to change the data (Visa, Master, ArCa Icons in a row)*/}
+                                <div style={{display: "flex", gap: "1.5em", alignItems: "center"}}>
+                                    <div className="visaIcon"><SiVisa fontSize={30} color="blue" /></div>
+                                    <div className="masterIcon"></div>
+                                    <div className="arcaIcon"></div>
+                                </div>
+                            </div>
+
+                            <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
+                                {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                                <div className="idramIcon"></div>
+                                <p className="addfounds__method--title">IDram</p>
+                                <p className="addfounds__method--description">Instant payment</p>
+                                <p style={{color: "#fff", fontSize: "1.4em"}}>via Idram wallet</p>
+                            </div>
+
+                            <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
+                                {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                                <div><RiBankFill fontSize={50} /></div>
+                                <p className="addfounds__method--title">Account Transfer</p>
+                                <p className="addfounds__method--description">From bank account</p>
+                                <p className="addfounds__method--description--label">24-48 hours</p>
+                            </div>
+
                         </div>
                     </div>
-                    <div style={{display: "flex"}}>
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={10}
-                            pattern="[0-9]*"
-                            placeholder="Company TIN (ՀՎՀՀ)"
-                            className="signup_form__form--input"
-                            style={{margin: 0}}
-                            value={taxInput}
-                            onChange={handleTaxInputChange}
-                        />
-                        <button
-                            className="tax__button"
-                            disabled={!taxInput || isSavingTax}
-                            onClick={handleConfirmTax}
-                            type="button"
-                        >
-                            {isSavingTax ? "Saving..." : "Confirm"}
-                        </button>
+                </div>
+
+
+                <div className="billing__sidebar">
+                    <div className="billing__sidebar--notes">
+                        <p className="title" style={{fontSize: "1.5em"}}>Why top up with wrapgo</p>
+                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> Instant campaign activation</p>
+                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> 100% secure payments</p>
+                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> Multiple payment methods</p>
+                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> 24/7 customer support</p>
+                    </div>
+                    <div className="billing__sidebar--contact">
+                        <p className="title" style={{fontSize: "1.5em"}}>Need help?</p>
+                        <p className="billing__sidebar--notes-p">Contact our support team for assistance with billing and payments.</p>
+                        <button className="contact__button">Contact Support</button>
                     </div>
                 </div>
-            )}
 
-            <div className="addfounds">
-                <div className="addfounds__header">
-                    <h2 className="title" style={{fontSize: "1.8em"}}>Add Founds to Your Account</h2>
-                    <p className="description" style={{fontSize: "1.4em"}}>Top up your balance to run campaigns without interruptions.</p>
-                </div>
-                <div className="addfounds__methods">
 
-                    <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
-                        {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
-                        <div style={{width: 50}}><IoCard fontSize={50} /></div>
-                        <p className="addfounds__method--title">Card Payment</p>
-                        <p className="addfounds__method--description">Visa, MasterCard, ArCa</p>
-                        {/* Logic need to change the data (Visa, Master, ArCa Icons in a row)*/}
-                        <div style={{display: "flex", gap: "1.5em", alignItems: "center"}}>
-                            <div className="visaIcon"><SiVisa fontSize={60} color="blue" /></div>
-                            <div className="masterIcon"></div>
-                            <div className="arcaIcon"></div>
-                        </div>
-                    </div>
-
-                    <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
-                        {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
-                        <div className="idramIcon"></div>
-                        <p className="addfounds__method--title">IDram</p>
-                        <p className="addfounds__method--description">Instant payment</p>
-                        <p style={{color: "#fff", fontSize: "1.4em"}}>via Idram wallet</p>
-                    </div>
-
-                    <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
-                        {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
-                        <div><RiBankFill fontSize={50} /></div>
-                        <p className="addfounds__method--title">Account Transfer</p>
-                        <p className="addfounds__method--description">From bank account</p>
-                        <p className="addfounds__method--description--label">24-48 hours</p>
-                    </div>
-
-                </div>
             </div>
 
             {/* Invoice History */}
