@@ -1,12 +1,12 @@
 {
     "signup" : {
         "tag" : "",
-        "title" : ["Turn your fleet into a ", "revenue engine."],
-        "description" : "Join thousands of businesses using WrapGo to manage vehicle advertising campaigns with precision tracking and analytics.",
+        "title" : ["Launch Your Campaign"],
+        "description" : "Turn everyday traffic into real impressions.",
         "blocks" : [
             {
                 "title" : "Real-time GPS Tracking",
-                "description" : "Monitor your vehicles in real-time with our advanced GPS tracking system."
+                "description" : "Measure performance, understand audience reach, and optimize for better results."
             },
             {
                 "title" : "Smart Analytics",
