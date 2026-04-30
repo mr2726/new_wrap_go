@@ -140,6 +140,12 @@ function DashboardApp() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (page === "signin" || page === "signup") {
+      localStorage.clear();
+    }
+  }, [page]);
+
+  useEffect(() => {
     const syncEmailFromSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.email) {

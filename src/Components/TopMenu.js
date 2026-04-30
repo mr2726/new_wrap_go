@@ -1,7 +1,16 @@
 import "../App.css";
 import Logo from "./Logo";
+import { supabase } from "../data/supabase";
 
 function TopMenu ({sendto, setFleetPage}) {
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            console.log(error.message);
+        }
+    };
+
     return (
         <div className="top-menu">
             <Logo setPage={setFleetPage} transfer={sendto} />
@@ -9,7 +18,7 @@ function TopMenu ({sendto, setFleetPage}) {
                 <li onClick={() => setFleetPage("dashboard")}>Dashboard</li>
                 <li onClick={() => setFleetPage("billing")}>Billing</li>
             </ul>
-            <p className="logout">Logout</p>
+            <p className="logout" onClick={handleLogout}>Logout</p>
         </div>
     );
 }
