@@ -9,6 +9,10 @@ import { MdCorporateFare } from "react-icons/md";
 import { BsShieldCheck } from "react-icons/bs";
 import { supabase } from "../../data/supabase";
 import { LuCircleCheckBig } from "react-icons/lu";
+import { IoCard } from "react-icons/io5";
+import { RiBankFill } from "react-icons/ri";
+import { FaCheckCircle } from "react-icons/fa";
+import { SiVisa } from "react-icons/si";
 
 function Billing() {
     const [loading, setLoading] = useState(true);
@@ -24,6 +28,7 @@ function Billing() {
     const [cardExpiry, setCardExpiry] = useState("");
     const [cardCvc, setCardCvc] = useState("");
     const [cardHolder, setCardHolder] = useState("");
+    const [balance, setBalance] = useState(null);
 
     useEffect(() => {
         const initPage = async () => {
@@ -38,16 +43,17 @@ function Billing() {
 
                 const { data: profileRow, error: profileError } = await supabase
                     .from("profiles")
-                    .select("tax")
+                    .select("*")
                     .eq("userid", user.id)
                     .single();
 
                 if (profileError) {
                     console.log("Profile fetch error:", profileError.message);
                 } else {
-                    const loadedTax = profileRow?.tax || "";
+                    const loadedTax = String(profileRow?.tax || "").trim();
                     setProfileTax(loadedTax);
                     setTaxInput(loadedTax);
+                    setBalance(profileRow?.balance || 0);
                 }
 
                 const { data: pendingCampaigns, error: pendingCampaignsError } = await supabase
@@ -149,110 +155,29 @@ function Billing() {
         setCardHolder(e.target.value.toUpperCase());
     };
 
-    function renderBillingMethodDetails(isDrawer = false) {
-        switch (currentBillingMethod) {
-            case "card":
-                if (isDrawer) {
-                    return (
-                        <div className="billing_method__details billing_method__details--drawer">
-                            <div className="card-form">
-                                <div className="card-form__field card-form__field--full">
-                                    <label className="card-form__label">Card Number</label>
-                                    <input
-                                        className="card-form__input"
-                                        type="text"
-                                        inputMode="numeric"
-                                        placeholder="0000 0000 0000 0000"
-                                        value={cardNumber}
-                                        onChange={handleCardNumberChange}
-                                        maxLength={19}
-                                    />
-                                </div>
-                                <div className="card-form__row">
-                                    <div className="card-form__field">
-                                        <label className="card-form__label">Expiry Date</label>
-                                        <input
-                                            className="card-form__input"
-                                            type="text"
-                                            inputMode="numeric"
-                                            placeholder="MM/YY"
-                                            value={cardExpiry}
-                                            onChange={handleCardExpiryChange}
-                                            maxLength={5}
-                                        />
-                                    </div>
-                                    <div className="card-form__field">
-                                        <label className="card-form__label">CVC</label>
-                                        <input
-                                            className="card-form__input"
-                                            type="text"
-                                            inputMode="numeric"
-                                            placeholder="•••"
-                                            value={cardCvc}
-                                            onChange={handleCardCvcChange}
-                                            maxLength={4}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="card-form__field card-form__field--full">
-                                    <label className="card-form__label">Cardholder Name</label>
-                                    <input
-                                        className="card-form__input"
-                                        type="text"
-                                        placeholder="JOHN DOE"
-                                        value={cardHolder}
-                                        onChange={handleCardHolderChange}
-                                    />
-                                </div>
-                                <button className="tax__button card-form__submit" type="button">
-                                    <BsShieldCheck fontSize={16} style={{marginRight: 8}}/>
-                                    Pay {formatAmount(selectedInvoice?.amount)}
-                                </button>
-                            </div>
-                        </div>
-                    );
-                }
-                return (
-                    <div className="billing_method__details">
-                        <div className="billing__wrapper">
-                            <div className="billing_method__details--content">
-                                <h2 className="title">Pay securely via vPOS</h2>
-                                <p className="description">Your campaign activates the moment payment is verified.</p>
-                                <div className="sesurity">
-                                    <BsShieldCheck fontSize={18} className="highlight" style={{marginRight: 10}}/>
-                                    <p>Powered by Ameriabank</p>
-                                </div>
-                            </div>
-                            <button className="tax__button">Pay all unpaid invoices now</button>
-                        </div>
-                    </div>
-                );
-            case "idram":
-                return (
-                    <div className="billing_method__details">
-                        <div className="qr_wrapper">
-                            <div className="QR">
-                                <img src={require("../../assets/qr-code.png")} alt="IDram QR Code" className="QR__code" width={150}/>
-                            </div>
-                            <div className="billing_method__details--content">
-                                <h2 className="title">Direct-to-Bank QR Code</h2>
-                                <p className="description">Open your favorite Armenian banking app (Ameria, ACBA, Ineco, IDram, or Telcell) and scan this QR code to complete the payment.</p>
-                            </div>
-                        </div>
-                    </div>
-                );
-            case "corporate":
-                return (
-                    <div className="billing_method__details">
-                        <h2 className="title">Comming Soon</h2>
-                        {/* <p>Transfer the amount to our corporate bank account using IBAN or SWIFT.</p>
-                        <p>After making the transfer, please upload your payment receipt for approval.</p> */}
-                    </div>
-                );
-            default:
-                return null;
-        }
-    }
+    // function renderBillingMethodDetails(isDrawer = false) {
+    //     switch (currentBillingMethod) {
+    //         case "card":
+    //             if (isDrawer) {
+    //                 return (
+                        
+    //                 );
+    //             }
+    //             return (
+                    
+    //             );
+    //         case "idram":
+    //             return (
+
+    //             );
+    //         case "corporate":
+    //             return (
+
+    //             );
+    //         default:
+    //             return null;
+    //     }
+    // }
 
     const formatInvoiceDate = (dateValue) => {
         if (!dateValue) return "-";
@@ -269,7 +194,7 @@ function Billing() {
         if (amount === null || amount === undefined || amount === "") return "-";
         const numericAmount = Number(amount);
         if (Number.isNaN(numericAmount)) return `${amount}`;
-        return `${numericAmount.toLocaleString("en-US")} ֏`;
+        return `${numericAmount.toLocaleString("en-US")}`;
     };
 
     const formatLongDate = (dateValue) => {
@@ -370,7 +295,7 @@ function Billing() {
         }
     };
 
-    const shouldShowTaxInfo = !profileTax;
+    const shouldShowTaxInfo = String(profileTax || "").trim().length === 0;
 
     const getBaseInvoiceDate = () => {
         const pendingInvoice = invoices.find((invoice) => String(invoice.status || "").toLowerCase() === "pending");
@@ -400,7 +325,7 @@ function Billing() {
     const paymentDeadlineDate = getDateFromInvoicePlusDays(2);
     const campaignLaunchDate = getDateFromInvoicePlusDays(7);
     const pendingInvoicesCount = invoices.filter((invoice) => String(invoice.status || "").toLowerCase() === "pending").length;
-    const hasPendingInvoices = pendingInvoicesCount > 0;
+    // const hasPendingInvoices = pendingInvoicesCount > 0;
 
 
 
@@ -412,104 +337,90 @@ function Billing() {
                 <p className="description">Direct invoice payment and transaction history.</p>
             </div>
             
-            {!hasPendingInvoices && (
-                <div className="no_pendings_invoices">
-                    <div className="doneIcon">
-                        <LuCircleCheckBig fontSize={48} className="highlight"/>
+            <div className="account__balance">
+                <div>
+                    <p className="label">Account balance</p>
+                    <h2 className="title">{formatAmount(balance)} ֏</h2>
+                    <p className="description">Available balance for campaigns</p>
+                </div>
+                <button className="cta">+ Add Funds</button>
+            </div>
+
+
+
+
+
+            {shouldShowTaxInfo && (
+                <div className="tax_info">
+                    <div className="tax_info__info">
+                        <div className="warn"><PiWarningOctagonBold fontSize={18} className="warn__icon"/></div>
+                        <div>
+                            <p className="warn__title">Tax Information Required</p>
+                            <p className="description">Please confirm your Company TIN (ՀՎՀՀ) to generate your Tax Invoice.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="title">All Caught Up!</h2>
-                        <p className="description">There are no pending invoices to pay at this time.</p>
+                    <div style={{display: "flex"}}>
+                        <input
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={10}
+                            pattern="[0-9]*"
+                            placeholder="Company TIN (ՀՎՀՀ)"
+                            className="signup_form__form--input"
+                            style={{margin: 0}}
+                            value={taxInput}
+                            onChange={handleTaxInputChange}
+                        />
+                        <button
+                            className="tax__button"
+                            disabled={!taxInput || isSavingTax}
+                            onClick={handleConfirmTax}
+                            type="button"
+                        >
+                            {isSavingTax ? "Saving..." : "Confirm"}
+                        </button>
                     </div>
                 </div>
             )}
 
-            {hasPendingInvoices && (
-                <>
-                    <div className="current__campaign__billing">
-                        <div>
-                            <div className="next-title">
-                                <LuClock fontSize={18} className="highlight"/>
-                                <p className="highlight">Next Campaign Start Date</p>
-                            </div>
-                            <h2 className="title date">{nextCampaignStartDate}</h2>
-                            <div className="billing__notes">
-                                <LuClock fontSize={15} className="highlight"/>
-                                <p className="description">
-                                    {pendingInvoicesCount > 1
-                                        ? `You have ${pendingInvoicesCount} unpaid invoices`
-                                        : `Complete payment by ${paymentDeadlineDate} to Start your Campaign on ${campaignLaunchDate}.`
-                                    }
-                                </p>
-                            </div>
-                        </div>
+            <div className="addfounds">
+                <div className="addfounds__header">
+                    <h2 className="title" style={{fontSize: "1.8em"}}>Add Founds to Your Account</h2>
+                    <p className="description" style={{fontSize: "1.4em"}}>Top up your balance to run campaigns without interruptions.</p>
+                </div>
+                <div className="addfounds__methods">
 
-                        <div className="billing__require">
-                            <p>Amount Due</p>
-                            <p className="title billing__rate">{formattedPendingCampaignAmount} <span>֏</span></p>
-                            <p>INV-2026-001</p>
-                        </div>
-                    </div>
-                    {/* Shows only when profiles.tax is empty */}
-                    {shouldShowTaxInfo && (
-                        <div className="tax_info">
-                            <div className="tax_info__info">
-                                <div className="warn"><PiWarningOctagonBold fontSize={18} className="warn__icon"/></div>
-                                <div>
-                                    <p className="warn__title">Tax Information Required</p>
-                                    <p className="description">Please confirm your Company TIN (ՀՎՀՀ) to generate your Tax Invoice.</p>
-                                </div>
-                            </div>
-                            <div>
-                                <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    maxLength={10}
-                                    pattern="[0-9]*"
-                                    placeholder="Company TIN (ՀՎՀՀ)"
-                                    className="signup_form__form--input"
-                                    style={{margin: 0}}
-                                    value={taxInput}
-                                    onChange={handleTaxInputChange}
-                                />
-                                <button
-                                    className="tax__button"
-                                    disabled={!taxInput || isSavingTax}
-                                    onClick={handleConfirmTax}
-                                    type="button"
-                                >
-                                    {isSavingTax ? "Saving..." : "Confirm"}
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="billing_method">
-                        <div className={`billing_method__block ${currentBillingMethod === "card" ? "billing_method__block--active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
-                            <IoMdCard fontSize={38} className="highlight"/>
-                            <h3 className="title" style={{fontSize: 18}}>Credit/Debit Card</h3>
-                            <p className="description" style={{fontSize: 12}}>Visa, MasterCard, ArCa</p>
-                            <h4 className="highlight" style={{fontSize: 15}}>Activate Instantly</h4>
-                        </div>
-
-                        <div className={`billing_method__block ${currentBillingMethod === "idram" ? "billing_method__block--active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
-                            <IoPhonePortraitOutline fontSize={38} className="highlight"/>
-                            <h3 className="title" style={{fontSize: 18}}>IDram</h3>
-                            <p className="description" style={{fontSize: 12}}>Scan with IDram</p>
-                            <h4 className="highlight" style={{fontSize: 15}}>Pay via Mobile App</h4>
-                        </div>
-
-                        <div className={`billing_method__block ${currentBillingMethod === "corporate" ? "billing_method__block--active" : ""}`} onClick={() => setCurrentBillingMethod("corporate")}>
-                            <MdCorporateFare fontSize={38} className="highlight"/>
-                            <h3 className="title" style={{fontSize: 18}}>Corporate Bank Transfer</h3>
-                            <p className="description" style={{fontSize: 12}}>Account Number</p>
-                            <h4 className="highlight" style={{fontSize: 15}}>Upload Receipt for Approval</h4>
+                    <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
+                        {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                        <div style={{width: 50}}><IoCard fontSize={50} /></div>
+                        <p className="addfounds__method--title">Card Payment</p>
+                        <p className="addfounds__method--description">Visa, MasterCard, ArCa</p>
+                        {/* Logic need to change the data (Visa, Master, ArCa Icons in a row)*/}
+                        <div style={{display: "flex", gap: "1.5em", alignItems: "center"}}>
+                            <div className="visaIcon"><SiVisa fontSize={60} color="blue" /></div>
+                            <div className="masterIcon"></div>
+                            <div className="arcaIcon"></div>
                         </div>
                     </div>
 
-                    {renderBillingMethodDetails()}
-                </>
-            )}
+                    <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
+                        {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                        <div className="idramIcon"></div>
+                        <p className="addfounds__method--title">IDram</p>
+                        <p className="addfounds__method--description">Instant payment</p>
+                        <p style={{color: "#fff", fontSize: "1.4em"}}>via Idram wallet</p>
+                    </div>
+
+                    <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
+                        {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                        <div><RiBankFill fontSize={50} /></div>
+                        <p className="addfounds__method--title">Account Transfer</p>
+                        <p className="addfounds__method--description">From bank account</p>
+                        <p className="addfounds__method--description--label">24-48 hours</p>
+                    </div>
+
+                </div>
+            </div>
 
             {/* Invoice History */}
             <div className="invoice-history">
@@ -615,42 +526,6 @@ function Billing() {
                                 <p className="invoice-drawer__value">{getDueDate(selectedInvoice.created_at)}</p>
                             </div>
                         </div>
-
-                        {String(selectedInvoice.status || "").toLowerCase() === "pending" && (
-                            <>
-                                <div className="invoice-drawer__separator" />
-                                <div className="billing_method billing_method--drawer">
-                                    <div
-                                        className={`billing_method__block ${currentBillingMethod === "card" ? "billing_method__block--active" : ""}`}
-                                        onClick={() => setCurrentBillingMethod("card")}
-                                    >
-                                        <IoMdCard fontSize={38} className="highlight"/>
-                                        <h3 className="title" style={{fontSize: 18}}>Credit/Debit Card</h3>
-                                        <p className="description" style={{fontSize: 12}}>Visa, MasterCard, ArCa</p>
-                                        <h4 className="highlight" style={{fontSize: 15}}>Activate Instantly</h4>
-                                    </div>
-                                    <div
-                                        className={`billing_method__block ${currentBillingMethod === "idram" ? "billing_method__block--active" : ""}`}
-                                        onClick={() => setCurrentBillingMethod("idram")}
-                                    >
-                                        <IoPhonePortraitOutline fontSize={38} className="highlight"/>
-                                        <h3 className="title" style={{fontSize: 18}}>IDram</h3>
-                                        <p className="description" style={{fontSize: 12}}>Scan with IDram</p>
-                                        <h4 className="highlight" style={{fontSize: 15}}>Pay via Mobile App</h4>
-                                    </div>
-                                    <div
-                                        className={`billing_method__block ${currentBillingMethod === "corporate" ? "billing_method__block--active" : ""}`}
-                                        onClick={() => setCurrentBillingMethod("corporate")}
-                                    >
-                                        <MdCorporateFare fontSize={38} className="highlight"/>
-                                        <h3 className="title" style={{fontSize: 18}}>Corporate Bank Transfer</h3>
-                                        <p className="description" style={{fontSize: 12}}>Account Number</p>
-                                        <h4 className="highlight" style={{fontSize: 15}}>Upload Receipt for Approval</h4>
-                                    </div>
-                                </div>
-                                {renderBillingMethodDetails(true)}
-                            </>
-                        )}
                     </aside>
                 </div>
             )}
