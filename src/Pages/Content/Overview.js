@@ -84,8 +84,6 @@ function Overview ({data, setPage}) {
                 return;
             }
 
-            setCampaignData(campaigns || []);
-
             // profile
             const { data: profileData, error: profileError } = await supabase
                 .from("profiles")
@@ -101,11 +99,18 @@ function Overview ({data, setPage}) {
             // setProfile(profileData);
 
             // drivers
-            const campaignIds = campaigns.map(c => c.id);
+            const campaignIds = (campaigns || []).map(c => c.id);
+
+            if (!campaignIds.length) {
+                setCampaignData([]);
+                setTotalDistance(0);
+                setLoading(false);
+                return;
+            }
 
             const { data: drivers, error: driversError } = await supabase
                 .from("drivers")
-                .select("totaldistance")
+                .select("contractid, totaldistance")
                 .in("contractid", campaignIds);
             
             if(driversError){
@@ -113,10 +118,41 @@ function Overview ({data, setPage}) {
                 return
             }
 
-            const total = drivers.reduce((sum, t) => {
+            const driverCountByCampaign = (drivers || []).reduce((acc, driver) => {
+                const campaignId = driver.contractid;
+                if (!campaignId) return acc;
+                acc[campaignId] = (acc[campaignId] || 0) + 1;
+                return acc;
+            }, {});
+
+            const campaignsWithDriverCount = (campaigns || []).map((campaign) => ({
+                ...campaign,
+                driverCount: driverCountByCampaign[campaign.id] || 0,
+            }));
+
+            const countUpdates = campaignsWithDriverCount
+                .filter((campaign) => (campaign.driverCount || 0) !== (campaigns.find((item) => item.id === campaign.id)?.driverCount || 0))
+                .map((campaign) =>
+                    supabase
+                        .from("campaigns")
+                        .update({ driverCount: campaign.driverCount })
+                        .eq("id", campaign.id)
+                );
+
+            if (countUpdates.length > 0) {
+                const updateResults = await Promise.all(countUpdates);
+                updateResults.forEach(({ error }) => {
+                    if (error) {
+                        console.warn("Driver count update error:", error.message);
+                    }
+                });
+            }
+
+            const total = (drivers || []).reduce((sum, t) => {
                 return sum + parseFloat(t.totaldistance || 0);
             }, 0);
 
+            setCampaignData(campaignsWithDriverCount);
             setTotalDistance(total);
             setLoading(false);
         };

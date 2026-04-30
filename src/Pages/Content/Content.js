@@ -10,7 +10,7 @@ import Billing from "./Billing";
 import Contacts from "./Contacts";
 
 function Content({data}) {
-    const [page, setPage] = useState("analytics");
+    const [page, setPage] = useState("overview");
 
     const renderPages = () => {
         switch(page) {
