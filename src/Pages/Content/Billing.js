@@ -1,14 +1,14 @@
 import "../../App.css";
 import { useEffect, useState } from "react";
 import Loader from "../../Components/Loader";
-import { LuClock } from "react-icons/lu";
+// import { LuClock } from "react-icons/lu";
 import { PiWarningOctagonBold } from "react-icons/pi";
-import { IoMdCard } from "react-icons/io";
-import { IoPhonePortraitOutline } from "react-icons/io5";
-import { MdCorporateFare } from "react-icons/md";
-import { BsShieldCheck } from "react-icons/bs";
+// import { IoMdCard } from "react-icons/io";
+// import { IoPhonePortraitOutline } from "react-icons/io5";
+// import { MdCorporateFare } from "react-icons/md";
+// import { BsShieldCheck } from "react-icons/bs";
 import { supabase } from "../../data/supabase";
-import { LuCircleCheckBig } from "react-icons/lu";
+// import { LuCircleCheckBig } from "react-icons/lu";
 import { IoCard } from "react-icons/io5";
 import { RiBankFill } from "react-icons/ri";
 import { FaCheckCircle } from "react-icons/fa";
@@ -22,14 +22,17 @@ function Billing() {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [profileTax, setProfileTax] = useState(null);
     const [taxInput, setTaxInput] = useState("");
-    const [pendingCampaignAmount, setPendingCampaignAmount] = useState(0);
+    // const [pendingCampaignAmount, setPendingCampaignAmount] = useState(0);
     const [isSavingTax, setIsSavingTax] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
-    const [cardNumber, setCardNumber] = useState("");
-    const [cardExpiry, setCardExpiry] = useState("");
-    const [cardCvc, setCardCvc] = useState("");
-    const [cardHolder, setCardHolder] = useState("");
+    // const [cardNumber, setCardNumber] = useState("");
+    // const [cardExpiry, setCardExpiry] = useState("");
+    // const [cardCvc, setCardCvc] = useState("");
+    // const [cardHolder, setCardHolder] = useState("");
     const [balance, setBalance] = useState(null);
+    const [addFunds, setAddFunds] = useState(false);
+    const [topupAmount, setTopupAmount] = useState("");
+    const [payingInvoiceId, setPayingInvoiceId] = useState(null);
 
     useEffect(() => {
         const initPage = async () => {
@@ -57,33 +60,33 @@ function Billing() {
                     setBalance(profileRow?.balance || 0);
                 }
 
-                const { data: pendingCampaigns, error: pendingCampaignsError } = await supabase
-                    .from("campaigns")
-                    .select("budget")
-                    .eq("ownerid", user.id)
-                    .eq("status", "pending");
+                // const { data: pendingCampaigns, error: pendingCampaignsError } = await supabase
+                //     .from("campaigns")
+                //     .select("budget")
+                //     .eq("ownerid", user.id)
+                //     .eq("status", "pending");
 
-                if (pendingCampaignsError) {
-                    console.log("Pending campaigns fetch error:", pendingCampaignsError.message);
-                    setPendingCampaignAmount(0);
-                } else {
-                    const totalPendingAmount = (pendingCampaigns || []).reduce((sum, campaign) => {
-                        const rawBudget = campaign?.budget;
-                        if (rawBudget === null || rawBudget === undefined || rawBudget === "") {
-                            return sum;
-                        }
+                // // if (pendingCampaignsError) {
+                //     console.log("Pending campaigns fetch error:", pendingCampaignsError.message);
+                //     // setPendingCampaignAmount(0);
+                // } else {
+                //     // const totalPendingAmount = (pendingCampaigns || []).reduce((sum, campaign) => {
+                //     //     const rawBudget = campaign?.budget;
+                //     //     if (rawBudget === null || rawBudget === undefined || rawBudget === "") {
+                //     //         return sum;
+                //     //     }
 
-                        const numericBudget = Number(
-                            typeof rawBudget === "number"
-                                ? rawBudget
-                                : String(rawBudget).replace(/[^0-9.-]/g, "")
-                        );
+                //     //     const numericBudget = Number(
+                //     //         typeof rawBudget === "number"
+                //     //             ? rawBudget
+                //     //             : String(rawBudget).replace(/[^0-9.-]/g, "")
+                //     //     );
 
-                        return Number.isNaN(numericBudget) ? sum : sum + numericBudget;
-                    }, 0);
+                //     //     return Number.isNaN(numericBudget) ? sum : sum + numericBudget;
+                //     // }, 0);
 
-                    setPendingCampaignAmount(totalPendingAmount);
-                }
+                //     // setPendingCampaignAmount(totalPendingAmount);
+                // }
 
                 const { data: invoiceRows, error: invoiceError } = await supabase
                     .from("invoices")
@@ -133,28 +136,28 @@ function Billing() {
         initPage();
     }, []);
 
-    const formattedPendingCampaignAmount = pendingCampaignAmount.toLocaleString("en-US");
+    // const formattedPendingCampaignAmount = pendingCampaignAmount.toLocaleString("en-US");
 
 
-    const handleCardNumberChange = (e) => {
-        const raw = e.target.value.replace(/\D/g, "").slice(0, 16);
-        const formatted = raw.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
-        setCardNumber(formatted);
-    };
+    // const handleCardNumberChange = (e) => {
+    //     const raw = e.target.value.replace(/\D/g, "").slice(0, 16);
+    //     const formatted = raw.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+    //     setCardNumber(formatted);
+    // };
 
-    const handleCardExpiryChange = (e) => {
-        const raw = e.target.value.replace(/\D/g, "").slice(0, 4);
-        const formatted = raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw;
-        setCardExpiry(formatted);
-    };
+    // const handleCardExpiryChange = (e) => {
+    //     const raw = e.target.value.replace(/\D/g, "").slice(0, 4);
+    //     const formatted = raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw;
+    //     setCardExpiry(formatted);
+    // };
 
-    const handleCardCvcChange = (e) => {
-        setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
-    };
+    // const handleCardCvcChange = (e) => {
+    //     setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
+    // };
 
-    const handleCardHolderChange = (e) => {
-        setCardHolder(e.target.value.toUpperCase());
-    };
+    // const handleCardHolderChange = (e) => {
+    //     setCardHolder(e.target.value.toUpperCase());
+    // };
 
     // function renderBillingMethodDetails(isDrawer = false) {
     //     switch (currentBillingMethod) {
@@ -196,6 +199,17 @@ function Billing() {
         const numericAmount = Number(amount);
         if (Number.isNaN(numericAmount)) return `${amount}`;
         return `${numericAmount.toLocaleString("en-US")}`;
+    };
+
+    const parseAmount = (value) => {
+        if (value === null || value === undefined || value === "") return 0;
+
+        const normalized =
+            typeof value === "number"
+                ? value
+                : Number(String(value).replace(/[^0-9.-]/g, ""));
+
+        return Number.isNaN(normalized) ? 0 : normalized;
     };
 
     const formatLongDate = (dateValue) => {
@@ -296,39 +310,146 @@ function Billing() {
         }
     };
 
+    const handleTopupAmountChange = (event) => {
+        const numericValue = event.target.value.replace(/\D/g, "").slice(0, 10);
+        setTopupAmount(numericValue);
+    };
+
+    const handlePayNow = async (event, invoice) => {
+        event.stopPropagation();
+
+        if (!invoice?.id || !currentUserId) {
+            return;
+        }
+
+        const invoiceAmount = parseAmount(invoice.amount);
+        const currentBalance = parseAmount(balance);
+
+        if (invoiceAmount <= 0) {
+            alert("Invalid invoice amount.");
+            return;
+        }
+
+        if (currentBalance < invoiceAmount) {
+            alert("Insufficient balance.");
+            return;
+        }
+
+        const nextBalance = currentBalance - invoiceAmount;
+        setPayingInvoiceId(invoice.id);
+
+        try {
+            const { error: balanceError } = await supabase
+                .from("profiles")
+                .update({ balance: nextBalance })
+                .eq("userid", currentUserId);
+
+            if (balanceError) {
+                console.log("Balance update error:", balanceError.message);
+                alert("Failed to update balance. Please try again.");
+                return;
+            }
+
+            const { error: invoiceError } = await supabase
+                .from("invoices")
+                .update({ status: "paid" })
+                .eq("id", invoice.id);
+
+            if (invoiceError) {
+                // Best-effort rollback if invoice status update failed.
+                await supabase
+                    .from("profiles")
+                    .update({ balance: currentBalance })
+                    .eq("userid", currentUserId);
+
+                console.log("Invoice status update error:", invoiceError.message);
+                alert("Failed to mark invoice as paid. Please try again.");
+                return;
+            }
+
+            setBalance(nextBalance);
+            setInvoices((prev) =>
+                prev.map((item) =>
+                    item.id === invoice.id ? { ...item, status: "paid" } : item
+                )
+            );
+            setSelectedInvoice((prev) =>
+                prev?.id === invoice.id ? { ...prev, status: "paid" } : prev
+            );
+        } finally {
+            setPayingInvoiceId(null);
+        }
+    };
+
     const shouldShowTaxInfo = String(profileTax || "").trim().length === 0;
 
-    const getBaseInvoiceDate = () => {
-        const pendingInvoice = invoices.find((invoice) => String(invoice.status || "").toLowerCase() === "pending");
-        const sourceDate = pendingInvoice?.created_at || invoices[0]?.created_at;
+    // const getBaseInvoiceDate = () => {
+    //     const pendingInvoice = invoices.find((invoice) => String(invoice.status || "").toLowerCase() === "pending");
+    //     const sourceDate = pendingInvoice?.created_at || invoices[0]?.created_at;
 
-        if (!sourceDate) return null;
+    //     if (!sourceDate) return null;
 
-        const parsedDate = new Date(sourceDate);
-        if (Number.isNaN(parsedDate.getTime())) return null;
-        return parsedDate;
-    };
+    //     const parsedDate = new Date(sourceDate);
+    //     if (Number.isNaN(parsedDate.getTime())) return null;
+    //     return parsedDate;
+    // };
 
-    const getDateFromInvoicePlusDays = (daysToAdd) => {
-        const baseDate = getBaseInvoiceDate();
-        if (!baseDate) return "-";
+    // const getDateFromInvoicePlusDays = (daysToAdd) => {
+    //     const baseDate = getBaseInvoiceDate();
+    //     if (!baseDate) return "-";
 
-        const resultDate = new Date(baseDate);
-        resultDate.setDate(resultDate.getDate() + daysToAdd);
-        return resultDate.toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-        });
-    };
+    //     const resultDate = new Date(baseDate);
+    //     resultDate.setDate(resultDate.getDate() + daysToAdd);
+    //     return resultDate.toLocaleDateString("en-US", {
+    //         month: "long",
+    //         day: "numeric",
+    //         year: "numeric",
+    //     });
+    // };
 
-    const nextCampaignStartDate = getDateFromInvoicePlusDays(7);
-    const paymentDeadlineDate = getDateFromInvoicePlusDays(2);
-    const campaignLaunchDate = getDateFromInvoicePlusDays(7);
-    const pendingInvoicesCount = invoices.filter((invoice) => String(invoice.status || "").toLowerCase() === "pending").length;
+    // const nextCampaignStartDate = getDateFromInvoicePlusDays(7);
+    // const paymentDeadlineDate = getDateFromInvoicePlusDays(2);
+    // const campaignLaunchDate = getDateFromInvoicePlusDays(7);
+    // const pendingInvoicesCount = invoices.filter((invoice) => String(invoice.status || "").toLowerCase() === "pending").length;
     // const hasPendingInvoices = pendingInvoicesCount > 0;
 
-
+    const renderPaymentMethod = () => {
+        switch (currentBillingMethod) {
+            case "card":
+                return (
+                    <div className="card-payment">
+                        <p className="description">Card payment details form will be here.</p>
+                        <div>
+                            <input value={topupAmount} onChange={handleTopupAmountChange} placeholder="Enter Amount" required className="signup_form__form--input" inputMode="numeric" maxLength={10} pattern="[0-9]*" style={{width: "auto", marginRight: 10}} />
+                            <button className="cta">Proceed to Pay</button>
+                        </div>
+                        
+                    </div>
+                );
+            case "idram":
+                return (
+                    <div className="idram-payment">
+                        <p className="description">IDram payment instructions will be here.</p>
+                        <div>
+                            <input value={topupAmount} onChange={handleTopupAmountChange} placeholder="Enter Amount" required className="signup_form__form--input" inputMode="numeric" maxLength={10} pattern="[0-9]*" style={{width: "auto", marginRight: 10}} />
+                            <button className="cta">Proceed to Pay</button>
+                        </div>
+                    </div>
+                );
+            case "bank":
+                return (
+                    <div className="bank-payment">
+                        <p className="description">Bank transfer instructions will be here.</p>
+                        <div>
+                            <input value={topupAmount} onChange={handleTopupAmountChange} placeholder="Enter Amount" required className="signup_form__form--input" inputMode="numeric" maxLength={10} pattern="[0-9]*" style={{width: "auto", marginRight: 10}} />
+                            <button className="cta">Proceed to Pay</button>
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <div className="settings">
@@ -346,7 +467,7 @@ function Billing() {
                             <h2 className="title">{formatAmount(balance)} ֏</h2>
                             <p className="description">Available balance for campaigns</p>
                         </div>
-                        <button className="cta">+ Add Funds</button>
+                        <button className="cta" onClick={() => setAddFunds(!addFunds)}>+ Add Funds</button>
                     </div>
 
                     {shouldShowTaxInfo && (
@@ -382,44 +503,50 @@ function Billing() {
                         </div>
                     )}
 
-                    <div className="addfounds">
-                        <div className="addfounds__header">
-                            <h2 className="title" style={{fontSize: "1.8em"}}>Add Founds to Your Account</h2>
-                            <p className="description" style={{fontSize: "1.4em"}}>Top up your balance to run campaigns without interruptions.</p>
-                        </div>
-                        <div className="addfounds__methods">
+                    {
+                        addFunds && (
+                            <div className="addfounds">
+                                <div className="addfounds__header">
+                                    <h2 className="title" style={{fontSize: "1.8em"}}>Add Founds to Your Account</h2>
+                                    <p className="description" style={{fontSize: "1.4em"}}>Top up your balance to run campaigns without interruptions.</p>
+                                </div>
+                                <div className="addfounds__methods">
 
-                            <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
-                                {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
-                                <div style={{width: 50}}><IoCard fontSize={50} /></div>
-                                <p className="addfounds__method--title">Card Payment</p>
-                                <p className="addfounds__method--description">Visa, MasterCard, ArCa</p>
-                                {/* Logic need to change the data (Visa, Master, ArCa Icons in a row)*/}
-                                <div style={{display: "flex", gap: "1.5em", alignItems: "center"}}>
-                                    <div className="visaIcon"><SiVisa fontSize={30} color="blue" /></div>
-                                    <div className="masterIcon"></div>
-                                    <div className="arcaIcon"></div>
+                                    <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
+                                        {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                                        <div style={{width: 50}}><IoCard fontSize={50} /></div>
+                                        <p className="addfounds__method--title">Card Payment</p>
+                                        <p className="addfounds__method--description">Visa, MasterCard, ArCa</p>
+                                        <div style={{display: "flex", gap: "1.5em", alignItems: "center"}}>
+                                            <div className="visaIcon"><SiVisa fontSize={30} color="blue" /></div>
+                                            <div className="masterIcon"></div>
+                                            <div className="arcaIcon"></div>
+                                        </div>
+                                    </div>
+
+                                    <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
+                                        {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                                        <div className="idramIcon"></div>
+                                        <p className="addfounds__method--title">IDram</p>
+                                        <p className="addfounds__method--description">Instant payment</p>
+                                        <p style={{color: "#fff", fontSize: "1.4em"}}>via Idram wallet</p>
+                                    </div>
+
+                                    <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
+                                        {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
+                                        <div><RiBankFill fontSize={50} /></div>
+                                        <p className="addfounds__method--title">Account Transfer</p>
+                                        <p className="addfounds__method--description">From bank account</p>
+                                        <p className="addfounds__method--description--label">24-48 hours</p>
+                                    </div>
+
+                                </div>
+                                <div className="addfounds__details">
+                                    {renderPaymentMethod()}
                                 </div>
                             </div>
-
-                            <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
-                                {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
-                                <div className="idramIcon"></div>
-                                <p className="addfounds__method--title">IDram</p>
-                                <p className="addfounds__method--description">Instant payment</p>
-                                <p style={{color: "#fff", fontSize: "1.4em"}}>via Idram wallet</p>
-                            </div>
-
-                            <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
-                                {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
-                                <div><RiBankFill fontSize={50} /></div>
-                                <p className="addfounds__method--title">Account Transfer</p>
-                                <p className="addfounds__method--description">From bank account</p>
-                                <p className="addfounds__method--description--label">24-48 hours</p>
-                            </div>
-
-                        </div>
-                    </div>
+                        )
+                    }
                 </div>
 
 
@@ -456,6 +583,7 @@ function Billing() {
                     <div className="invoice-history__body">
                         {invoices.map((invoice) => {
                             const isPaid = String(invoice.status || "").toLowerCase() === "paid";
+                            const isPayingCurrent = payingInvoiceId === invoice.id;
 
                             return (
                                 <div
@@ -476,7 +604,13 @@ function Billing() {
                                         {isPaid ? (
                                             <button className="invoice-history__action--tax">↓ Tax Invoice</button>
                                         ) : (
-                                            <button className="invoice-history__action--paynow">Pay Now</button>
+                                            <button
+                                                className="invoice-history__action--paynow"
+                                                onClick={(event) => handlePayNow(event, invoice)}
+                                                disabled={isPayingCurrent}
+                                            >
+                                                {isPayingCurrent ? "Paying..." : "Pay Now"}
+                                            </button>
                                         )}
                                     </span>
                                 </div>

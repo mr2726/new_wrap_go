@@ -2221,6 +2221,10 @@ select option{
   background-color: var(--input-border);
 }
 
+.addfounds__details{
+  margin-top: 2em;
+}
+
 /* Invoice History */
 .invoice-history{
   width: 100%;
