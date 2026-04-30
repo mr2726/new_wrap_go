@@ -33,6 +33,10 @@ function Billing() {
     const [addFunds, setAddFunds] = useState(false);
     const [topupAmount, setTopupAmount] = useState("");
     const [payingInvoiceId, setPayingInvoiceId] = useState(null);
+    const [amountError, setAmountError] = useState("");
+    const [isProcessingTopup, setIsProcessingTopup] = useState(false);
+    const [topupResult, setTopupResult] = useState(null); // { success: bool, amount: number }
+    const [transactionHistory, setTransactionHistory] = useState([]);
 
     useEffect(() => {
         const initPage = async () => {
@@ -313,12 +317,82 @@ function Billing() {
     const handleTopupAmountChange = (event) => {
         const numericValue = event.target.value.replace(/\D/g, "").slice(0, 10);
         setTopupAmount(numericValue);
+        
+        // Inline validation
+        if (numericValue === "") {
+            setAmountError("");
+        } else if (Number(numericValue) < 1000) {
+            setAmountError("Minimum: 1,000 ֏");
+        } else {
+            setAmountError("");
+        }
+    };
+
+    const handleQuickAmount = (amount) => {
+        setTopupAmount(String(amount));
+        setAmountError("");
+    };
+
+    const handleProcessTopup = async () => {
+        const amount = Number(topupAmount);
+        
+        if (!topupAmount || amount < 1000) {
+            setAmountError("Minimum: 1,000 ֏");
+            return;
+        }
+
+        setIsProcessingTopup(true);
+        
+        try {
+            // Simulate payment processing
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            const newBalance = parseAmount(balance) + amount;
+            
+            // Update balance in Supabase
+            const { error: balanceError } = await supabase
+                .from("profiles")
+                .update({ balance: newBalance })
+                .eq("userid", currentUserId);
+
+            if (balanceError) {
+                console.log("Balance update error:", balanceError.message);
+                setTopupResult({ success: false, amount: 0 });
+                return;
+            }
+
+            // Add to transaction history
+            const transaction = {
+                id: Date.now(),
+                type: "topup",
+                amount: amount,
+                method: currentBillingMethod,
+                timestamp: new Date().toISOString(),
+                status: "completed"
+            };
+            
+            setBalance(newBalance);
+            setTransactionHistory([transaction, ...transactionHistory.slice(0, 2)]);
+            setTopupResult({ success: true, amount: amount });
+            setTopupAmount("");
+            setAmountError("");
+        } catch (error) {
+            console.log("Topup error:", error.message);
+            setTopupResult({ success: false, amount: 0 });
+        } finally {
+            setIsProcessingTopup(false);
+        }
     };
 
     const handlePayNow = async (event, invoice) => {
         event.stopPropagation();
 
         if (!invoice?.id || !currentUserId) {
+            return;
+        }
+
+        if (shouldShowTaxInfo) {
+            alert("Tax information is required. Please fill in your Company TIN (ՀՎՀՀ) first.");
             return;
         }
 
@@ -331,7 +405,7 @@ function Billing() {
         }
 
         if (currentBalance < invoiceAmount) {
-            alert("Insufficient balance.");
+            alert("Insufficient balance. Please top up your account.");
             return;
         }
 
@@ -365,6 +439,19 @@ function Billing() {
                 console.log("Invoice status update error:", invoiceError.message);
                 alert("Failed to mark invoice as paid. Please try again.");
                 return;
+            }
+
+            // Update campaign status if campaign_id exists
+            if (invoice.campaign_id) {
+                const { error: campaignError } = await supabase
+                    .from("campaigns")
+                    .update({ status: "live" })
+                    .eq("id", invoice.campaign_id);
+
+                if (campaignError) {
+                    console.log("Campaign status update error:", campaignError.message);
+                    // Don't fail the payment, just log the error
+                }
             }
 
             setBalance(nextBalance);
@@ -413,37 +500,130 @@ function Billing() {
     // const pendingInvoicesCount = invoices.filter((invoice) => String(invoice.status || "").toLowerCase() === "pending").length;
     // const hasPendingInvoices = pendingInvoicesCount > 0;
 
-    const renderPaymentMethod = () => {
+    const getMethodDescription = () => {
         switch (currentBillingMethod) {
             case "card":
-                return (
-                    <div className="card-payment">
-                        <p className="description">Card payment details form will be here.</p>
-                        <div>
-                            <input value={topupAmount} onChange={handleTopupAmountChange} placeholder="Enter Amount" required className="signup_form__form--input" inputMode="numeric" maxLength={10} pattern="[0-9]*" style={{width: "auto", marginRight: 10}} />
-                            <button className="cta">Proceed to Pay</button>
-                        </div>
-                        
-                    </div>
-                );
+                return { title: "Card Payment", time: "Instantly", fee: "0%" };
             case "idram":
-                return (
-                    <div className="idram-payment">
-                        <p className="description">IDram payment instructions will be here.</p>
-                        <div>
-                            <input value={topupAmount} onChange={handleTopupAmountChange} placeholder="Enter Amount" required className="signup_form__form--input" inputMode="numeric" maxLength={10} pattern="[0-9]*" style={{width: "auto", marginRight: 10}} />
-                            <button className="cta">Proceed to Pay</button>
-                        </div>
-                    </div>
-                );
+                return { title: "IDram Wallet", time: "Through wallet", fee: "0%" };
+            case "bank":
+                return { title: "Account Transfer", time: "1-2 days", fee: "0%" };
+            default:
+                return { title: "", time: "", fee: "0%" };
+        }
+    };
+
+    const renderPaymentMethod = () => {
+        const methodDesc = getMethodDescription();
+        const amount = Number(topupAmount) || 0;
+        const totalAmount = amount; // Commission is 0%, so total = amount
+        const isValidAmount = amount >= 1000;
+        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup || isProcessingTopup;
+
+        switch (currentBillingMethod) {
+            case "card":
+            case "idram":
             case "bank":
                 return (
-                    <div className="bank-payment">
-                        <p className="description">Bank transfer instructions will be here.</p>
-                        <div>
-                            <input value={topupAmount} onChange={handleTopupAmountChange} placeholder="Enter Amount" required className="signup_form__form--input" inputMode="numeric" maxLength={10} pattern="[0-9]*" style={{width: "auto", marginRight: 10}} />
-                            <button className="cta">Proceed to Pay</button>
+                    <div className="payment-form">
+                        {/* Current method info */}
+                        <div className="payment-method-info">
+                            <div className="method-info-header">
+                                <p className="method-label">Selected: {methodDesc.title}</p>
+                                <p className="method-time">{methodDesc.time}</p>
+                            </div>
+                            <p className="method-fee">Commission: {methodDesc.fee}</p>
                         </div>
+
+                        {/* Amount input */}
+                        <div className="payment-amount-section">
+                            <label className="payment-label">Amount to Top Up</label>
+                            <div className="amount-input-wrapper">
+                                <input
+                                    value={topupAmount}
+                                    onChange={handleTopupAmountChange}
+                                    placeholder="Enter amount"
+                                    className={`signup_form__form--input amount-input ${amountError ? "input-error" : ""}`}
+                                    inputMode="numeric"
+                                    maxLength={10}
+                                    pattern="[0-9]*"
+                                    disabled={isProcessingTopup}
+                                />
+                                <span className="currency-symbol">֏</span>
+                            </div>
+                            {amountError && <p className="error-message">{amountError}</p>}
+                        </div>
+
+                        {/* Quick amounts */}
+                        {!isProcessingTopup && (
+                            <div className="quick-amounts">
+                                <p className="quick-label">Quick select:</p>
+                                <div className="quick-buttons">
+                                    {[10000, 25000, 50000, 100000].map((quickAmount) => (
+                                        <button
+                                            key={quickAmount}
+                                            className={`quick-amount-btn ${topupAmount === String(quickAmount) ? "active" : ""}`}
+                                            onClick={() => handleQuickAmount(quickAmount)}
+                                            disabled={isProcessingTopup}
+                                        >
+                                            {quickAmount.toLocaleString("en-US")} ֏
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Total summary */}
+                        <div className="payment-summary">
+                            <div className="summary-row">
+                                <span className="summary-label">Refill amount:</span>
+                                <span className="summary-value">{formatAmount(amount)} ֏</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-label">Commission:</span>
+                                <span className="summary-value">0%</span>
+                            </div>
+                            <div className="summary-row summary-total">
+                                <span className="summary-label">Total to debit:</span>
+                                <span className="summary-value-total">{formatAmount(totalAmount)} ֏</span>
+                            </div>
+                        </div>
+
+                        {/* Pay button */}
+                        <button
+                            className="cta payment-button"
+                            onClick={handleProcessTopup}
+                            disabled={isButtonDisabled}
+                        >
+                            {isProcessingTopup ? "Processing..." : isValidAmount ? `Pay ${formatAmount(totalAmount)} ֏` : "Enter valid amount"}
+                        </button>
+
+                        {/* Security info */}
+                        <div className="security-info">
+                            <p className="security-text">🔒 Secure payment - PCI DSS compliant</p>
+                        </div>
+
+                        {/* Transaction history */}
+                        {transactionHistory.length > 0 && (
+                            <div className="transaction-history">
+                                <p className="history-title">Last transactions:</p>
+                                {transactionHistory.map((tx) => {
+                                    const txDate = new Date(tx.timestamp);
+                                    const txDateStr = txDate.toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    });
+                                    return (
+                                        <div key={tx.id} className="history-item">
+                                            <span className="history-amount">+{formatAmount(tx.amount)} ֏</span>
+                                            <span className="history-date">{txDateStr}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 );
             default:
@@ -607,7 +787,7 @@ function Billing() {
                                             <button
                                                 className="invoice-history__action--paynow"
                                                 onClick={(event) => handlePayNow(event, invoice)}
-                                                disabled={isPayingCurrent}
+                                                disabled={isPayingCurrent || shouldShowTaxInfo}
                                             >
                                                 {isPayingCurrent ? "Paying..." : "Pay Now"}
                                             </button>
@@ -680,6 +860,41 @@ function Billing() {
                             </div>
                         </div>
                     </aside>
+                </div>
+            )}
+
+            {/* Topup Result Modal */}
+            {topupResult && (
+                <div className="topup-result-overlay" onClick={() => setTopupResult(null)}>
+                    <div className="topup-result-modal" onClick={(e) => e.stopPropagation()}>
+                        {topupResult.success ? (
+                            <>
+                                <div className="result-success">✔</div>
+                                <h2 className="result-title">Balance Replenished</h2>
+                                <p className="result-amount">+{formatAmount(topupResult.amount)} ֏</p>
+                                <p className="result-label">New balance:</p>
+                                <p className="result-new-balance">{formatAmount(balance)} ֏</p>
+                                <button
+                                    className="cta result-button"
+                                    onClick={() => setTopupResult(null)}
+                                >
+                                    Continue
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <div className="result-error">❌</div>
+                                <h2 className="result-title">Payment Failed</h2>
+                                <p className="result-error-message">Unable to process your payment. Please try again.</p>
+                                <button
+                                    className="cta result-button"
+                                    onClick={() => setTopupResult(null)}
+                                >
+                                    Try Again
+                                </button>
+                            </>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

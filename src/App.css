@@ -3618,3 +3618,312 @@ select option{
     width: 100%;
   }
 }
+
+/* ===== Payment Form Styles ===== */
+.payment-form {
+  background-color: var(--block-bg);
+  padding: 2em;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.payment-method-info {
+  background-color: rgba(57, 255, 25, 0.05);
+  border-left: 3px solid var(--primary-color);
+  padding: 1.5em;
+  border-radius: 0.5em;
+}
+
+.method-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.method-label {
+  font-size: 1.4em;
+  font-family: 'LufgaBold';
+  color: var(--text-color);
+  margin: 0;
+}
+
+.method-time {
+  font-size: 1.2em;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.method-fee {
+  font-size: 1.2em;
+  color: var(--sign-secondary-color);
+  margin: 0;
+}
+
+.payment-amount-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+
+.payment-label {
+  font-size: 1.3em;
+  font-family: 'LufgaMedium';
+  color: var(--text-color);
+}
+
+.amount-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.amount-input {
+  padding-right: 3em;
+}
+
+.currency-symbol {
+  position: absolute;
+  right: 1.5em;
+  font-size: 1.5em;
+  color: var(--sign-secondary-color);
+  pointer-events: none;
+}
+
+.input-error {
+  border-color: var(--completed-status-color) !important;
+}
+
+.error-message {
+  font-size: 1.2em;
+  color: var(--completed-status-color);
+  margin: 0;
+  margin-top: -0.5em;
+}
+
+.quick-amounts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.quick-label {
+  font-size: 1.2em;
+  color: var(--sign-secondary-color);
+  margin: 0;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 0.8em;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.quick-amount-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 1em;
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  border-radius: 0.7em;
+  color: var(--sign-secondary-color);
+  font-size: 1.2em;
+  font-family: 'LufgaMedium';
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.quick-amount-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.quick-amount-btn.active {
+  background-color: var(--primary-color-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.quick-amount-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.payment-summary {
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  border-radius: 0.8em;
+  padding: 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3em;
+}
+
+.summary-label {
+  color: var(--sign-secondary-color);
+}
+
+.summary-value {
+  color: var(--text-color);
+  font-family: 'LufgaMedium';
+}
+
+.summary-total {
+  border-top: 1px solid var(--input-border);
+  padding-top: 0.8em;
+  font-family: 'LufgaBold';
+}
+
+.summary-value-total {
+  color: var(--primary-color);
+  font-size: 1.4em;
+  font-family: 'LufgaBold';
+}
+
+.payment-button {
+  width: 100%;
+  padding: 1.2em;
+  font-size: 1.5em;
+}
+
+.payment-button:disabled {
+  background-color: var(--input-border);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.security-info {
+  text-align: center;
+  padding: 1em;
+  background-color: rgba(57, 255, 25, 0.05);
+  border-radius: 0.5em;
+}
+
+.security-text {
+  font-size: 1.2em;
+  color: var(--sign-secondary-color);
+  margin: 0;
+}
+
+.transaction-history {
+  background-color: var(--budget-block-bg);
+  padding: 1.5em;
+  border-radius: 0.8em;
+}
+
+.history-title {
+  font-size: 1.3em;
+  font-family: 'LufgaMedium';
+  color: var(--text-color);
+  margin: 0 0 1em 0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8em 0;
+  border-bottom: 1px solid var(--input-border);
+  font-size: 1.2em;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-amount {
+  color: var(--primary-color);
+  font-family: 'LufgaMedium';
+}
+
+.history-date {
+  color: var(--sign-secondary-color);
+  font-size: 1.1em;
+}
+
+/* ===== Topup Result Modal ===== */
+.topup-result-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1em;
+}
+
+.topup-result-modal {
+  background-color: var(--block-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 1.5em;
+  padding: 2.5em;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.result-success {
+  font-size: 3.5em;
+  margin-bottom: 1em;
+  display: block;
+}
+
+.result-error {
+  font-size: 3.5em;
+  margin-bottom: 1em;
+  display: block;
+}
+
+.result-title {
+  font-size: 2em;
+  font-family: 'LufgaBold';
+  color: var(--text-color);
+  margin: 0 0 1em 0;
+}
+
+.result-amount {
+  font-size: 2.5em;
+  color: var(--primary-color);
+  font-family: 'LufgaBold';
+  margin: 0 0 1.5em 0;
+}
+
+.result-label {
+  font-size: 1.3em;
+  color: var(--sign-secondary-color);
+  margin: 0 0 0.5em 0;
+}
+
+.result-new-balance {
+  font-size: 2em;
+  color: var(--text-color);
+  font-family: 'LufgaBold';
+  margin: 0 0 2em 0;
+}
+
+.result-error-message {
+  font-size: 1.3em;
+  color: var(--sign-secondary-color);
+  margin: 0 0 2em 0;
+}
+
+.result-button {
+  width: 100%;
+  padding: 1em;
+  font-size: 1.4em;
+}
