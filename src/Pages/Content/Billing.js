@@ -15,7 +15,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
 import { FaRegCheckCircle } from "react-icons/fa";
 
-function Billing() {
+function Billing({setPage}) {
     const [loading, setLoading] = useState(true);
     const [currentBillingMethod, setCurrentBillingMethod] = useState("card");
     const [invoices, setInvoices] = useState([]);
@@ -741,7 +741,7 @@ function Billing() {
                     <div className="billing__sidebar--contact">
                         <p className="title" style={{fontSize: "1.5em"}}>Need help?</p>
                         <p className="billing__sidebar--notes-p">Contact our support team for assistance with billing and payments.</p>
-                        <button className="contact__button">Contact Support</button>
+                        <button className="contact__button" onClick={() => setPage("contacts")}>Contact Support</button>
                     </div>
                 </div>
 

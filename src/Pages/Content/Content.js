@@ -25,7 +25,7 @@ function Content({data}) {
             case "contacts":
                 return <Contacts data={data.contacts} />
             case "billing":
-                return <Billing />
+                return <Billing setPage={setPage} />
             case "settings":
                 return <Settings />
             default:
