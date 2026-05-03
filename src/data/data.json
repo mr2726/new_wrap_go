@@ -515,22 +515,22 @@
                     "id" : "email",
                     "icon" : "email",
                     "title" : "Email support",
-                    "value" : "admin@wrapgo.com",
+                    "value" : "admin@wrapgo.am",
                     "meta" : "Response time: < 2 hours"
                 },
                 {
                     "id" : "phone",
                     "icon" : "phone",
                     "title" : "Direct Line",
-                    "value" : "+1 800-123-4567",
-                    "meta" : "Mon - Fri, 9am - 5pm EST"
+                    "value" : "+374 55 604 644",
+                    "meta" : "Mon - Fri, 9am - 5pm AMT"
                 },
                 {
                     "id" : "office",
                     "icon" : "location",
                     "title" : "KINETIC LAB HQ",
-                    "value" : "101 Innovation Blvd,<br />Suite 400, Austin, TX",
-                    "meta" : "Mon - Fri, 9am - 5pm EST"
+                    "value" : "Avetis Aharoyan 11/7,<br />Yerevan, Armenia",
+                    "meta" : "Mon - Fri, 9am - 5pm AMT"
                 }
             ]
         }

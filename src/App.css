@@ -3943,3 +3943,42 @@ select option{
   padding: 1em;
   font-size: 1.4em;
 }
+
+.table_title{
+  font-size: 1.1em;
+  font-family: 'LufgaBold';
+  color: var(--text-color);
+  /* margin-bottom: 0.5em; */
+  text-transform: uppercase;
+}
+
+.table_description{
+  font-size: 1.1em;
+  color: var(--sign-secondary-color);
+}
+
+.table_loader{
+  width: 100% !important;
+  height: 5px !important;
+  margin-top: 5px;
+  background-color: var(--background-color);
+}
+
+.table_loader div{
+  z-index: 1 !important;
+  height: 5px;
+  background-color: var(--primary-color);
+}
+
+.action_button{
+  background-color: transparent;
+  border: 1px solid var(--input-border);
+  cursor: pointer;
+  padding: 0.5em 0.5em;
+  transition: .2s;
+}
+
+.action_button:hover{
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}

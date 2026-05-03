@@ -3,7 +3,7 @@ import Dashboard from "./Dashboard";
 import Billing from "./Billing";
 import { useState } from "react";
 function FleetContent({ setPage }) {
-    const [fleetPage, setFleetPage] = useState("billing");
+    const [fleetPage, setFleetPage] = useState("dashboard");
 
     const RenderFleetPage = () => {
         switch (fleetPage) {
