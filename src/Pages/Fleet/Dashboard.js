@@ -226,7 +226,7 @@ function Dashboard({ setFleetPage }) {
 
     useEffect(() => {
         fetchVehicles();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const resetVehicleForm = () => {
         setMark("");
