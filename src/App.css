@@ -3378,11 +3378,17 @@ select option{
 
 /* Table wrapper — scrollable on small screens */
 .dashboard__table-wrap {
-  width: 100%;
-  overflow-x: auto;
+  width: calc(80% - 2em);
+  overflow: visible;
   border-radius: 1.4em;
   border: 1px solid var(--input-border);
   background-color: var(--block-bg);
+}
+
+.dashboard__table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 1.4em;
 }
 
 .dashboard__table {
@@ -3981,4 +3987,75 @@ select option{
 .action_button:hover{
   border-color: var(--primary-color);
   color: var(--primary-color);
+}
+
+.dashboard_info{
+  width: 100%;
+  display: flex;
+  gap: 1.5em;
+  flex-wrap: wrap;
+  margin-bottom: 2em;
+  justify-content: space-between;
+}
+
+.info_block{
+  width: 18%;
+  padding: 2em;
+  border-radius: 1em;
+  background-color: var(--block-bg);
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+}
+
+.info_block__icons{
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-color-light);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  color: var(--primary-color);
+  margin-right: 1em;
+}
+
+.info_block_title{
+  font-size: 1.2em;
+  color: var(--text-color);
+  font-family: 'LufgaMedium';
+}
+
+.info_block_value{
+  font-size: 1.5em;
+  color: var(--primary-color);
+  font-family: 'LufgaBold';
+  margin: 0.8em 0
+}
+
+.additionalInfo{
+  font-size: 1.1em;
+  color: var(--sign-secondary-color);
+}
+
+.content_wrap{
+  display: flex;
+  gap: 2em;
+  flex-wrap: wrap;
+}
+
+.allDrivers{
+  width: 20%;
+  padding: 2em;
+  border-radius: 1em;
+  background-color: var(--block-bg);
+}
+
+.driver_card{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--input-border);
+  padding: 1em 0;
 }
