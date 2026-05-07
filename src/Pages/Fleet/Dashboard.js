@@ -104,7 +104,7 @@ function Dashboard({ setFleetPage }) {
     const [vehicleYears, setVehicleYears] = useState("");
     const [email, setEmail] = useState("");
     const [drivers, setDrivers] = useState([]);
-    const [targetData, setTargetData] = useState({
+    const [targetData] = useState({
         km: 100,
         zoneHours: 100,
     });
