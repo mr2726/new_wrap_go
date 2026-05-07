@@ -3476,6 +3476,643 @@ select option{
   padding: 0.5em 2.5em;
 }
 
+/* Fleet Billing */
+.fleet-billing {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% -10%, rgba(57, 255, 25, 0.14), transparent 42%),
+    radial-gradient(circle at 100% 0%, rgba(40, 125, 255, 0.14), transparent 38%),
+    linear-gradient(165deg, #070d16 0%, #070b14 45%, #060a13 100%);
+}
+
+.fleet-billing__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8em;
+}
+
+.fleet-billing__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.4em;
+}
+
+.fleet-billing__actions {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.fleet-billing__ghost-btn,
+.fleet-billing__cta-btn,
+.fleet-billing__new-btn,
+.fleet-billing__withdraw-btn {
+  border: none;
+  border-radius: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  cursor: pointer;
+  font-family: 'LufgaMedium', sans-serif;
+  transition: 0.2s;
+}
+
+.fleet-billing__ghost-btn {
+  background: rgba(8, 18, 30, 0.85);
+  color: #d8e4f3;
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  padding: 0.9em 1.2em;
+  font-size: 1.32em;
+}
+
+.fleet-billing__ghost-btn:hover {
+  border-color: rgba(57, 255, 25, 0.48);
+  color: var(--primary-color);
+}
+
+.fleet-billing__ghost-btn--small {
+  font-size: 1.2em;
+  padding: 0.75em 1em;
+}
+
+.fleet-billing__cta-btn,
+.fleet-billing__withdraw-btn {
+  background: linear-gradient(120deg, #39ff19 0%, #4ad931 100%);
+  color: #08100a;
+  font-size: 1.35em;
+  padding: 0.9em 1.4em;
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.fleet-billing__cta-btn:hover,
+.fleet-billing__withdraw-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.5em 1.6em rgba(57, 255, 25, 0.24);
+}
+
+.fleet-billing__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2em;
+}
+
+.fleet-billing__stat-card {
+  background:
+    linear-gradient(135deg, rgba(19, 30, 46, 0.95), rgba(8, 20, 36, 0.9));
+  border: 1px solid rgba(53, 78, 110, 0.48);
+  border-radius: 1.2em;
+  padding: 1.5em;
+  display: flex;
+  gap: 1.2em;
+  align-items: flex-start;
+}
+
+.fleet-billing__stat-icon {
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 0.65em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+}
+
+.fleet-billing__stat-icon--green {
+  background: rgba(57, 255, 25, 0.2);
+  color: var(--primary-color);
+}
+
+.fleet-billing__stat-icon--purple {
+  background: rgba(150, 82, 255, 0.2);
+  color: #c595ff;
+}
+
+.fleet-billing__stat-icon--blue {
+  background: rgba(40, 125, 255, 0.2);
+  color: #73adff;
+}
+
+.fleet-billing__stat-label {
+  font-size: 1.2em;
+  color: #9cb0ca;
+  margin-bottom: 0.4em;
+}
+
+.fleet-billing__stat-value {
+  font-size: clamp(2em, 2vw, 2.8em);
+  line-height: 1.1;
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.fleet-billing__stat-value span {
+  font-size: 0.5em;
+  color: #9cb0ca;
+  font-family: 'LufgaMedium', sans-serif;
+}
+
+.fleet-billing__stat-meta {
+  font-size: 1.2em;
+  color: #7e95b1;
+  margin-top: 0.5em;
+}
+
+.fleet-billing__main-grid {
+  display: grid;
+  grid-template-columns: minmax(32em, 0.95fr) minmax(40em, 1.35fr);
+  gap: 1.2em;
+}
+
+.fleet-billing__panel {
+  background:
+    linear-gradient(135deg, rgba(16, 27, 42, 0.92), rgba(8, 17, 30, 0.9));
+  border: 1px solid rgba(53, 78, 110, 0.48);
+  border-radius: 1.2em;
+  padding: 1.5em;
+}
+
+.fleet-billing__panel-title {
+  font-family: 'LufgaBold', sans-serif;
+  font-size: 2.2em;
+}
+
+.fleet-billing__panel-subtitle {
+  margin-top: 0.35em;
+  font-size: 1.3em;
+  color: #8fa6c2;
+}
+
+.fleet-billing__panel--withdraw {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2em;
+}
+
+.fleet-billing__field-row,
+.fleet-billing__receive-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.35em;
+  color: #a8bbd2;
+}
+
+.fleet-billing__field-row strong,
+.fleet-billing__receive-row strong {
+  color: #eaf1ff;
+  font-family: 'LufgaMedium', sans-serif;
+}
+
+.fleet-billing__receive-row strong {
+  color: var(--primary-color);
+  font-size: 1.18em;
+}
+
+.fleet-billing__label {
+  font-size: 1.25em;
+  color: #aac0dc;
+}
+
+.fleet-billing__input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  border-radius: 0.9em;
+  background: rgba(8, 18, 30, 0.8);
+  overflow: hidden;
+}
+
+.fleet-billing__input-wrap span,
+.fleet-billing__input-wrap small {
+  font-size: 1.3em;
+  color: #9cb0ca;
+  padding: 0.8em 0.95em;
+}
+
+.fleet-billing__input-wrap input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #eaf1ff;
+  font-size: 1.6em;
+  font-family: 'LufgaMedium', sans-serif;
+}
+
+.fleet-billing__hint {
+  color: #7f95b1;
+  font-size: 1.2em;
+}
+
+.fleet-billing__hint b {
+  margin: 0 0.4em;
+}
+
+.fleet-billing__method-picker {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.8em;
+}
+
+.fleet-billing__method-picker select {
+  width: 100%;
+  background: rgba(8, 18, 30, 0.8);
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  border-radius: 0.9em;
+  color: #eaf1ff;
+  font-size: 1.25em;
+  padding: 0.95em;
+  outline: none;
+}
+
+.fleet-billing__new-btn {
+  background: rgba(16, 30, 48, 0.95);
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  color: #d8e4f3;
+  padding: 0.8em 1.1em;
+  font-size: 1.2em;
+}
+
+.fleet-billing__new-btn:hover {
+  color: var(--primary-color);
+  border-color: rgba(57, 255, 25, 0.48);
+}
+
+.fleet-billing__withdraw-btn {
+  width: 100%;
+}
+
+.fleet-billing__panel-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1em;
+  margin-bottom: 1.2em;
+}
+
+.fleet-billing__methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.fleet-billing__method-row {
+  border: 1px solid rgba(58, 81, 113, 0.45);
+  background: rgba(8, 18, 30, 0.78);
+  border-radius: 0.9em;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+}
+
+.fleet-billing__method-details {
+  display: flex;
+  gap: 0.9em;
+  align-items: center;
+}
+
+.fleet-billing__method-icon {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 0.75em;
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #e7f1ff;
+  background: rgba(11, 24, 39, 0.95);
+}
+
+.fleet-billing__method-title {
+  font-size: 1.4em;
+  font-family: 'LufgaMedium', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+}
+
+.fleet-billing__method-title span {
+  font-size: 0.72em;
+  color: var(--primary-color);
+  background: rgba(57, 255, 25, 0.17);
+  padding: 0.18em 0.65em;
+  border-radius: 999px;
+}
+
+.fleet-billing__method-meta {
+  font-size: 1.18em;
+  color: #7f95b1;
+}
+
+.fleet-billing__method-actions {
+  display: flex;
+  gap: 0.55em;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.fleet-billing__method-actions button {
+  background: rgba(16, 30, 48, 0.95);
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  color: #d8e4f3;
+  border-radius: 0.7em;
+  font-size: 1.15em;
+  padding: 0.55em 0.9em;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.fleet-billing__method-actions button:hover {
+  color: var(--primary-color);
+  border-color: rgba(57, 255, 25, 0.48);
+}
+
+.fleet-billing__empty-cards {
+  border: 1px dashed rgba(72, 96, 127, 0.75);
+  border-radius: 1em;
+  padding: 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: flex-start;
+}
+
+.fleet-billing__empty-cards p {
+  font-size: 1.25em;
+  color: #9db2cc;
+}
+
+.fleet-billing__danger-btn {
+  color: #ff9d9d !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+}
+
+.fleet-billing__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 14, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5em;
+}
+
+.fleet-billing__modal {
+  width: min(46em, 100%);
+  background: linear-gradient(150deg, rgba(13, 24, 39, 0.98), rgba(7, 16, 28, 0.98));
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  border-radius: 1.2em;
+  padding: 1.6em;
+}
+
+.fleet-billing__modal h3 {
+  font-size: 2em;
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.fleet-billing__modal p {
+  margin-top: 0.4em;
+  color: #95abc6;
+  font-size: 1.2em;
+}
+
+.fleet-billing__modal-form {
+  margin-top: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.fleet-billing__success-modal {
+  width: min(36em, 100%);
+  background: linear-gradient(150deg, rgba(13, 24, 39, 0.98), rgba(7, 16, 28, 0.98));
+  border: 1px solid rgba(57, 255, 25, 0.35);
+  border-radius: 1.2em;
+  padding: 2.4em 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  text-align: center;
+}
+
+.fleet-billing__success-icon {
+  width: 4em;
+  height: 4em;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #39FF19 0%, #1adf00 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  color: #000;
+  font-family: 'LufgaBold', sans-serif;
+  box-shadow: 0 0 24px rgba(57, 255, 25, 0.45);
+}
+
+.fleet-billing__success-modal h3 {
+  font-family: 'LufgaBold', sans-serif;
+  font-size: 2em;
+  color: #fff;
+  margin: 0;
+}
+
+.fleet-billing__success-amount {
+  font-family: 'LufgaBold', sans-serif;
+  font-size: 2.4em;
+  color: #39FF19;
+  margin: 0;
+}
+
+.fleet-billing__success-id {
+  font-size: 1.1em;
+  color: #64748b;
+  margin: 0;
+}
+
+.fleet-billing__modal-form label {
+  font-size: 1.2em;
+  color: #b6cae1;
+}
+
+.fleet-billing__modal-form input,
+.fleet-billing__modal-form select {
+  width: 100%;
+  border: 1px solid rgba(72, 96, 127, 0.55);
+  border-radius: 0.8em;
+  background: rgba(8, 18, 30, 0.85);
+  color: #e8f3ff;
+  padding: 0.75em 0.9em;
+  font-size: 1.3em;
+  outline: none;
+}
+
+.fleet-billing__modal-actions {
+  margin-top: 0.8em;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8em;
+}
+
+.fleet-billing__modal-actions .fleet-billing__cta-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fleet-billing__history-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.fleet-billing__filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.7em;
+}
+
+.fleet-billing__table-wrap {
+  overflow: auto;
+}
+
+.fleet-billing__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.27em;
+  min-width: 90em;
+}
+
+.fleet-billing__table thead tr {
+  border-bottom: 1px solid rgba(72, 96, 127, 0.55);
+}
+
+.fleet-billing__table th {
+  text-align: left;
+  font-family: 'LufgaMedium', sans-serif;
+  color: #8fa6c2;
+  font-size: 0.9em;
+  padding: 1em 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fleet-billing__table td {
+  color: #d9e8fa;
+  padding: 0.95em 0.7em;
+  border-bottom: 1px solid rgba(58, 81, 113, 0.35);
+}
+
+.fleet-billing__amount-positive {
+  color: var(--primary-color);
+  font-family: 'LufgaMedium', sans-serif;
+}
+
+.fleet-billing__amount-negative {
+  color: #ff6767;
+  font-family: 'LufgaMedium', sans-serif;
+}
+
+.fleet-billing__status {
+  color: var(--primary-color);
+  background: rgba(57, 255, 25, 0.17);
+  border: 1px solid rgba(57, 255, 25, 0.35);
+  border-radius: 999px;
+  font-size: 0.92em;
+  padding: 0.3em 0.75em;
+}
+
+.fleet-billing__table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.fleet-billing__table-footer p {
+  font-size: 1.2em;
+  color: #8fa6c2;
+}
+
+.fleet-billing__pager {
+  display: flex;
+  gap: 0.55em;
+}
+
+.fleet-billing__pager button {
+  min-width: 2.4em;
+  min-height: 2.4em;
+  border-radius: 0.65em;
+  border: 1px solid var(--input-border);
+  background: rgba(16, 30, 48, 0.95);
+  color: #d8e4f3;
+  font-size: 1.15em;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.fleet-billing__pager button:hover {
+  border-color: var(--primary-color);
+  color: #efffeb;
+}
+
+.fleet-billing__pager-btn--active {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.fleet-billing__pager-btn--active:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 1180px) {
+  .fleet-billing__stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fleet-billing__main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .fleet-billing__header,
+  .fleet-billing__panel-header-row {
+    flex-direction: column;
+  }
+
+  .fleet-billing__actions,
+  .fleet-billing__filters {
+    width: 100%;
+  }
+
+  .fleet-billing__ghost-btn,
+  .fleet-billing__cta-btn,
+  .fleet-billing__ghost-btn--small {
+    width: 100%;
+  }
+
+  .fleet-billing__method-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .fleet-billing__table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 /* Up Menu */
 .menu li{
   list-style: none;
