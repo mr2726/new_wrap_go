@@ -149,7 +149,7 @@ function Dashboard({ setFleetPage }) {
         const byFleet = await supabase
             .from("vehicles")
             .select("id, mark, model, year, status, invite_code, created_at")
-            .eq("fleet", userId)
+            .eq("fleetownerid", userId)
             .order("created_at", { ascending: false });
 
         if (!byFleet.error) {
@@ -158,7 +158,7 @@ function Dashboard({ setFleetPage }) {
             const byUserId = await supabase
                 .from("vehicles")
                 .select("id, mark, model, year, status, invite_code, created_at")
-                .eq("userid", userId)
+                .eq("fleetownerid", userId)
                 .order("created_at", { ascending: false });
 
             if (!byUserId.error) {

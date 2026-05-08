@@ -12,7 +12,10 @@ function Contracts({setFleetPage}) {
     const [contractDetails, setContractDetails] = useState(true);
     const [isClosing, setIsClosing] = useState(false);
     const [contractData, setContractData] = useState([]);
+    const [myContractIds, setMyContractIds] = useState([]);
     const [selectedContract, setSelectedContract] = useState(null);
+    const [filter, setFilter] = useState("available");
+    const standartPayment = 30000;
 
     const closeDetails = useCallback(() => {
         setIsClosing(true);
@@ -24,7 +27,19 @@ function Contracts({setFleetPage}) {
 
     useEffect(() => {
         const fetchContracts = async () => {
-            const { data: contracts, error: contractsError } = await supabase
+            const { data: { user } } = await supabase.auth.getUser();
+
+            const { data: fleetData, error: fleetError } = await supabase
+                .from("fleets")
+                .select("contracts")
+                .eq("userid", user?.id)
+                .single();
+
+            if (!fleetError && fleetData?.contracts) {
+                setMyContractIds(fleetData.contracts);
+            }
+
+            const { data: campaigns, error: contractsError } = await supabase
                 .from("campaigns")
                 .select("*")
             if (contractsError) {
@@ -32,11 +47,20 @@ function Contracts({setFleetPage}) {
                 return;
             }
             else {
-                setContractData(contracts);
+                setContractData(campaigns);
             }
         }
         fetchContracts();
     }, [])
+    const normalizedMyIds = myContractIds.map((id) => String(id));
+    const filteredContracts = (contractData || []).filter((item) => {
+        const id = String(item.id);
+        if (filter === "completed") return item.status === "complited";
+        if (filter === "my") return item.status === "live" && normalizedMyIds.includes(id);
+        // available
+        return item.status === "live" && !normalizedMyIds.includes(id);
+    });
+
     return (
         <div className="contracts">
             <TopMenu sendto="" setFleetPage={setFleetPage} />
@@ -45,8 +69,13 @@ function Contracts({setFleetPage}) {
                 <p className="signup_content_container__description">Browse advertised contracts and manage your fleet agreements.</p>
             </div>
             <div className="contracts__content">
+                    <div className="contracts_filter_btns">
+                        <button className={`contracts__filter--button ${filter === "available" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("available")}>Available Contracts</button>
+                        <button className={`contracts__filter--button ${filter === "my" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("my")}>My Contracts</button>
+                        <button className={`contracts__filter--button ${filter === "completed" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("completed")}>Completed Contracts</button>
+                    </div>
                     {
-                        (contractData || []).map((item)=> (
+                        filteredContracts.map((item)=> (
                             <div className="contracts__block">
                                 <div style={{display: "flex"}}>
                                     <div className="contracts__block--image"><img src={item.image_link} alt="Contract" /></div>
@@ -102,12 +131,12 @@ function Contracts({setFleetPage}) {
                                     <div className="contracts__block--details--actions__header">
                                         <p className="contracts__block--details--actions__header--title">Estimated Earnings</p>
                                         <div className="title__details">
-                                            <p>{(Number(item.budget) / item.economValue).toLocaleString('en-US')} AMD</p>
+                                            <p>{(Number(standartPayment)).toLocaleString('en-US')} AMD</p>
                                             <p>Per Vehicle</p>
                                         </div>
                                     </div>
                                     <div className="contracts__block--details--actions__buttons">
-                                        <button className="contracts__block--details--actions--button cta">Book Contract</button>
+                                        {filter !== "completed" && <button className="contracts__block--details--actions--button cta">Book Contract</button>}
                                         <button className="contracts__block--details--actions--button secondary_cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>View Details</button>
                                     </div>
                                 </div>
@@ -135,8 +164,8 @@ function Contracts({setFleetPage}) {
                                         </div>
                                     </div>
 
-                                    {selectedContract.description && (
-                                        <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1.05em", color: "#94A3B8", lineHeight: 1.5, marginBottom: "1.4em"}}>{selectedContract.description}</p>
+                                    {selectedContract.name && (
+                                        <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1.05em", color: "#94A3B8", lineHeight: 1.5, marginBottom: "1.4em"}}>{selectedContract.name}</p>
                                     )}
 
                                     <div style={{borderTop: "1px solid rgba(72,96,127,0.3)", paddingTop: "1.2em", display: "flex", flexDirection: "column", gap: "1em", marginBottom: "1.4em"}}>
@@ -172,11 +201,11 @@ function Contracts({setFleetPage}) {
 
                                     <div style={{borderTop: "1px solid rgba(72,96,127,0.3)", paddingTop: "1.2em", marginBottom: "1.6em"}}>
                                         <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1em", color: "#64748b", marginBottom: "0.3em"}}>Estimated Earnings</p>
-                                        <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(selectedContract.budget) / selectedContract.economValue).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>AMD / vehicle</span></p>
+                                        <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(standartPayment)).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>AMD / vehicle</span></p>
                                     </div>
 
-                                    <button className="contract__details--popup__close" onClick={closeDetails} style={{width: "100%", marginTop: "auto"}}>Book Contract</button>
-                                    <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: "0.6em"}}>Close</button>
+                                    {filter !== "completed" && <button className="contract__details--popup__close" onClick={closeDetails} style={{width: "100%", marginTop: "auto"}}>Book Contract</button>}
+                                    <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: filter !== "completed" ? "0.6em" : "auto"}}>Close</button>
                                 </div>
                             </div>
                         </div>
