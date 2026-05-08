@@ -13,8 +13,6 @@ function Contracts({setFleetPage}) {
     const [isClosing, setIsClosing] = useState(false);
     const [contractData, setContractData] = useState([]);
     const [selectedContract, setSelectedContract] = useState(null);
-    const [companyData, setCompanyData] = useState(null);
-    const [loading, setLoading] = useState(false);
 
     const closeDetails = useCallback(() => {
         setIsClosing(true);
@@ -51,7 +49,7 @@ function Contracts({setFleetPage}) {
                         (contractData || []).map((item)=> (
                             <div className="contracts__block">
                                 <div style={{display: "flex"}}>
-                                    <div className="contracts__block--image"><img src={item.image_link} alt="Contract Image" /></div>
+                                    <div className="contracts__block--image"><img src={item.image_link} alt="Contract" /></div>
                                 
                                     <div className="contracts__block--main">
 
