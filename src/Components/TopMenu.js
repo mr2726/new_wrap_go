@@ -16,6 +16,7 @@ function TopMenu ({sendto, setFleetPage}) {
             <Logo setPage={setFleetPage} transfer={sendto} />
             <ul className="menu">
                 <li onClick={() => setFleetPage("dashboard")}>Dashboard</li>
+                <li onClick={() => setFleetPage("contracts")}>Contracts</li>
                 <li onClick={() => setFleetPage("billing")}>Billing</li>
             </ul>
             <p className="logout" onClick={handleLogout}>Logout</p>
