@@ -12,6 +12,7 @@ function Contracts({setFleetPage}) {
     const [contractDetails, setContractDetails] = useState(true);
     const [isClosing, setIsClosing] = useState(false);
     const [contractData, setContractData] = useState([]);
+    const [profilesByUserId, setProfilesByUserId] = useState({});
     const [myContractIds, setMyContractIds] = useState([]);
     const [selectedContract, setSelectedContract] = useState(null);
     const [filter, setFilter] = useState("available");
@@ -48,6 +49,25 @@ function Contracts({setFleetPage}) {
             }
             else {
                 setContractData(campaigns);
+
+                const ownerIds = [...new Set((campaigns || []).map((campaign) => campaign.ownerid).filter(Boolean))];
+
+                if (ownerIds.length > 0) {
+                    const { data: profilesData, error: profilesError } = await supabase
+                        .from("profiles")
+                        .select("userid, companyname, city, industry")
+                        .in("userid", ownerIds);
+
+                    if (profilesError) {
+                        console.error("Error fetching profiles:", profilesError);
+                    } else {
+                        const profileMap = (profilesData || []).reduce((acc, profile) => {
+                            acc[String(profile.userid)] = profile;
+                            return acc;
+                        }, {});
+                        setProfilesByUserId(profileMap);
+                    }
+                }
             }
         }
         fetchContracts();
@@ -63,7 +83,7 @@ function Contracts({setFleetPage}) {
 
     return (
         <div className="contracts">
-            <TopMenu sendto="" setFleetPage={setFleetPage} />
+            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
             <div className="contracts__header">
                 <h1 className="signup_content_container__title">Contracts</h1>
                 <p className="signup_content_container__description">Browse advertised contracts and manage your fleet agreements.</p>
@@ -86,10 +106,10 @@ function Contracts({setFleetPage}) {
                                         <div className="contracts__block--details--company_info">
                                             <div className="company__logo"><img src="https://rshhhtxokegviwblosur.supabase.co/storage/v1/object/public/profile-images/59956ff9-7702-4ba7-b43f-001f494461c4/company-1778195849542-photo_2026-05-07_14-57-03.jpg" alt="Company Logo" /></div>
                                             <div>
-                                                <h2 className="company__name">Company Name</h2>
+                                                <h2 className="company__name">{profilesByUserId[String(item.ownerid)]?.companyname || "Company"}</h2>
                                                 <div className="contracts__tags">
-                                                    <p className="company__industry company__info--details">Industry: Transportation</p>
-                                                    <p className="company__size company__info--details">Location: Yerevan, Armenia</p>
+                                                    <p className="company__industry company__info--details">Industry: {profilesByUserId[String(item.ownerid)]?.industry || "N/A"}</p>
+                                                    <p className="company__size company__info--details">Location: {profilesByUserId[String(item.ownerid)]?.city || item.city || "N/A"}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -159,8 +179,8 @@ function Contracts({setFleetPage}) {
                                             <img src="https://rshhhtxokegviwblosur.supabase.co/storage/v1/object/public/profile-images/59956ff9-7702-4ba7-b43f-001f494461c4/company-1778195849542-photo_2026-05-07_14-57-03.jpg" alt="Company Logo" />
                                         </div>
                                         <div>
-                                            <h2 style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "1.3em", color: "#fff", margin: 0}}>{selectedContract.title || "Contract"}</h2>
-                                            <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1em", color: "#64748b", margin: 0}}>{selectedContract.city}</p>
+                                            <h2 style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "1.3em", color: "#fff", margin: 0}}>{profilesByUserId[String(selectedContract.ownerid)]?.companyname || selectedContract.title || "Contract"}</h2>
+                                            <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1em", color: "#64748b", margin: 0}}>{profilesByUserId[String(selectedContract.ownerid)]?.city || selectedContract.city}</p>
                                         </div>
                                     </div>
 

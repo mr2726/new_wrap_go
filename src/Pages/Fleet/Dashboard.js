@@ -430,7 +430,7 @@ function Dashboard({ setFleetPage }) {
                     isSubmitting={invitingDriver}
                 />
             )}
-            <TopMenu sendto="" setFleetPage={setFleetPage} />
+            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
             <div className="dashboard__content">
                 <div className="dashboard_info">
                     <DashInfo info={{ type: "vehicles", title: "Total Vehicles", value: vehicles.length, additionalInfo: "All registered Vehicles" }} />
