@@ -63,7 +63,7 @@ function Contracts({setFleetPage}) {
 
     return (
         <div className="contracts">
-            <TopMenu sendto="" setFleetPage={setFleetPage} />
+            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
             <div className="contracts__header">
                 <h1 className="signup_content_container__title">Contracts</h1>
                 <p className="signup_content_container__description">Browse advertised contracts and manage your fleet agreements.</p>
