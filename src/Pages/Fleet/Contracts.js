@@ -236,7 +236,7 @@ function Contracts({setFleetPage}) {
     const normalizedMyIds = myContractIds.map((id) => String(id));
     const filteredContracts = (contractData || []).filter((item) => {
         const id = String(item.id);
-        if (filter === "completed") return item.status === "complited";
+        if (filter === "completed") return item.status === "complited" && normalizedMyIds.includes(id);
         if (filter === "my") return item.status === "live" && normalizedMyIds.includes(id);
         // available
         return item.status === "live" && !normalizedMyIds.includes(id);
@@ -317,7 +317,7 @@ function Contracts({setFleetPage}) {
                                         </div>
                                     </div>
                                     <div className="contracts__block--details--actions__buttons">
-                                        {filter !== "completed" && <button className="contracts__block--details--actions--button cta" onClick={() => openDriverSelection(item)}>Book Contract</button>}
+                                        {(filter !== "completed" && filter !== "my") && <button className="contracts__block--details--actions--button cta" onClick={() => openDriverSelection(item)}>Book Contract</button>}
                                         <button className="contracts__block--details--actions--button secondary_cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>View Details</button>
                                     </div>
                                 </div>
@@ -385,7 +385,7 @@ function Contracts({setFleetPage}) {
                                         <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(standartPayment)).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>AMD / vehicle</span></p>
                                     </div>
 
-                                    {filter !== "completed" && <button className="contract__details--popup__close" onClick={() => { closeDetails(); setTimeout(() => openDriverSelection(selectedContract), 300); }} style={{width: "100%", marginTop: "auto"}}>Book Contract</button>}
+                                    {(filter !== "completed" && filter !== "my") && <button className="contract__details--popup__close" onClick={() => { closeDetails(); setTimeout(() => openDriverSelection(selectedContract), 300); }} style={{width: "100%", marginTop: "auto"}}>Book Contract</button>}
                                     <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: filter !== "completed" ? "0.6em" : "auto"}}>Close</button>
                                 </div>
                             </div>
