@@ -1,51 +1,275 @@
 import "../../App.css";
+import { useEffect, useState } from "react";
 import TopMenu from "../../Components/TopMenu";
 import { FaRegUser, FaPhoneAlt } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
-
-
+import { RiBankFill } from "react-icons/ri";
+import { supabase } from "../../data/supabase";
+import Loader from "../../Components/Loader";
+import ChangePassword from "./components/ChangePassword";
+import TwoFactorAuth from "./components/2FA";
 
 
 function Profile({ setFleetPage }) {
-    
+    const [profile, setProfile] = useState(null);
+    const [formData, setFormData] = useState({
+        contactpersone: "",
+        fleetname: "",
+        email: "",
+        phone: ""
+    });
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState("");
 
+    const [changePasswordVisible, setChangePasswordVisible] = useState(false);
+    const [twoFactorVisible, setTwoFactorVisible] = useState(false);
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+    const [is2FALoading, setIs2FALoading] = useState(false);
 
-  return (
-    <div className="Profile">
-        <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
+    const withAuthLockRetry = async (callback, retries = 1) => {
+        try {
+            return await callback();
+        } catch (error) {
+            const isLockAbort =
+                error?.name === "AbortError" ||
+                String(error?.message || "").includes("Lock broken by another request");
 
-        <h1 className="title">Fleet Profile</h1>
-        <p className="description">Here you can manage your fleet profile, update your information, and customize your settings.</p>
-        <div className="profile_content">
-            <div className="profile__block">
-                <div className="profile__block--item">
-                    <div style={{display: "flex", gap: "1em"}}>
-                        <FaRegUser size={15} color="#94A3B8"/>
-                        <p>Full Name</p>
+            if (!isLockAbort || retries <= 0) {
+                throw error;
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            return withAuthLockRetry(callback, retries - 1);
+        }
+    };
+
+    const refresh2FAState = async () => {
+        const { data: factorsData, error } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
+        if (error) {
+            console.error("Error loading 2FA factors:", error);
+            return;
+        }
+
+        const verifiedFactor = (factorsData?.totp || []).find((factor) => factor.status === "verified");
+        setIs2FAEnabled(Boolean(verifiedFactor));
+    };
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                setLoading(true);
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data, error } = await supabase
+                        .from("fleets")
+                        .select("*")
+                        .eq("userid", user.id)
+                        .single();
+                    if (error) {
+                        console.error("Error fetching profile:", error);
+                        setMessage("Error loading profile: " + error.message);
+                    } else {
+                        console.log("Profile data:", data);
+                        setProfile(data);
+                        setFormData({
+                            contactpersone: data.contactpersone || "",
+                            fleetname: data.fleetname || "",
+                            email: data.email || "",
+                            phone: data.phone || ""
+                        });
+                    }
+                }
+                await refresh2FAState();
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSave = async () => {
+        try {
+            setSaving(true);
+            setMessage("");
+            
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                setMessage("User not authenticated");
+                return;
+            }
+
+            const { error } = await supabase
+                .from("fleets")
+                .update({
+                    contactpersone: formData.contactpersone,
+                    fleetname: formData.fleetname,
+                    email: formData.email,
+                    phone: formData.phone
+                })
+                .eq("userid", user.id);
+
+            if (error) {
+                console.error("Error saving profile:", error);
+                setMessage("Error saving profile: " + error.message);
+            } else {
+                setMessage("Profile saved successfully!");
+                setTimeout(() => setMessage(""), 3000);
+            }
+        } catch (err) {
+            console.error("Unexpected error:", err);
+            setMessage("Unexpected error: " + err.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleTwoFactorAction = async () => {
+        if (!is2FAEnabled) {
+            setTwoFactorVisible(true);
+            return;
+        }
+
+        try {
+            setIs2FALoading(true);
+            setMessage("");
+
+            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
+            if (factorsError) {
+                setMessage("Error disabling 2FA: " + factorsError.message);
+                return;
+            }
+
+            const totpFactors = factorsData?.totp || [];
+            for (const factor of totpFactors) {
+                const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+                if (error) {
+                    setMessage("Error disabling 2FA: " + error.message);
+                    return;
+                }
+            }
+
+            setIs2FAEnabled(false);
+            setMessage("2FA disabled successfully!");
+            setTimeout(() => setMessage(""), 3000);
+        } catch (error) {
+            setMessage("Unexpected error: " + error.message);
+        } finally {
+            setIs2FALoading(false);
+        }
+    };
+
+    return (
+        <div className="Profile">
+            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
+
+            <h1 className="title">Fleet Profile</h1>
+            <p className="description">Here you can manage your fleet profile, update your information, and customize your settings.</p>
+            
+            {loading && <Loader />}
+            {message && <p style={{color: message.includes("successfully") ? "green" : "red", padding: "1em"}}>{message}</p>}
+            
+            {!loading && (
+            <div className="profile_content">
+                <div className="profile__block">
+                    <div className="profile__block--item">
+                        <div style={{display: "flex", gap: "1em"}}>
+                            <FaRegUser size={15} color="#94A3B8"/>
+                            <p>Full Name</p>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="contactpersone"
+                            value={formData.contactpersone} 
+                            className="editable_input" 
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <input type="text" value="Joe Doe" className="editable_input"/>
-                </div>
-
-                <div className="profile__block--item">
-                    <div style={{display: "flex", gap: "1em"}}>
-                        <MdAlternateEmail size={15} color="#94A3B8"/>
-                        <p>Email</p>
+                    <div className="profile__block--item">
+                        <div style={{display: "flex", gap: "1em"}}>
+                            <RiBankFill size={15} color="#94A3B8"/>
+                            <p>Company Name</p>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="fleetname"
+                            value={formData.fleetname} 
+                            className="editable_input" 
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <input type="email" value="joe.doe@example.com" className="editable_input"/>
-                </div>
-
-                <div className="profile__block--item">
-                    <div style={{display: "flex", gap: "1em"}}>
-                        <FaPhoneAlt size={15} color="#94A3B8"/>
-                        <p>Phone</p>
+                    <div className="profile__block--item">
+                        <div style={{display: "flex", gap: "1em"}}>
+                            <MdAlternateEmail size={15} color="#94A3B8"/>
+                            <p>Email</p>
+                        </div>
+                        <input 
+                            type="email" 
+                            name="email"
+                            value={formData.email} 
+                            className="editable_input" 
+                            onChange={handleInputChange}
+                        />
                     </div>
-                    <input type="text" value="+1 234 567 890" className="editable_input"/>
+
+                    <div className="profile__block--item">
+                        <div style={{display: "flex", gap: "1em"}}>
+                            <FaPhoneAlt size={15} color="#94A3B8"/>
+                            <p>Phone</p>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="phone"
+                            value={formData.phone} 
+                            className="editable_input" 
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <button 
+                        className="save_btn cta" 
+                        onClick={handleSave}
+                        disabled={saving}
+                    >
+                        {saving ? "Saving..." : "Save Changes"}
+                    </button>
                 </div>
-                <button className="save_btn cta">Save Changes</button>
+                <div className="profile__block">
+                    <h2 className="profile__block--title">Account Settings</h2>
+                    <div className="profile__block--item">
+                        <p>Change Password</p>
+                        <button className="change_password_btn cta" onClick={() => setChangePasswordVisible(true)}>Change</button>
+                    </div>
+                    <div className="profile__block--item">
+                        <p>Two-Factor Authentication</p>
+                        <button className="change_password_btn cta" onClick={handleTwoFactorAction} disabled={is2FALoading}>
+                            {is2FALoading ? "Processing..." : is2FAEnabled ? "Cancel" : "Enable"}
+                        </button>
+                    </div>
+                </div>
             </div>
+            )}
+            {changePasswordVisible && (
+                <ChangePassword onClose={() => setChangePasswordVisible(false)} />
+            )}
+            {twoFactorVisible && (
+                <TwoFactorAuth
+                    onClose={() => setTwoFactorVisible(false)}
+                    onEnabled={async () => {
+                        await refresh2FAState();
+                        setTwoFactorVisible(false);
+                    }}
+                />
+            )}
         </div>
-    </div>
-  );
+    );
 }
 
 export default Profile;
