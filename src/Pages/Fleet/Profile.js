@@ -1,5 +1,5 @@
 import "../../App.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TopMenu from "../../Components/TopMenu";
 import { FaRegUser, FaPhoneAlt } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
@@ -11,7 +11,6 @@ import TwoFactorAuth from "./components/2FA";
 
 
 function Profile({ setFleetPage }) {
-    const [profile, setProfile] = useState(null);
     const [formData, setFormData] = useState({
         contactpersone: "",
         fleetname: "",
@@ -27,7 +26,7 @@ function Profile({ setFleetPage }) {
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [is2FALoading, setIs2FALoading] = useState(false);
 
-    const withAuthLockRetry = async (callback, retries = 1) => {
+    const withAuthLockRetry = useCallback(async (callback, retries = 1) => {
         try {
             return await callback();
         } catch (error) {
@@ -42,9 +41,9 @@ function Profile({ setFleetPage }) {
             await new Promise((resolve) => setTimeout(resolve, 200));
             return withAuthLockRetry(callback, retries - 1);
         }
-    };
+    }, []);
 
-    const refresh2FAState = async () => {
+    const refresh2FAState = useCallback(async () => {
         const { data: factorsData, error } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
         if (error) {
             console.error("Error loading 2FA factors:", error);
@@ -53,7 +52,7 @@ function Profile({ setFleetPage }) {
 
         const verifiedFactor = (factorsData?.totp || []).find((factor) => factor.status === "verified");
         setIs2FAEnabled(Boolean(verifiedFactor));
-    };
+    }, [withAuthLockRetry]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -71,7 +70,6 @@ function Profile({ setFleetPage }) {
                         setMessage("Error loading profile: " + error.message);
                     } else {
                         console.log("Profile data:", data);
-                        setProfile(data);
                         setFormData({
                             contactpersone: data.contactpersone || "",
                             fleetname: data.fleetname || "",
@@ -86,7 +84,7 @@ function Profile({ setFleetPage }) {
             }
         };
         fetchProfile();
-    }, []);
+    }, [refresh2FAState]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

@@ -3,7 +3,7 @@ import Dashboard from "./Dashboard";
 import Contracts from "./Contracts";
 import Billing from "./Billing";
 import Profile from "./Profile";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../data/supabase";
 import Loader from "../../Components/Loader";
 
@@ -17,7 +17,7 @@ function FleetContent({ setPage }) {
     const [twoFactorError, setTwoFactorError] = useState("");
     const [isVerifying2FA, setIsVerifying2FA] = useState(false);
 
-    const withAuthLockRetry = async (callback, retries = 1) => {
+    const withAuthLockRetry = useCallback(async (callback, retries = 1) => {
         try {
             return await callback();
         } catch (error) {
@@ -32,7 +32,7 @@ function FleetContent({ setPage }) {
             await new Promise((resolve) => setTimeout(resolve, 200));
             return withAuthLockRetry(callback, retries - 1);
         }
-    };
+    }, []);
 
     useEffect(() => {
         let isMounted = true;
@@ -114,7 +114,7 @@ function FleetContent({ setPage }) {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [withAuthLockRetry]);
 
     const handleVerify2FA = async (event) => {
         event.preventDefault();

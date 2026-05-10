@@ -1,5 +1,5 @@
 import "../../../App.css";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../../data/supabase";
 
 function TwoFactorAuth({ onClose, onEnabled }) {
@@ -10,7 +10,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [status, setStatus] = useState({ type: "", text: "" });
 
-    const withAuthLockRetry = async (callback, retries = 1) => {
+    const withAuthLockRetry = useCallback(async (callback, retries = 1) => {
         try {
             return await callback();
         } catch (error) {
@@ -25,7 +25,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
             await new Promise((resolve) => setTimeout(resolve, 200));
             return withAuthLockRetry(callback, retries - 1);
         }
-    };
+    }, []);
 
     const normalizeQrCodeSrc = (value) => {
         if (!value) return "";
@@ -105,7 +105,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [withAuthLockRetry]);
 
     const handleConfirm = async (event) => {
         event.preventDefault();
