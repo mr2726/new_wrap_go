@@ -17,6 +17,13 @@ function Contracts({setFleetPage}) {
     const [selectedContract, setSelectedContract] = useState(null);
     const [filter, setFilter] = useState("available");
     const standartPayment = 30000;
+    
+    // States for driver selection
+    const [showDriverSelection, setShowDriverSelection] = useState(false);
+    const [driversList, setDriversList] = useState([]);
+    const [selectedDrivers, setSelectedDrivers] = useState([]);
+    const [contractToBook, setContractToBook] = useState(null);
+    const [isBooking, setIsBooking] = useState(false);
 
     const closeDetails = useCallback(() => {
         setIsClosing(true);
@@ -25,6 +32,160 @@ function Contracts({setFleetPage}) {
             setIsClosing(false);
         }, 250);
     }, []);
+
+    // Open driver selection modal
+    const openDriverSelection = useCallback(async (contract) => {
+        setShowDriverSelection(true);
+        setContractToBook(contract);
+        setSelectedDrivers([]);
+        
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            console.log("=== Driver Selection Debug ===");
+            console.log("Current user ID:", user?.id);
+
+            // First, let's check ALL drivers in the table
+            const { data: allDrivers, error: allError } = await supabase
+                .from("drivers")
+                .select("*");
+            
+            console.log("All drivers in table:", allDrivers);
+            console.log("All drivers error:", allError);
+
+            // Get list of user's drivers
+            const { data: drivers, error } = await supabase
+                .from("drivers")
+                .select("*")
+                    .eq("fleet", user?.id);
+
+            console.log("Drivers matching current user:", drivers);
+            console.log("Query error:", error);
+
+            if (error) {
+                console.error("Error loading drivers:", error);
+                alert("Error loading drivers: " + error.message);
+            } else {
+                setDriversList(drivers || []);
+                if (!drivers || drivers.length === 0) {
+                    alert("You have no drivers added for this user.\n\nYour ID: " + user?.id + "\n\nCheck console for all drivers in system.");
+                }
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while loading drivers");
+        }
+    }, []);
+
+    // Toggle driver selection
+    const toggleDriverSelection = useCallback((driverId) => {
+        const maxDrivers = contractToBook?.economValue || 1;
+        
+        setSelectedDrivers(prev => {
+            const isSelected = prev.includes(driverId);
+            
+            if (isSelected) {
+                // If driver is already selected, deselect
+                return prev.filter(id => id !== driverId);
+            } else {
+                // If not selected and there's space, add
+                if (prev.length < maxDrivers) {
+                    return [...prev, driverId];
+                }
+            }
+            return prev;
+        });
+    }, [contractToBook]);
+
+    // Save contract with selected drivers
+    const bookContract = useCallback(async () => {
+        if (selectedDrivers.length === 0) {
+            alert("Please select at least one driver");
+            return;
+        }
+
+        setIsBooking(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            // 1. Add contract ID to user's contracts array
+            const { data: fleetData } = await supabase
+                .from("fleets")
+                .select("contracts")
+                .eq("userid", user?.id)
+                .single();
+
+            const currentContracts = fleetData?.contracts || [];
+            if (!currentContracts.includes(contractToBook.id)) {
+                currentContracts.push(contractToBook.id);
+            }
+
+            const { error: fleetError } = await supabase
+                .from("fleets")
+                .update({ contracts: currentContracts })
+                .eq("userid", user?.id);
+
+            if (fleetError) throw fleetError;
+
+            // 2. Update selected drivers information
+            for (const driverId of selectedDrivers) {
+                const { data: driverData } = await supabase
+                    .from("drivers")
+                    .select("fleet, contractid")
+                    .eq("id", driverId)
+                    .single();
+
+                // Ensure both fields are arrays
+                let currentFleets = Array.isArray(driverData?.fleet) ? driverData.fleet : [];
+                let currentContractIds = Array.isArray(driverData?.contractid) ? driverData.contractid : [];
+
+                if (!currentContractIds.includes(contractToBook.id)) {
+                    currentContractIds.push(contractToBook.id);
+                }
+                if (!currentFleets.includes(contractToBook.id)) {
+                    currentFleets.push(contractToBook.id);
+                }
+
+                    console.log("Updating driver", driverId, "with:", { fleet: currentFleets, contractid: currentContractIds });
+
+                    const { error: updateError } = await supabase
+                        .from("drivers")
+                        .update({ contractid: currentContractIds[0] })
+                        .eq("id", driverId);
+
+                    if (updateError) {
+                        console.error("Error updating driver:", updateError);
+                        throw updateError;
+                    }
+            }
+
+            // Close modal and update data
+            setShowDriverSelection(false);
+            setSelectedDrivers([]);
+            setContractToBook(null);
+            
+            // Reload contracts list
+            const { data: campaigns } = await supabase
+                .from("campaigns")
+                .select("*");
+            setContractData(campaigns || []);
+
+            // Update my contracts list
+            const { data: updatedFleet } = await supabase
+                .from("fleets")
+                .select("contracts")
+                .eq("userid", user?.id)
+                .single();
+            setMyContractIds(updatedFleet?.contracts || []);
+
+            alert("Contract successfully booked!");
+        } catch (error) {
+            console.error("Error booking contract:", error);
+            alert("Error booking contract");
+        } finally {
+            setIsBooking(false);
+        }
+    }, [selectedDrivers, contractToBook]);
 
     useEffect(() => {
         const fetchContracts = async () => {
@@ -156,7 +317,7 @@ function Contracts({setFleetPage}) {
                                         </div>
                                     </div>
                                     <div className="contracts__block--details--actions__buttons">
-                                        {filter !== "completed" && <button className="contracts__block--details--actions--button cta">Book Contract</button>}
+                                        {filter !== "completed" && <button className="contracts__block--details--actions--button cta" onClick={() => openDriverSelection(item)}>Book Contract</button>}
                                         <button className="contracts__block--details--actions--button secondary_cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>View Details</button>
                                     </div>
                                 </div>
@@ -224,14 +385,128 @@ function Contracts({setFleetPage}) {
                                         <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(standartPayment)).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>AMD / vehicle</span></p>
                                     </div>
 
-                                    {filter !== "completed" && <button className="contract__details--popup__close" onClick={closeDetails} style={{width: "100%", marginTop: "auto"}}>Book Contract</button>}
+                                    {filter !== "completed" && <button className="contract__details--popup__close" onClick={() => { closeDetails(); setTimeout(() => openDriverSelection(selectedContract), 300); }} style={{width: "100%", marginTop: "auto"}}>Book Contract</button>}
                                     <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: filter !== "completed" ? "0.6em" : "auto"}}>Close</button>
                                 </div>
                             </div>
                         </div>
                     )
                 }
-        </div>
+                
+                {/* Driver selection modal */}
+                {showDriverSelection && contractToBook && (
+                    <div className="contract__details--bg" onClick={() => setShowDriverSelection(false)}>
+                        <div className="contract__details--popup" onClick={(e) => e.stopPropagation()}>
+                            <div className="contract__details--popup__content">
+                                <h2 style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "1.3em", color: "#fff", margin: "0 0 0.5em 0"}}>
+                                    Select Drivers
+                                </h2>
+                                <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "0.95em", color: "#94A3B8", marginBottom: "1.2em"}}>
+                                    Required: {contractToBook.economValue} {contractToBook.economValue === 1 ? "driver" : "drivers"}
+                                </p>
+                                <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "0.9em", color: "#64748b", marginBottom: "1em"}}>
+                                    Selected: {selectedDrivers.length} of {contractToBook.economValue}
+                                </p>
+
+                                {/* Drivers list */}
+                                <div style={{maxHeight: "300px", overflowY: "auto", marginBottom: "1.4em", borderTop: "1px solid rgba(72,96,127,0.3)", paddingTop: "1em"}}>
+                                    {driversList.filter((driver) => driver.contractid === null).length > 0 ? (
+                                        driversList.filter((driver) => driver.contractid === null).map((driver) => (
+                                            <div
+                                                key={driver.id}
+                                                onClick={() => toggleDriverSelection(driver.id)}
+                                                style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    padding: "0.8em",
+                                                    marginBottom: "0.6em",
+                                                    backgroundColor: selectedDrivers.includes(driver.id) ? "rgba(59, 130, 246, 0.2)" : "rgba(72,96,127,0.1)",
+                                                    border: selectedDrivers.includes(driver.id) ? "1px solid #3B82F6" : "1px solid rgba(72,96,127,0.2)",
+                                                    borderRadius: "0.5em",
+                                                    cursor: "pointer",
+                                                    transition: "all 0.2s ease"
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        width: "1.2em",
+                                                        height: "1.2em",
+                                                        borderRadius: "0.3em",
+                                                        border: selectedDrivers.includes(driver.id) ? "2px solid #3B82F6" : "2px solid #64748b",
+                                                        backgroundColor: selectedDrivers.includes(driver.id) ? "#3B82F6" : "transparent",
+                                                        marginRight: "0.8em",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        flexShrink: 0
+                                                    }}
+                                                >
+                                                    {selectedDrivers.includes(driver.id) && (
+                                                        <span style={{color: "#fff", fontSize: "0.9em"}}>✓</span>
+                                                    )}
+                                                </div>
+                                                <div style={{flex: 1}}>
+                                                    <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "0.95em", color: "#fff", margin: 0}}>
+                                                        {driver.name}
+                                                    </p>
+                                                    <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "0.85em", color: "#94A3B8", margin: "0.2em 0 0 0"}}>
+                                                        {driver.phone}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "0.95em", color: "#94A3B8", textAlign: "center", padding: "2em"}}>
+                                            You have no available drivers
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Action buttons */}
+                                <div style={{display: "flex", gap: "0.8em", marginTop: "1.2em"}}>
+                                    <button
+                                        onClick={bookContract}
+                                        disabled={selectedDrivers.length === 0 || isBooking}
+                                        style={{
+                                            flex: 1,
+                                            padding: "0.8em",
+                                            backgroundColor: selectedDrivers.length > 0 && !isBooking ? "var(--primary-color)" : "#4B5563",
+                                            color: "#fff",
+                                            border: "none",
+                                            borderRadius: "0.5em",
+                                            fontFamily: "'LufgaBold', sans-serif",
+                                            fontSize: "0.95em",
+                                            cursor: selectedDrivers.length > 0 && !isBooking ? "pointer" : "not-allowed",
+                                            transition: "all 0.2s ease",
+                                            opacity: selectedDrivers.length > 0 && !isBooking ? 1 : 0.6
+                                        }}
+                                    >
+                                        {isBooking ? "Processing..." : "Book"}
+                                    </button>
+                                    <button
+                                        onClick={() => setShowDriverSelection(false)}
+                                        disabled={isBooking}
+                                        style={{
+                                            flex: 1,
+                                            padding: "0.8em",
+                                            backgroundColor: "rgba(72,96,127,0.2)",
+                                            color: "#94A3B8",
+                                            border: "1px solid rgba(72,96,127,0.3)",
+                                            borderRadius: "0.5em",
+                                            fontFamily: "'LufgaRegular', sans-serif",
+                                            fontSize: "0.95em",
+                                            cursor: isBooking ? "not-allowed" : "pointer",
+                                            transition: "all 0.2s ease"
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
     )
 }
 
