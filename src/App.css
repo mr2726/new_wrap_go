@@ -3356,125 +3356,7 @@ select option{
   transform: translateY(0);
 }
 
-.dashboard__content {
-  padding: 10em 2.4em 3em;
-  max-width: 160em;
-  width: 100%;
-  margin: 0 auto;
-}
 
-.dashboard__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2.4em;
-}
-
-.dashboard__title {
-  font-family: 'LufgaBold', sans-serif;
-  font-size: 3.2em;
-  margin-bottom: 0.3em;
-}
-
-/* Table wrapper — scrollable on small screens */
-.dashboard__table-wrap {
-  width: 100%;
-  overflow: visible;
-  border-radius: 1.4em;
-  border: 1px solid var(--input-border);
-  background-color: var(--block-bg);
-}
-
-.dashboard__table-scroll {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 1.4em;
-}
-
-.dashboard__table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 1.4em;
-  white-space: nowrap;
-}
-
-.dashboard__table thead tr {
-  border-bottom: 1px solid var(--input-border);
-}
-
-.dashboard__table th {
-  padding: 1.4em 1.6em;
-  text-align: left;
-  font-family: 'LufgaMedium', sans-serif;
-  color: var(--sign-secondary-color);
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  font-size: 0.85em;
-}
-
-.dashboard__table td {
-  padding: 1.3em 1.6em;
-  color: var(--text-color);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
-  vertical-align: middle;
-}
-
-.dashboard__table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.dashboard__table tbody tr {
-  transition: background-color 0.15s ease;
-}
-
-.dashboard__table tbody tr:hover {
-  background-color: rgba(57, 255, 25, 0.04);
-}
-
-/* Vehicle ID chip */
-.dashboard__id {
-  font-family: 'LufgaMedium', sans-serif;
-  font-size: 0.9em;
-  color: var(--primary-color);
-  background: var(--primary-color-light);
-  border-radius: 999px;
-  padding: 0.25em 0.75em;
-  letter-spacing: 0.05em;
-}
-
-/* Status badges */
-.dashboard__badge {
-  display: inline-block;
-  border-radius: 999px;
-  padding: 0.3em 0.9em;
-  font-size: 0.88em;
-  font-family: 'LufgaMedium', sans-serif;
-  letter-spacing: 0.03em;
-}
-
-.dashboard__badge--active {
-  color: var(--primary-color);
-  background: var(--primary-color-light);
-  border: 1px solid rgba(57, 255, 25, 0.3);
-}
-
-.dashboard__badge--pending {
-  color: var(--pending-status-color);
-  background: var(--pending-status-color-light);
-  border: 1px solid rgba(255, 179, 0, 0.3);
-}
-
-.dashboard__badge--inactive {
-  color: var(--completed-status-color);
-  background: var(--completed-status-color-light);
-  border: 1px solid rgba(189, 46, 46, 0.3);
-}
-
-
-.dashboard__button{
-  padding: 0.5em 2.5em;
-}
 
 /* Fleet Billing */
 .fleet-billing {
@@ -4587,45 +4469,6 @@ select option{
   font-size: 1.4em;
 }
 
-.table_title{
-  font-size: 1.1em;
-  font-family: 'LufgaBold';
-  color: var(--text-color);
-  /* margin-bottom: 0.5em; */
-  text-transform: uppercase;
-}
-
-.table_description{
-  font-size: 1.1em;
-  color: var(--sign-secondary-color);
-}
-
-.table_loader{
-  width: 100% !important;
-  height: 5px !important;
-  margin-top: 5px;
-  background-color: var(--background-color);
-}
-
-.table_loader div{
-  z-index: 1 !important;
-  height: 5px;
-  background-color: var(--primary-color);
-}
-
-.action_button{
-  background-color: transparent;
-  border: 1px solid var(--input-border);
-  cursor: pointer;
-  padding: 0.5em 0.5em;
-  transition: .2s;
-}
-
-.action_button:hover{
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-}
-
 .dashboard_info{
   width: 100%;
   display: flex;
@@ -4635,66 +4478,76 @@ select option{
   justify-content: space-between;
 }
 
-.info_block{
-  width: 18%;
-  padding: 2em;
-  border-radius: 1em;
+.info_block {
+  flex: 1;
+  min-width: 200px;
+  padding: 1.8em 2em;
+  border-radius: 1.2em;
   background-color: var(--block-bg);
+  border: 1px solid var(--input-border);
   display: flex;
-  /* justify-content: space-between; */
   align-items: center;
+  gap: 1.4em;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.info_block__icons{
-  width: 40px;
-  height: 40px;
+.info_block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-color), transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.info_block:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.info_block:hover::before {
+  opacity: 1;
+}
+
+.info_block__icons {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
   background-color: var(--primary-color-light);
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.5em;
+  font-size: 1.8em;
   color: var(--primary-color);
-  margin-right: 1em;
 }
 
-.info_block_title{
-  font-size: 1.2em;
-  color: var(--text-color);
-  font-family: 'LufgaMedium';
-}
-
-.info_block_value{
-  font-size: 1.5em;
-  color: var(--primary-color);
-  font-family: 'LufgaBold';
-  margin: 0.8em 0
-}
-
-.additionalInfo{
+.info_block_title {
   font-size: 1.1em;
   color: var(--sign-secondary-color);
+  font-family: 'LufgaRegular', sans-serif;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.content_wrap{
-  display: flex;
-  gap: 2em;
-  flex-wrap: wrap;
+.info_block_value {
+  font-size: 2.4em;
+  color: var(--text-color);
+  font-family: 'LufgaBold', sans-serif;
+  margin: 0.15em 0 0.1em;
+  line-height: 1;
 }
 
-.allDrivers{
-  width: 20%;
-  padding: 2em;
-  border-radius: 1em;
-  background-color: var(--block-bg);
-}
-
-.driver_card{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--input-border);
-  padding: 1em 0;
+.additionalInfo {
+  font-size: 1em;
+  color: var(--sign-secondary-color);
+  margin: 0;
 }
 
 
@@ -5134,37 +4987,6 @@ select option{
 }
 
 
-.sign_contract{
-  width: 100%;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  overflow: hidden;
-}
-
-.sign_contract__content{
-  width: 300px;
-  height: 100vh;
-  background-color: var(--block-bg);
-  padding: 2em;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5em;
-  position: absolute;
-  right: 0;
-  overflow-y: auto;
-}
-
-.contract__img{
-  width: 30px;
-  height: 30px;
-  background-color: var(--primary-color-light);
-  border-radius: 50%;
-}
-
 /* Custom Select Styles */
 .custom-select {
   display: flex;
@@ -5318,4 +5140,325 @@ select option{
 .custom-select__option .contract__logo {
   width: 36px;
   height: 36px;
+}
+
+.fleet__content,.fleet-billing{
+  margin-top: 8em;
+  padding: 2em;
+}
+
+.DashInfo{
+  display: flex;
+  gap: 1.5em;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+
+/* ===== Fleet Table ===== */
+.fleet__table {
+  width: 100%;
+  border-radius: 1.4em;
+  border: 1px solid var(--input-border);
+  background-color: var(--block-bg);
+  overflow: hidden;
+}
+
+.fleet__table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.27em;
+  white-space: nowrap;
+}
+
+.fleet__table table thead tr {
+  border-bottom: 1px solid var(--input-border);
+}
+
+.fleet__table table thead th {
+  padding: 1.2em 1.6em;
+  text-align: left;
+  font-family: 'LufgaMedium', sans-serif;
+  color: var(--sign-secondary-color);
+  font-weight: 500;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fleet__table table tbody tr {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.35);
+  transition: background-color 0.15s ease;
+}
+
+.fleet__table table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.fleet__table table tbody tr:hover {
+  background-color: rgba(57, 255, 25, 0.03);
+}
+
+.fleet__table table td {
+  padding: 1.4em 1.6em;
+  vertical-align: middle;
+}
+
+/* Vehicle cell */
+.fleet__table td:first-child div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.table_title {
+  font-size: 1em;
+  font-family: 'LufgaBold', sans-serif;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.table_description {
+  font-size: 0.9em;
+  color: var(--sign-secondary-color);
+  margin: 0;
+}
+
+.table_sub_title {
+  font-size: 0.85em;
+  font-family: 'LufgaMedium', sans-serif;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* Plate number badge */
+.plate {
+  width: 75px;
+  display: inline-block;
+  font-size: 0.82em;
+  font-family: 'LufgaMedium', sans-serif;
+  color: var(--sign-secondary-color);
+  background-color: rgba(51, 65, 85, 0.4);
+  border: 1px solid var(--input-border);
+  border-radius: 0.4em;
+  padding: 0.15em 0.6em;
+  margin: 0;
+  margin-top: 0.3em;
+  letter-spacing: 0.06em;
+}
+
+/* Contract cell — logo + text */
+.fleet__table td:nth-child(2) > div {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+}
+
+.table_img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--input-border);
+}
+
+/* Driver cell — avatar + text */
+.fleet__table td:nth-child(4) > div {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+}
+
+/* Driver Status stepper */
+.fleet__table td:nth-child(3) > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+
+.fleet__table td:nth-child(3) > div > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  min-width: 68px;
+}
+
+/* Connector line between steps */
+.fleet__table td:nth-child(3) > div > div:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: calc(50% + 11px);
+  width: calc(100% - 22px);
+  height: 2px;
+  background-color: var(--input-border);
+}
+
+/* Active connector line */
+.fleet__table td:nth-child(3) > div > div.step--done:not(:last-child)::after {
+  background-color: var(--primary-color);
+}
+
+/* Step dot */
+.fleet__table td:nth-child(3) > div > div > div:first-child {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--input-border);
+  border: 2px solid var(--input-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.4em;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* Completed step dot */
+.fleet__table td:nth-child(3) > div > div.step--done > div:first-child {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.fleet__table td:nth-child(3) > div > div.step--done > div:first-child::after {
+  content: '✓';
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.fleet__table td:nth-child(3) p {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.fleet__controls{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2em;
+}
+
+.add_form {
+  width: min(760px, 100%);
+  background: linear-gradient(150deg, rgba(14, 22, 35, 0.96), rgba(10, 17, 29, 0.94));
+  border: 1px solid var(--input-border);
+  border-radius: 1.4em;
+  padding: 2em;
+  box-shadow: 0 1.1em 2.6em rgba(0, 0, 0, 0.25);
+}
+
+.add_form_modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(2, 6, 12, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5em;
+}
+
+.add_form__header {
+  margin-bottom: 1.6em;
+}
+
+.add_form_title {
+  margin: 0;
+  font-family: 'LufgaBold', sans-serif;
+  font-size: clamp(2.1em, 2.5vw, 2.8em);
+  color: var(--text-color);
+}
+
+.add_form__subtitle {
+  margin-top: 0.45em;
+  font-size: 1.25em;
+  color: var(--sign-secondary-color);
+}
+
+.add_form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1em;
+}
+
+.form_group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.form_group label {
+  font-size: 1.1em;
+  color: var(--sign-secondary-color);
+  font-family: 'LufgaMedium', sans-serif;
+}
+
+.form_group input {
+  width: 100%;
+  border: 1px solid var(--input-border);
+  border-radius: 0.8em;
+  background: rgba(6, 12, 22, 0.9);
+  color: var(--text-color);
+  font-size: 1.25em;
+  padding: 0.82em 0.95em;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form_group input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(57, 255, 25, 0.12);
+}
+
+.add_form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8em;
+  margin-top: 0.35em;
+}
+
+.add_form__ghost {
+  border: 1px solid var(--input-border);
+  background: transparent;
+  color: var(--sign-secondary-color);
+  border-radius: 999px;
+  padding: 0.55em 1.2em;
+  font-size: 1.3em;
+  font-family: 'LufgaMedium', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.add_form__ghost:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+@media (max-width: 760px) {
+  .add_form {
+    padding: 1.4em;
+  }
+
+  .add_form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .add_form__actions {
+    justify-content: stretch;
+    flex-direction: column;
+  }
+
+  .add_form__actions .cta,
+  .add_form__actions .add_form__ghost {
+    width: 100%;
+  }
 }
