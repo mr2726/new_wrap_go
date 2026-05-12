@@ -5389,6 +5389,17 @@ select option{
   gap: 1.1em;
 }
 
+.add_form__note {
+  grid-column: 1 / -1;
+  margin: 0;
+  border: 1px solid rgba(57, 255, 25, 0.22);
+  background: rgba(57, 255, 25, 0.08);
+  color: #bfffb2;
+  border-radius: 0.8em;
+  padding: 0.8em 0.95em;
+  font-size: 1.1em;
+}
+
 .form_group {
   display: flex;
   flex-direction: column;
@@ -5413,9 +5424,32 @@ select option{
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.form_group select {
+  width: 100%;
+  border: 1px solid var(--input-border);
+  border-radius: 0.8em;
+  background: rgba(6, 12, 22, 0.9);
+  color: var(--text-color);
+  font-size: 1.25em;
+  padding: 0.82em 0.95em;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin: 0;
+}
+
 .form_group input:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(57, 255, 25, 0.12);
+}
+
+.form_group select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(57, 255, 25, 0.12);
+}
+
+.add_form__actions .cta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .add_form__actions {

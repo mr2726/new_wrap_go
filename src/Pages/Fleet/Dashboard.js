@@ -4,7 +4,7 @@ import DashInfo from './components/DashInfo';
 import TableTr from './components/table_tr';
 import AddForm from './components/AddForm';
 import AddDriverForm from './components/AddDriverForm';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../data/supabase';
 
 function Dashboard({ setFleetPage }) {
@@ -15,7 +15,7 @@ function Dashboard({ setFleetPage }) {
     const [drivers, setDrivers] = useState([]);
     const [contracts, setContracts] = useState([]);
 
-    const fetchDrivers = async (inviteCodes) => {
+    const fetchDrivers = useCallback(async (inviteCodes) => {
         if (!inviteCodes || inviteCodes.length === 0) return;
         const { data, error } = await supabase
             .from('drivers')
@@ -27,9 +27,9 @@ function Dashboard({ setFleetPage }) {
         } else {
             setDrivers(data);
         }
-    }
+    }, []);
 
-    const fetchContracts = async (contractCode) => {
+    const fetchContracts = useCallback(async (contractCode) => {
         if (!contractCode || contractCode.length === 0) return;
         const {data, error} = await supabase
             .from("campaigns")
@@ -40,9 +40,9 @@ function Dashboard({ setFleetPage }) {
         } else {
             setContracts(data);
         }
-    }
+    }, []);
 
-    const fetchFleets = async () => {
+    const fetchFleets = useCallback(async () => {
         const { data: authData } = await supabase.auth.getUser();
         const user = authData?.user;
         if (!user) return;
@@ -59,9 +59,9 @@ function Dashboard({ setFleetPage }) {
                 .filter(Boolean);
             await fetchContracts(contractCodes);
         }
-    }
+    }, [fetchContracts]);
 
-    const fetchVehicles = async () => {
+    const fetchVehicles = useCallback(async () => {
         const { data: authData } = await supabase.auth.getUser();
         const user = authData?.user;
         if (!user) return;
@@ -77,12 +77,12 @@ function Dashboard({ setFleetPage }) {
             const inviteCodes = (data || []).map(v => v.invite_code).filter(Boolean);
             await fetchDrivers(inviteCodes);
         }
-    }
+    }, [fetchDrivers]);
 
     useEffect(() => {
         fetchVehicles();
         fetchFleets();
-    }, [])
+    }, [fetchVehicles, fetchFleets]);
 
 
     return (
