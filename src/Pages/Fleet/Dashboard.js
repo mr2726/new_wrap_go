@@ -5,6 +5,7 @@ import { supabase } from "../../data/supabase";
 import { HiDotsVertical } from "react-icons/hi";
 import vehicle from "./vehicle.json";
 import DashInfo from "./components/DashInfo";
+import CustomSelect from "./components/CustomSelect";
 
 function AddVehicleForm({ onClose, vehicleYears, setVehicleYears, mark, setMark, model, setModel, onSubmit, isSubmitting }) {
     return (
@@ -90,6 +91,8 @@ function AddDriverForm({ onClose, onDone, email, setEmail, onSubmit, inviteCode,
 
 function Dashboard({ setFleetPage }) {
     const [vehicles, setVehicles] = useState([]);
+    const [campaigns, setCampaigns] = useState([]);
+    const [myCampaigns, setMyCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [addVehicleFormVisible, setAddVehicleFormVisible] = useState(false);
@@ -108,7 +111,9 @@ function Dashboard({ setFleetPage }) {
         km: 100,
         zoneHours: 100,
     });
-
+    const [signContractVisible, setSignContractVisible] = useState(true);
+    const [selectedContractVehicle, setSelectedContractVehicle] = useState("");
+    const [selectedContractValue, setSelectedContractValue] = useState("");
     const getStatusClassName = (status) => {
         const normalizedStatus = String(status || "").toLowerCase();
 
@@ -238,11 +243,75 @@ function Dashboard({ setFleetPage }) {
         setVehicles(normalizedVehicles);
         setLoading(false);
     };
+    const fetchMyActiveContracts = async () => {
+        const userId = await getCurrentFleetUserId();
+        if (!userId) {
+            setMyCampaigns([]);
+            return [];
+        }
+
+        const { data, error } = await supabase
+            .from("fleets")
+            .select("contracts")
+            .eq("userid", userId)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Error fetching active contracts:", error);
+            setMyCampaigns([]);
+            return [];
+        }
+
+        const rawContracts = data?.contracts;
+        const activeContractIds = Array.isArray(rawContracts)
+            ? rawContracts
+            : rawContracts
+                ? [rawContracts]
+                : [];
+
+        setMyCampaigns(activeContractIds);
+        return activeContractIds;
+    };
+
+    const fetchCampaigns = async (contractIds = []) => {
+        if (!Array.isArray(contractIds) || contractIds.length === 0) {
+            setCampaigns([]);
+            return;
+        }
+
+        const normalizedContractIds = contractIds
+            .filter((id) => id !== null && id !== undefined && id !== "")
+            .map((id) => {
+                const asNumber = Number(id);
+                return Number.isNaN(asNumber) ? id : asNumber;
+            });
+
+        if (normalizedContractIds.length === 0) {
+            setCampaigns([]);
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from("campaigns")
+            .select("*")
+            .in("id", normalizedContractIds);
+
+        if (error) {
+            console.error("Error fetching campaigns:", error);
+            setCampaigns([]);
+        } else {
+            setCampaigns(data || []);
+        }
+    };
 
     useEffect(() => {
-        fetchVehicles();
-        
-        console.log("Fetched vehicles:", vehicles);
+        const loadDashboardData = async () => {
+            await fetchVehicles();
+            const activeContractIds = await fetchMyActiveContracts();
+            await fetchCampaigns(activeContractIds);
+        };
+
+        loadDashboardData();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const resetVehicleForm = () => {
@@ -432,19 +501,21 @@ function Dashboard({ setFleetPage }) {
             )}
             <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
             <div className="dashboard__content">
-                <div className="dashboard_info">
-                    <DashInfo info={{ type: "vehicles", title: "Total Vehicles", value: vehicles.length, additionalInfo: "All registered Vehicles" }} />
-                    <DashInfo info={{ type: "drivers", title: "Total Drivers", value: drivers.length, additionalInfo: "All registered Drivers" }} />
-                    <DashInfo info={{ type: "earn", title: "Total Earnings", value: drivers.reduce((sum, d) => sum + (Number(d.earntoday) || 0), 0), additionalInfo: "All time earnings" }} />
-                    <DashInfo info={{ type: "km", title: "Total KM", value: vehicles.reduce((sum, v) => sum + (Number(v.kmToday) || 0), 0), additionalInfo: "All vehicles combined" }} />
-                    <DashInfo info={{ type: "activezones", title: "Active Zones", value: vehicles.reduce((sum, v) => sum + (Number(v.zoneHours) || 0), 0), additionalInfo: "Currently active zones" }} />
-                </div>
                 <div className="dashboard__header">
                     <div>
                         <h1 className="dashboard__title">Dashboard</h1>
                         <p className="description">Manage your fleet, track vehicles and campaign performance.</p>
                     </div>
-                    <button className="dashboard__button signup_form__form--button" onClick={() => setAddVehicleFormVisible(true)}>Add Vehicle</button>
+                    <div>
+                        <button className="dashboard__button signup_form__form--button" onClick={() => setSignContractVisible(true)} style={{marginRight: "1em"}}>Sign Contract</button>
+                        <button className="dashboard__button signup_form__form--button" onClick={() => setAddVehicleFormVisible(true)}>Add Vehicle</button>
+                    </div>
+                </div>
+                <div className="dashboard_info">
+                    <DashInfo info={{ type: "vehicles", title: "Total Vehicles", value: vehicles.length, additionalInfo: "All registered Vehicles" }} />
+                    <DashInfo info={{ type: "drivers", title: "Total Drivers", value: drivers.length, additionalInfo: "All registered Drivers" }} />
+                    <DashInfo info={{ type: "earn", title: "Total Earnings", value: drivers.reduce((sum, d) => sum + (Number(d.earntoday) || 0), 0), additionalInfo: "All time earnings" }} />
+                    <DashInfo info={{ type: "km", title: "Total KM", value: vehicles.reduce((sum, v) => sum + (Number(v.kmToday) || 0), 0), additionalInfo: "All vehicles combined" }} />
                 </div>
                 <div className="content_wrap">
                     <div className="dashboard__table-wrap">
@@ -518,26 +589,50 @@ function Dashboard({ setFleetPage }) {
                             </table>
                         </div>
                     </div>
-                    <div className="allDrivers">
-                        <h2 className="dashboard__subtitle">All Drivers</h2>
-                        <div className="drivers_list">
-                            {drivers.map((driver) => (
-                                <div key={driver.id} className="driver_card">
-                                    <div>
-                                        <p className="table_title">{driver.name}</p>
-                                        <span className="table_description">{formatArmenianPhone(driver.phone)}</span>
-                                    </div>
-                                    <div>
-                                        <p className="table_description">KM Today</p>
-                                        <p className="table_description">{driver.kmtoday} km</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
 
                 </div>
             </div>
+            {signContractVisible && (
+                <div className="sign_contract" onClick={() => setSignContractVisible(false)}>
+                    <div className="sign_contract__content" onClick={(e) => e.stopPropagation()}>
+                        <CustomSelect
+                            label="1. Select Vehicle"
+                            options={vehicles.map(v => ({
+                                value: v.id,
+                                label: `${v.mark} ${v.model} ${v.year}`
+                            }))}
+                            value={selectedContractVehicle}
+                            onChange={setSelectedContractVehicle}
+                            isVehicle={true}
+                        />
+                        <CustomSelect
+                            label="2. Select Contract"
+                            options={campaigns.length > 0
+                                ? campaigns.map((campaign, index) => ({
+                                    value: campaign.id,
+                                    label: campaign.name || `Contract ${index + 1}`,
+                                    date: campaign.created_at
+                                        ? `Valid until ${new Date(campaign.created_at).toLocaleDateString()}`
+                                        : "",
+                                    logo: "🔴",
+                                }))
+                                : [{
+                                    value: "",
+                                    label: "No Active Contract",
+                                    date: "",
+                                    logo: "",
+                                }]
+                            }
+                            value={selectedContractValue}
+                            onChange={setSelectedContractValue}
+                            isVehicle={false}
+                        />
+                        <button className="signup_form__form--button" style={{ marginTop: "1em", width: "100%" }}>
+                            Sign Contract
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

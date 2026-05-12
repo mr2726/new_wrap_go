@@ -3378,7 +3378,7 @@ select option{
 
 /* Table wrapper — scrollable on small screens */
 .dashboard__table-wrap {
-  width: calc(80% - 2em);
+  width: 100%;
   overflow: visible;
   border-radius: 1.4em;
   border: 1px solid var(--input-border);
@@ -5133,3 +5133,189 @@ select option{
   to   { opacity: 1; }
 }
 
+
+.sign_contract{
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.sign_contract__content{
+  width: 300px;
+  height: 100vh;
+  background-color: var(--block-bg);
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  position: absolute;
+  right: 0;
+  overflow-y: auto;
+}
+
+.contract__img{
+  width: 30px;
+  height: 30px;
+  background-color: var(--primary-color-light);
+  border-radius: 50%;
+}
+
+/* Custom Select Styles */
+.custom-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.custom-select__label {
+  font-size: 0.95em;
+  font-weight: 500;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.custom-select__trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 0.8em;
+  padding: 0.8em 1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.custom-select__trigger:hover {
+  border-color: var(--primary-color);
+}
+
+.custom-select__value {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  flex: 1;
+}
+
+.custom-select__value.vehicle {
+  font-size: 0.95em;
+  color: var(--text-color);
+}
+
+.vehicle__icon {
+  font-size: 1.2em;
+}
+
+.custom-select__value.contract {
+  width: 100%;
+}
+
+.contract__card {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  width: 100%;
+}
+
+.contract__logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  flex-shrink: 0;
+  color: white;
+  font-weight: bold;
+}
+
+.contract__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contract__name {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 500;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contract__date {
+  margin: 0;
+  font-size: 0.85em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.placeholder {
+  color: var(--input-placeholder);
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.custom-select__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--block-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 0.8em;
+  z-index: 1001;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-select__option {
+  padding: 0.8em 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid var(--input-border);
+}
+
+.custom-select__option:last-child {
+  border-bottom: none;
+}
+
+.custom-select__option:hover {
+  background-color: var(--input-bg);
+}
+
+.custom-select__option.active {
+  background-color: var(--primary-color-light);
+  border-bottom: none;
+}
+
+.custom-select__option .vehicle,
+.custom-select__option .contract__card {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+}
+
+.custom-select__option .contract__logo {
+  width: 36px;
+  height: 36px;
+}
