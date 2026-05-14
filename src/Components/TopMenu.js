@@ -2,7 +2,14 @@ import "../App.css";
 import Logo from "./Logo";
 import { supabase } from "../data/supabase";
 
-function TopMenu ({sendto, setFleetPage}) {
+function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
+    const menuItems = [
+        { key: "dashboard", label: "Dashboard" },
+        { key: "contracts", label: "Contracts" },
+        { key: "billing", label: "Billing" },
+        { key: "profile", label: "Settings" },
+    ];
+
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut();
 
@@ -15,12 +22,20 @@ function TopMenu ({sendto, setFleetPage}) {
         <div className="top-menu">
             <Logo setPage={setFleetPage} transfer={sendto} />
             <ul className="menu">
-                <li onClick={() => setFleetPage("dashboard")}>Dashboard</li>
-                <li onClick={() => setFleetPage("contracts")}>Contracts</li>
-                <li onClick={() => setFleetPage("billing")}>Billing</li>
-                <li onClick={() => setFleetPage("profile")}>Settings</li>
+                {menuItems.map((item) => (
+                    <li key={item.key}>
+                        <button
+                            type="button"
+                            className={`menu__item ${currentPage === item.key ? "menu__item--active" : ""}`}
+                            aria-current={currentPage === item.key ? "page" : undefined}
+                            onClick={() => setFleetPage(item.key)}
+                        >
+                            {item.label}
+                        </button>
+                    </li>
+                ))}
             </ul>
-            <p className="logout" onClick={handleLogout}>Logout</p>
+            <button type="button" className="logout" onClick={handleLogout}>Logout</button>
         </div>
     );
 }

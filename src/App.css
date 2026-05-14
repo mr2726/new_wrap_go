@@ -3317,43 +3317,115 @@ select option{
 /* Top Menu */
 .top-menu{
   width: 100%;
-  height: 8em;
+  min-height: 8em;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, rgba(22, 27, 34, 0.95), rgba(11, 14, 20, 0.94));
-  border-bottom: 1px solid rgba(57, 255, 25, 0.16);
-  box-shadow: 0 0.8em 2.4em rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(10px);
+  background: rgba(10, 13, 19, 0.9);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 0.8em 2em rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
   padding: 0 clamp(1.2em, 3vw, 2.8em);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 110;
+  gap: 1.4em;
+  animation: topMenuEnter 220ms ease-out;
+}
+
+.top-menu .menu{
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  margin: 0;
+  padding: 0.2em;
+  /* border: 1px solid rgba(148, 163, 184, 0.2); */
+  border-radius: 0.9em;
+  background: rgba(15, 19, 26, 0.9);
+}
+
+.top-menu .menu li{
+  list-style: none;
+}
+
+.menu__item{
+  position: relative;
+  border: none;
+  background: transparent;
+  color: #b8c3d3;
+  font-family: 'LufgaMedium', sans-serif;
+  font-size: clamp(1.25em, 0.95vw, 1.4em);
+  letter-spacing: 0.01em;
+  padding: 0.58em 1em;
+  border-radius: 0.7em;
+  cursor: pointer;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+.menu__item:hover{
+  color: #e8edf5;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+.menu__item:active{
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.menu__item--active{
+  color: var(--primary-color);
+  background: rgba(148, 163, 184, 0.12);
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.menu__item--active::after{
+  transform: scaleX(1);
 }
 
 .logout{
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: transparent;
   font-size: clamp(1.4em, 1.2vw, 1.7em);
-  color: #ff6b6b;
+  color: #e2e8f0;
   font-family: 'LufgaMedium', sans-serif;
-  letter-spacing: 0.04em;
-  padding: 0.45em 1em;
-  border: 1px solid rgba(255, 107, 107, 0.45);
-  border-radius: 999px;
-  background: rgba(255, 107, 107, 0.08);
-  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.02em;
+  padding: 0.44em 0.95em;
+  border-radius: 0.7em;
+  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
   cursor: pointer;
+  outline: none;
 }
 
 .logout:hover{
-  color: #ffd2d2;
-  border-color: rgba(255, 107, 107, 0.8);
-  background: rgba(255, 107, 107, 0.16);
-  transform: translateY(-1px);
+  color: #ffffff;
+  border-color: rgba(148, 163, 184, 0.6);
+  background: rgba(148, 163, 184, 0.1);
 }
 
 .logout:active{
-  transform: translateY(0);
+  background: rgba(148, 163, 184, 0.14);
+}
+
+@keyframes topMenuEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-menu,
+  .menu__item,
+  .menu__item::after,
+  .logout {
+    animation: none;
+    transition: none;
+  }
 }
 
 
@@ -4012,6 +4084,15 @@ select option{
 .menu li:hover{
   color: var(--primary-color);
 }
+
+.top-menu .menu li{
+  display: block;
+  margin-right: 0;
+}
+
+.top-menu .menu li:hover{
+  color: inherit;
+}
 /* Add driver popup */
 .add-driver-form{
   width: 100%;
@@ -4074,8 +4155,25 @@ select option{
 
 @media (max-width: 640px) {
   .top-menu {
-    height: 7em;
-    padding: 0 1.2em;
+    min-height: 7em;
+    padding: 0.8em 1.2em;
+    gap: 0.8em;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .top-menu .menu {
+    width: 100%;
+    order: 3;
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+  }
+
+  .menu__item {
+    font-size: 1.25em;
+    padding: 0.6em 1em;
   }
 
   .logout {
@@ -5475,6 +5573,23 @@ select option{
 .add_form__ghost:hover {
   border-color: var(--primary-color);
   color: var(--primary-color);
+}
+
+.modal-content{
+  width: 350px;
+  height: 100vh;
+  background-color: var(--block-bg);
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 999;
+  padding: 2em;
+}
+
+.modal-content__header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media (max-width: 760px) {

@@ -385,7 +385,7 @@ function Billing({ setFleetPage }) {
 
     return (
         <div className="fleet-billing">
-            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
+            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} currentPage="billing" />
             <div className="dashboard__content fleet-billing__content">
                 <div className="fleet-billing__header">
                     <div>

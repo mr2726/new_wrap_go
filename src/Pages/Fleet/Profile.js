@@ -167,7 +167,7 @@ function Profile({ setFleetPage }) {
 
     return (
         <div className="Profile">
-            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} />
+            <TopMenu sendto="dashboard" setFleetPage={setFleetPage} currentPage="profile" />
 
             <h1 className="title">Fleet Profile</h1>
             <p className="description">Here you can manage your fleet profile, update your information, and customize your settings.</p>

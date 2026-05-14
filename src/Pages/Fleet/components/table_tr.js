@@ -74,8 +74,8 @@ function TableTr({ vehicleData, contractData, driverData }) {
         </td>
         
         <td><p className='table_title'>{formatStartDate(contract.created_at)}</p></td>
-        <td><p className='table_title'>{vehicle.kmtoday || 0}</p></td>
-        <td><p className='table_title'>{vehicle.zonehourse || 0}</p></td>
+        <td><p className='table_title'>{driver.kmtoday || 0}</p></td>
+        <td><p className='table_title'>{driver.zonehourse || 0}</p></td>
     </tr>
   );
 }
