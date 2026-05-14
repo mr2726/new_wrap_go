@@ -1,8 +1,12 @@
 import "../../../App.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../data/supabase";
+import pageData from "../../../data/data.json";
 
 function Security() {
+    const securityData = pageData.content.settings.security;
+    const twoFaData = securityData.twoFa;
+    const passwordData = securityData.password;
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [is2FALoading, setIs2FALoading] = useState(true);
     const [is2FASubmitting, setIs2FASubmitting] = useState(false);
@@ -58,7 +62,7 @@ function Security() {
             if (!isMounted) return;
 
             if (error) {
-                setSecurityStatus({ type: "error", text: error.message || "Failed to load 2FA settings." });
+                setSecurityStatus({ type: "error", text: error.message || twoFaData.errors.loadFailed });
                 setIs2FALoading(false);
                 return;
             }
@@ -77,7 +81,7 @@ function Security() {
     const persist2FAFlag = async (enabled) => {
         const { data: authData, error: authError } = await supabase.auth.getUser();
         if (authError || !authData?.user) {
-            throw new Error(authError?.message || "User is not authenticated.");
+            throw new Error(authError?.message || twoFaData.errors.userNotAuthenticated);
         }
 
         const { error } = await supabase
@@ -86,50 +90,50 @@ function Security() {
             .eq("userid", authData.user.id);
 
         if (error) {
-            throw new Error(error.message || "Failed to update 2FA setting.");
+            throw new Error(error.message || twoFaData.errors.updateFailed);
         }
     };
 
     const handleDisable2FA = async () => {
         const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
         if (factorsError) {
-            throw new Error(factorsError.message || "Failed to load MFA factors.");
+            throw new Error(factorsError.message || twoFaData.errors.loadFactorsFailed);
         }
 
         const verifiedTotpFactors = (factorsData?.totp || []).filter((factor) => factor.status === "verified");
         for (const factor of verifiedTotpFactors) {
             const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
             if (error) {
-                throw new Error(error.message || "Failed to disable authenticator factor.");
+                throw new Error(error.message || twoFaData.errors.disableFactorFailed);
             }
         }
 
         await persist2FAFlag(false);
         setIs2FAEnabled(false);
-        setSecurityStatus({ type: "success", text: "2FA disabled." });
+        setSecurityStatus({ type: "success", text: twoFaData.status.disabled });
     };
 
     const handleEnable2FA = async () => {
         const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
         if (factorsError) {
-            throw new Error(factorsError.message || "Failed to load MFA factors.");
+            throw new Error(factorsError.message || twoFaData.errors.loadFactorsFailed);
         }
 
         const verifiedTotpFactor = (factorsData?.totp || []).find((factor) => factor.status === "verified");
         if (verifiedTotpFactor) {
             await persist2FAFlag(true);
             setIs2FAEnabled(true);
-            setSecurityStatus({ type: "success", text: "2FA enabled." });
+            setSecurityStatus({ type: "success", text: twoFaData.status.enabled });
             return;
         }
 
         const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
             factorType: "totp",
-            friendlyName: "Google Authenticator",
+            friendlyName: twoFaData.friendlyName,
         });
 
         if (enrollError || !enrollData?.id) {
-            throw new Error(enrollError?.message || "Failed to create Google Authenticator setup.");
+            throw new Error(enrollError?.message || twoFaData.errors.setupCreateFailed);
         }
 
         setSetupFactorId(enrollData.id);
@@ -155,7 +159,7 @@ function Security() {
         } catch (error) {
             setSecurityStatus({
                 type: "error",
-                text: error instanceof Error ? error.message : "Failed to change 2FA setting.",
+                text: error instanceof Error ? error.message : twoFaData.errors.toggleFailed,
             });
         } finally {
             setIs2FASubmitting(false);
@@ -167,12 +171,12 @@ function Security() {
         setSecurityStatus({ type: "", text: "" });
 
         if (!setupFactorId) {
-            setSecurityStatus({ type: "error", text: "2FA factor is missing." });
+            setSecurityStatus({ type: "error", text: twoFaData.errors.factorMissing });
             return;
         }
 
         if (setupCode.length !== 6) {
-            setSecurityStatus({ type: "error", text: "Enter a valid 6-digit code." });
+            setSecurityStatus({ type: "error", text: twoFaData.errors.invalidCode });
             return;
         }
 
@@ -183,7 +187,7 @@ function Security() {
         });
 
         if (challengeError || !challengeData?.id) {
-            setSecurityStatus({ type: "error", text: challengeError?.message || "Failed to request verification challenge." });
+            setSecurityStatus({ type: "error", text: challengeError?.message || twoFaData.errors.challengeFailed });
             setIs2FASubmitting(false);
             return;
         }
@@ -195,7 +199,7 @@ function Security() {
         });
 
         if (verifyError) {
-            setSecurityStatus({ type: "error", text: verifyError.message || "Invalid authenticator code." });
+            setSecurityStatus({ type: "error", text: verifyError.message || twoFaData.errors.verifyFailed });
             setIs2FASubmitting(false);
             return;
         }
@@ -208,11 +212,11 @@ function Security() {
             setSetupFactorId("");
             setSetupQrCode("");
             setSetupSecret("");
-            setSecurityStatus({ type: "success", text: "2FA enabled successfully." });
+            setSecurityStatus({ type: "success", text: twoFaData.status.enabledSuccess });
         } catch (error) {
             setSecurityStatus({
                 type: "error",
-                text: error instanceof Error ? error.message : "Failed to persist 2FA setting.",
+                text: error instanceof Error ? error.message : twoFaData.errors.persistFailed,
             });
         } finally {
             setIs2FASubmitting(false);
@@ -241,32 +245,32 @@ function Security() {
         setStatus({ type: "", text: "" });
 
         if (newPassword.length < 8) {
-            setStatus({ type: "error", text: "Password must be at least 8 characters long." });
+            setStatus({ type: "error", text: passwordData.errors.minLength });
             return;
         }
 
         if (!/[A-Z]/.test(newPassword)) {
-            setStatus({ type: "error", text: "Password must include at least one uppercase letter." });
+            setStatus({ type: "error", text: passwordData.errors.missingUpper });
             return;
         }
 
         if (!/[a-z]/.test(newPassword)) {
-            setStatus({ type: "error", text: "Password must include at least one lowercase letter." });
+            setStatus({ type: "error", text: passwordData.errors.missingLower });
             return;
         }
 
         if (!/[0-9]/.test(newPassword)) {
-            setStatus({ type: "error", text: "Password must include at least one digit." });
+            setStatus({ type: "error", text: passwordData.errors.missingDigit });
             return;
         }
 
         if (!/[^A-Za-z0-9]/.test(newPassword)) {
-            setStatus({ type: "error", text: "Password must include at least one special symbol." });
+            setStatus({ type: "error", text: passwordData.errors.missingSymbol });
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            setStatus({ type: "error", text: "Passwords do not match." });
+            setStatus({ type: "error", text: passwordData.errors.mismatch });
             return;
         }
 
@@ -275,12 +279,12 @@ function Security() {
         const { error } = await supabase.auth.updateUser({ password: newPassword });
 
         if (error) {
-            setStatus({ type: "error", text: error.message || "Failed to update password." });
+            setStatus({ type: "error", text: error.message || passwordData.errors.updateFailed });
             setIsSubmitting(false);
             return;
         }
 
-        setStatus({ type: "success", text: "Password changed successfully." });
+        setStatus({ type: "success", text: passwordData.status.changed });
         setIsSubmitting(false);
         setNewPassword("");
         setConfirmPassword("");
@@ -289,19 +293,19 @@ function Security() {
     return (
         <div className="settings__block">
             <div className="notification__block--wrapper">
-                <h1 className="title">Security Settings</h1>
+                <h1 className="title">{securityData.title}</h1>
 
                 <div className="changePassword">
                     <div className="changePassword__content">
-                        <h2 className="second__title">Google Authenticator 2FA</h2>
-                        <p className="description">Use 6-digit TOTP code on each sign in.</p>
+                        <h2 className="second__title">{twoFaData.title}</h2>
+                        <p className="description">{twoFaData.description}</p>
                     </div>
                     <button
                         className="signup_form__form--button changePassword__button"
                         onClick={handleToggle2FA}
                         disabled={is2FALoading || is2FASubmitting}
                     >
-                        {is2FALoading ? "Loading..." : is2FAEnabled ? "Disable 2FA" : "Enable 2FA"}
+                        {is2FALoading ? twoFaData.loading : is2FAEnabled ? twoFaData.disable : twoFaData.enable}
                     </button>
                 </div>
 
@@ -310,28 +314,28 @@ function Security() {
 
                 <div className="changePassword">
                     <div className="changePassword__content">
-                        <h2 className="second__title">Change Password</h2>
-                        <p className="description">Update your password regularly to keep your account secure.</p>
+                        <h2 className="second__title">{passwordData.title}</h2>
+                        <p className="description">{passwordData.description}</p>
                     </div>
-                    <button className="signup_form__form--button changePassword__button" onClick={openModal}>Change Password</button>
+                    <button className="signup_form__form--button changePassword__button" onClick={openModal}>{passwordData.submit}</button>
                 </div>
             </div>
 
             {isModalOpen && (
                 <div className="modal" onClick={closeModal}>
                     <div className="modal__content security-modal" onClick={(event) => event.stopPropagation()}>
-                        <h2 className="modal__title">Change Password</h2>
-                        <p className="modal__text">Enter your new password and confirm it to update your account credentials.</p>
+                        <h2 className="modal__title">{passwordData.modalTitle}</h2>
+                        <p className="modal__text">{passwordData.modalText}</p>
 
                         <form className="security-modal__form" onSubmit={handleChangePassword}>
                             <div className="security-modal__group">
-                                <label className="signup_form__form--label" htmlFor="newPassword">New Password</label>
+                                <label className="signup_form__form--label" htmlFor="newPassword">{passwordData.newLabel}</label>
                                 <br />
                                 <input
                                     id="newPassword"
                                     type="password"
                                     className="signup_form__form--input"
-                                    placeholder="Enter new password"
+                                    placeholder={passwordData.newPlaceholder}
                                     value={newPassword}
                                     style={{
                                         width: "100%"
@@ -342,13 +346,13 @@ function Security() {
                             </div>
 
                             <div className="security-modal__group">
-                                <label className="signup_form__form--label" htmlFor="confirmPassword">Confirm New Password</label>
+                                <label className="signup_form__form--label" htmlFor="confirmPassword">{passwordData.confirmLabel}</label>
                                 <br />
                                 <input
                                     id="confirmPassword"
                                     type="password"
                                     className="signup_form__form--input"
-                                    placeholder="Confirm new password"
+                                    placeholder={passwordData.confirmPlaceholder}
                                     value={confirmPassword}
                                     style={{
                                         width: "100%"
@@ -368,7 +372,7 @@ function Security() {
                                     onClick={closeModal}
                                     disabled={isSubmitting}
                                 >
-                                    Cancel
+                                    {passwordData.cancel}
                                 </button>
                                 <button
                                     type="submit"
@@ -376,7 +380,7 @@ function Security() {
                                     disabled={isSubmitting}
                                     style={{ padding: "0.5em 1.5em" }}
                                 >
-                                    {isSubmitting ? "Changing..." : "Change Password"}
+                                    {isSubmitting ? passwordData.submitting : passwordData.submit}
                                 </button>
                             </div>
                         </form>
@@ -387,14 +391,14 @@ function Security() {
             {is2FASetupOpen && (
                 <div className="modal" onClick={() => !is2FASubmitting && setIs2FASetupOpen(false)}>
                     <div className="modal__content security-modal" onClick={(event) => event.stopPropagation()}>
-                        <h2 className="modal__title">Set up Google Authenticator</h2>
-                        <p className="modal__text">Scan QR in Google Authenticator and enter the 6-digit code.</p>
+                        <h2 className="modal__title">{twoFaData.setupTitle}</h2>
+                        <p className="modal__text">{twoFaData.setupDescription}</p>
 
                         {setupQrCode ? (
                             <div style={{ display: "flex", justifyContent: "center", margin: "1em auto" }}>
                                 <img
                                     src={normalizeQrCodeSrc(setupQrCode)}
-                                    alt="Google Authenticator QR"
+                                    alt={twoFaData.qrAlt}
                                     width={240}
                                     height={240}
                                     style={{
@@ -410,20 +414,20 @@ function Security() {
 
                         {setupSecret && (
                             <p className="description" style={{ wordBreak: "break-all" }}>
-                                Secret: {setupSecret}
+                                {twoFaData.secretPrefix} {setupSecret}
                             </p>
                         )}
 
                         <form className="security-modal__form" onSubmit={handleConfirm2FASetup}>
                             <div className="security-modal__group">
-                                <label className="signup_form__form--label" htmlFor="totpCode">Authenticator Code</label>
+                                <label className="signup_form__form--label" htmlFor="totpCode">{twoFaData.authCodeLabel}</label>
                                 <br />
                                 <input
                                     id="totpCode"
                                     type="text"
                                     inputMode="numeric"
                                     className="signup_form__form--input"
-                                    placeholder="123456"
+                                    placeholder={twoFaData.authCodePlaceholder}
                                     value={setupCode}
                                     style={{ width: "100%" }}
                                     onChange={(event) => setSetupCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -438,7 +442,7 @@ function Security() {
                                     onClick={() => setIs2FASetupOpen(false)}
                                     disabled={is2FASubmitting}
                                 >
-                                    Cancel
+                                    {twoFaData.cancel}
                                 </button>
                                 <button
                                     type="submit"
@@ -446,7 +450,7 @@ function Security() {
                                     disabled={is2FASubmitting}
                                     style={{ padding: "0.5em 1.5em" }}
                                 >
-                                    {is2FASubmitting ? "Verifying..." : "Confirm"}
+                                    {is2FASubmitting ? twoFaData.verifying : twoFaData.confirm}
                                 </button>
                             </div>
                         </form>

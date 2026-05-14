@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { HiChevronDown } from "react-icons/hi";
 import "../../../App.css";
+import pageData from "../../../data/data.json";
 
 function CustomSelect({ label, options, value, onChange, isVehicle }) {
+    const selectText = pageData.fleet.customSelect;
     const [isOpen, setIsOpen] = useState(false);
 
     const selectedOption = options.find(opt => opt.value === value);
@@ -34,7 +36,7 @@ function CustomSelect({ label, options, value, onChange, isVehicle }) {
                         </div>
                     )
                 ) : (
-                    <span className="placeholder">Select option</span>
+                    <span className="placeholder">{selectText.placeholder}</span>
                 )}
                 <HiChevronDown size={20} className={`chevron ${isOpen ? 'open' : ''}`} />
             </div>

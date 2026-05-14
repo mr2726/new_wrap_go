@@ -6,9 +6,11 @@ import { FaCar } from "react-icons/fa";
 import TopMenu from "../../Components/TopMenu";
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "../../data/supabase";
+import pageData from "../../data/data.json";
 
 
 function Contracts({setFleetPage}) {
+    const contractsText = pageData.fleet.contracts;
     const [contractDetails, setContractDetails] = useState(true);
     const [isClosing, setIsClosing] = useState(false);
     const [contractData, setContractData] = useState([]);
@@ -70,14 +72,14 @@ function Contracts({setFleetPage}) {
                 .single();
             setMyContractIds(updatedFleet?.contracts || []);
 
-            alert("Contract successfully booked!");
+            alert(contractsText.alerts.booked);
         } catch (error) {
             console.error("Error booking contract:", error);
-            alert("Error booking contract");
+            alert(contractsText.alerts.bookError);
         } finally {
             setIsBooking(false);
         }
-    }, [selectedContract, closeDetails]);
+    }, [selectedContract, closeDetails, contractsText.alerts.bookError, contractsText.alerts.booked]);
 
     useEffect(() => {
         const fetchContracts = async () => {
@@ -138,14 +140,14 @@ function Contracts({setFleetPage}) {
         <div className="contracts">
             <TopMenu sendto="dashboard" setFleetPage={setFleetPage} currentPage="contracts" />
             <div className="contracts__header">
-                <h1 className="signup_content_container__title">Contracts</h1>
-                <p className="signup_content_container__description">Browse advertised contracts and manage your fleet agreements.</p>
+                <h1 className="signup_content_container__title">{contractsText.title}</h1>
+                <p className="signup_content_container__description">{contractsText.description}</p>
             </div>
             <div className="contracts__content">
                     <div className="contracts_filter_btns">
-                        <button className={`contracts__filter--button ${filter === "available" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("available")}>Available Contracts</button>
-                        <button className={`contracts__filter--button ${filter === "my" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("my")}>My Contracts</button>
-                        <button className={`contracts__filter--button ${filter === "completed" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("completed")}>Completed Contracts</button>
+                        <button className={`contracts__filter--button ${filter === "available" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("available")}>{contractsText.filters.available}</button>
+                        <button className={`contracts__filter--button ${filter === "my" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("my")}>{contractsText.filters.my}</button>
+                        <button className={`contracts__filter--button ${filter === "completed" ? "contracts_filter_btns--active" : ""}`} onClick={() => setFilter("completed")}>{contractsText.filters.completed}</button>
                     </div>
                     {
                         filteredContracts.map((item)=> (
@@ -159,10 +161,10 @@ function Contracts({setFleetPage}) {
                                         <div className="contracts__block--details--company_info">
                                             <div className="company__logo"><img src="https://rshhhtxokegviwblosur.supabase.co/storage/v1/object/public/profile-images/59956ff9-7702-4ba7-b43f-001f494461c4/company-1778195849542-photo_2026-05-07_14-57-03.jpg" alt="Company Logo" /></div>
                                             <div>
-                                                <h2 className="company__name">{profilesByUserId[String(item.ownerid)]?.companyname || "Company"}</h2>
+                                                <h2 className="company__name">{profilesByUserId[String(item.ownerid)]?.companyname || contractsText.companyFallback}</h2>
                                                 <div className="contracts__tags">
-                                                    <p className="company__industry company__info--details">Industry: {profilesByUserId[String(item.ownerid)]?.industry || "N/A"}</p>
-                                                    <p className="company__size company__info--details">Location: {profilesByUserId[String(item.ownerid)]?.city || item.city || "N/A"}</p>
+                                                    <p className="company__industry company__info--details">{contractsText.details.industry} {profilesByUserId[String(item.ownerid)]?.industry || contractsText.na}</p>
+                                                    <p className="company__size company__info--details">{contractsText.details.locationMeta} {profilesByUserId[String(item.ownerid)]?.city || item.city || contractsText.na}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -172,29 +174,29 @@ function Contracts({setFleetPage}) {
                                             <div className="contract__details--block">
                                                 <IoLocationOutline color="#94A3B8" fontSize={20}/>
                                                 <div>
-                                                    <p>Location</p>
+                                                    <p>{contractsText.details.location}</p>
                                                     <p>{item.city}</p>
                                                 </div>
                                             </div>
                                             <div className="contract__details--block">
                                                 <CiCalendar color="#94A3B8" fontSize={20}/>
                                                 <div>
-                                                    <p>Start Date</p>
+                                                    <p>{contractsText.details.startDate}</p>
                                                     <p>{new Date(new Date(item.created_at).setDate(new Date(item.created_at).getDate() + 7)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                                                 </div>
                                             </div>
                                             <div className="contract__details--block">
                                                 <FaRegClock color="#94A3B8" fontSize={20}/>
                                                 <div>
-                                                    <p>Duration</p>
-                                                    <p>{item.duration?.replace('m', ' Month')}</p>
+                                                    <p>{contractsText.details.duration}</p>
+                                                    <p>{item.duration?.replace('m', contractsText.details.monthSuffix)}</p>
                                                 </div>
                                             </div>
                                             <div className="contract__details--block">
                                                 <FaCar color="#94A3B8" fontSize={20}/>
                                                 <div>
-                                                    <p>Vehicles Needed</p>
-                                                    <p>{item.economValue} Vehicles</p>
+                                                    <p>{contractsText.details.vehiclesNeeded}</p>
+                                                    <p>{item.economValue} {contractsText.details.vehiclesSuffix}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -202,15 +204,15 @@ function Contracts({setFleetPage}) {
                                 </div>
                                 <div className="contracts__block--details--actions">
                                     <div className="contracts__block--details--actions__header">
-                                        <p className="contracts__block--details--actions__header--title">Estimated Earnings</p>
+                                        <p className="contracts__block--details--actions__header--title">{contractsText.details.estimatedEarnings}</p>
                                         <div className="title__details">
                                             <p>{(Number(standartPayment)).toLocaleString('en-US')} AMD</p>
-                                            <p>Per Vehicle</p>
+                                            <p>{contractsText.details.perVehicle}</p>
                                         </div>
                                     </div>
                                     <div className="contracts__block--details--actions__buttons">
-                                        {(filter !== "completed" && filter !== "my") && <button className="contracts__block--details--actions--button cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>Book Contract</button>}
-                                        <button className="contracts__block--details--actions--button secondary_cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>View Details</button>
+                                        {(filter !== "completed" && filter !== "my") && <button className="contracts__block--details--actions--button cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>{contractsText.buttons.book}</button>}
+                                        <button className="contracts__block--details--actions--button secondary_cta" onClick={() => { setSelectedContract(item); setContractDetails(true); }}>{contractsText.buttons.view}</button>
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +234,7 @@ function Contracts({setFleetPage}) {
                                             <img src="https://rshhhtxokegviwblosur.supabase.co/storage/v1/object/public/profile-images/59956ff9-7702-4ba7-b43f-001f494461c4/company-1778195849542-photo_2026-05-07_14-57-03.jpg" alt="Company Logo" />
                                         </div>
                                         <div>
-                                            <h2 style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "1.3em", color: "#fff", margin: 0}}>{profilesByUserId[String(selectedContract.ownerid)]?.companyname || selectedContract.title || "Contract"}</h2>
+                                            <h2 style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "1.3em", color: "#fff", margin: 0}}>{profilesByUserId[String(selectedContract.ownerid)]?.companyname || selectedContract.title || contractsText.modalFallbackTitle}</h2>
                                             <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1em", color: "#64748b", margin: 0}}>{profilesByUserId[String(selectedContract.ownerid)]?.city || selectedContract.city}</p>
                                         </div>
                                     </div>
@@ -245,40 +247,40 @@ function Contracts({setFleetPage}) {
                                         <div className="contract__details--block">
                                             <CiCalendar color="#94A3B8" fontSize={20}/>
                                             <div>
-                                                <p>Start Date</p>
+                                                <p>{contractsText.details.startDate}</p>
                                                 <p>{new Date(new Date(selectedContract.created_at).setDate(new Date(selectedContract.created_at).getDate() + 7)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                                             </div>
                                         </div>
                                         <div className="contract__details--block">
                                             <FaRegClock color="#94A3B8" fontSize={18}/>
                                             <div>
-                                                <p>Duration</p>
-                                                <p>{selectedContract.duration?.replace('m', ' Month')}</p>
+                                                <p>{contractsText.details.duration}</p>
+                                                <p>{selectedContract.duration?.replace('m', contractsText.details.monthSuffix)}</p>
                                             </div>
                                         </div>
                                         <div className="contract__details--block">
                                             <IoLocationOutline color="#94A3B8" fontSize={20}/>
                                             <div>
-                                                <p>Location</p>
+                                                <p>{contractsText.details.location}</p>
                                                 <p>{selectedContract.city}</p>
                                             </div>
                                         </div>
                                         <div className="contract__details--block">
                                             <FaCar color="#94A3B8" fontSize={18}/>
                                             <div>
-                                                <p>Vehicles Needed</p>
-                                                <p>{selectedContract.economValue} Vehicles</p>
+                                                <p>{contractsText.details.vehiclesNeeded}</p>
+                                                <p>{selectedContract.economValue} {contractsText.details.vehiclesSuffix}</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div style={{borderTop: "1px solid rgba(72,96,127,0.3)", paddingTop: "1.2em", marginBottom: "1.6em"}}>
-                                        <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1em", color: "#64748b", marginBottom: "0.3em"}}>Estimated Earnings</p>
-                                        <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(standartPayment)).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>AMD / vehicle</span></p>
+                                        <p style={{fontFamily: "'LufgaRegular', sans-serif", fontSize: "1em", color: "#64748b", marginBottom: "0.3em"}}>{contractsText.details.estimatedEarnings}</p>
+                                        <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(standartPayment)).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>{contractsText.details.amdPerVehicle}</span></p>
                                     </div>
 
-                                    {(filter !== "completed" && filter !== "my") && <button className="contract__details--popup__close" onClick={bookContract} disabled={isBooking} style={{width: "100%", marginTop: "auto"}}>{isBooking ? "Booking..." : "Book Contract"}</button>}
-                                    <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: filter !== "completed" ? "0.6em" : "auto"}}>Close</button>
+                                    {(filter !== "completed" && filter !== "my") && <button className="contract__details--popup__close" onClick={bookContract} disabled={isBooking} style={{width: "100%", marginTop: "auto"}}>{isBooking ? contractsText.buttons.booking : contractsText.buttons.book}</button>}
+                                    <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: filter !== "completed" ? "0.6em" : "auto"}}>{contractsText.buttons.close}</button>
                                 </div>
                             </div>
                         </div>

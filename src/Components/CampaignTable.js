@@ -1,10 +1,11 @@
 import "../App.css";
+import appData from "../data/data.json";
 
 function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage}) {
-    
+    const fallbackText = appData.ui.common;
     const formatNumber = (num) => num.toLocaleString('en-US');
     if (!Array.isArray(data)) {
-        return <div>No data available</div>;
+        return <div>{pageData?.emptyState || fallbackText.noDataAvailable}</div>;
     }
 
     return (
@@ -37,13 +38,13 @@ function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage}
 
                                 <td>{item.city}</td>
                                 <td>{item.driverCount}</td>
-                                <td>{formatNumber(Math.round(item.budget))} <span className="article"> AMD</span></td>
+                                <td>{formatNumber(Math.round(item.budget))} <span className="article"> {pageData?.currency || fallbackText.currency}</span></td>
 
                                 <td>
-                                    <span className={`status status--${item.status}`}>{item.status}</span>
+                                    <span className={`status status--${item.status}`}>{pageData?.statusLabels?.[item.status] || item.status}</span>
                                     {
                                         item.status === "pending" && (
-                                            <button className="payButton" onClick={(e) => { e.stopPropagation(); setPage("billing"); }}>Pay</button>
+                                            <button className="payButton" onClick={(e) => { e.stopPropagation(); setPage("billing"); }}>{pageData?.pay || "Pay"}</button>
                                         )
                                     }
                                 </td>

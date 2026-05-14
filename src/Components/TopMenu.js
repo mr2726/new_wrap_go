@@ -1,13 +1,15 @@
 import "../App.css";
 import Logo from "./Logo";
 import { supabase } from "../data/supabase";
+import pageData from "../data/data.json";
 
 function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
+    const menuText = pageData.fleet.topMenu;
     const menuItems = [
-        { key: "dashboard", label: "Dashboard" },
-        { key: "contracts", label: "Contracts" },
-        { key: "billing", label: "Billing" },
-        { key: "profile", label: "Settings" },
+        { key: "dashboard", label: menuText.items.dashboard },
+        { key: "contracts", label: menuText.items.contracts },
+        { key: "billing", label: menuText.items.billing },
+        { key: "profile", label: menuText.items.profile },
     ];
 
     const handleLogout = async () => {
@@ -35,7 +37,7 @@ function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
                     </li>
                 ))}
             </ul>
-            <button type="button" className="logout" onClick={handleLogout}>Logout</button>
+            <button type="button" className="logout" onClick={handleLogout}>{menuText.logout}</button>
         </div>
     );
 }

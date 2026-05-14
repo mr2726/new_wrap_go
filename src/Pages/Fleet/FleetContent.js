@@ -6,8 +6,10 @@ import Profile from "./Profile";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../data/supabase";
 import Loader from "../../Components/Loader";
+import pageData from "../../data/data.json";
 
 function FleetContent({ setPage }) {
+    const gateText = pageData.fleet.fleetContent2fa;
     const [fleetPage, setFleetPage] = useState("dashboard");
     const [isChecking2FA, setIsChecking2FA] = useState(true);
     const [requires2FA, setRequires2FA] = useState(false);
@@ -75,7 +77,7 @@ function FleetContent({ setPage }) {
             if (!isMounted) return;
 
             if (factorsError) {
-                setTwoFactorError(factorsError.message || "Failed to load 2FA factors.");
+                setTwoFactorError(factorsError.message || gateText.errors.loadFactors);
                 setIsChecking2FA(false);
                 return;
             }
@@ -99,7 +101,7 @@ function FleetContent({ setPage }) {
             if (!isMounted) return;
 
             if (challengeError || !challengeData?.id) {
-                setTwoFactorError(challengeError?.message || "Failed to create 2FA challenge.");
+                setTwoFactorError(challengeError?.message || gateText.errors.createChallenge);
                 setChallengeId("");
                 setIsChecking2FA(false);
                 return;
@@ -121,12 +123,12 @@ function FleetContent({ setPage }) {
         setTwoFactorError("");
 
         if (!factorId || !challengeId) {
-            setTwoFactorError("2FA challenge is missing. Please sign in again.");
+            setTwoFactorError(gateText.errors.missingChallenge);
             return;
         }
 
         if (totpCode.length !== 6) {
-            setTwoFactorError("Enter a valid 6-digit code.");
+            setTwoFactorError(gateText.errors.invalidCode);
             return;
         }
 
@@ -138,7 +140,7 @@ function FleetContent({ setPage }) {
         }));
 
         if (error) {
-            setTwoFactorError(error.message || "Invalid authenticator code.");
+            setTwoFactorError(error.message || gateText.errors.invalidCodeVerify);
             setIsVerifying2FA(false);
             return;
         }
@@ -155,7 +157,7 @@ function FleetContent({ setPage }) {
 
     const handleRetryChallenge = async () => {
         if (!factorId) {
-            setTwoFactorError("2FA factor is missing. Please sign in again.");
+            setTwoFactorError(gateText.errors.invalidFactor);
             return;
         }
 
@@ -167,7 +169,7 @@ function FleetContent({ setPage }) {
         }));
 
         if (error || !challengeData?.id) {
-            setTwoFactorError(error?.message || "Failed to create 2FA challenge.");
+            setTwoFactorError(error?.message || gateText.errors.createChallenge);
             setIsVerifying2FA(false);
             return;
         }
@@ -200,19 +202,19 @@ function FleetContent({ setPage }) {
         return (
             <div className="modal">
                 <div className="modal__content security-modal" onClick={(event) => event.stopPropagation()}>
-                    <h2 className="modal__title">Two-Factor Authentication</h2>
-                    <p className="modal__text">Enter the 6-digit code from Google Authenticator to continue.</p>
+                    <h2 className="modal__title">{gateText.title}</h2>
+                    <p className="modal__text">{gateText.description}</p>
 
                     <form className="security-modal__form" onSubmit={handleVerify2FA}>
                         <div className="security-modal__group">
-                            <label className="signup_form__form--label" htmlFor="fleetSignInTotp">Authenticator Code</label>
+                            <label className="signup_form__form--label" htmlFor="fleetSignInTotp">{gateText.codeLabel}</label>
                             <br />
                             <input
                                 id="fleetSignInTotp"
                                 type="text"
                                 inputMode="numeric"
                                 className="signup_form__form--input"
-                                placeholder="123456"
+                                placeholder={gateText.placeholder}
                                 value={totpCode}
                                 style={{ width: "100%" }}
                                 onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -229,7 +231,7 @@ function FleetContent({ setPage }) {
                                 onClick={handleSignOutFrom2FA}
                                 disabled={isVerifying2FA}
                             >
-                                Sign out
+                                {gateText.signOut}
                             </button>
                             {!challengeId && (
                                 <button
@@ -238,7 +240,7 @@ function FleetContent({ setPage }) {
                                     onClick={handleRetryChallenge}
                                     disabled={isVerifying2FA}
                                 >
-                                    Retry challenge
+                                    {gateText.retryChallenge}
                                 </button>
                             )}
                             <button
@@ -247,7 +249,7 @@ function FleetContent({ setPage }) {
                                 disabled={isVerifying2FA || !challengeId}
                                 style={{ padding: "0.5em 1.5em" }}
                             >
-                                {isVerifying2FA ? "Verifying..." : "Verify"}
+                                {isVerifying2FA ? gateText.verifying : gateText.verify}
                             </button>
                         </div>
                     </form>

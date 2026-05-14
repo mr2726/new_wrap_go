@@ -1,14 +1,17 @@
 import "../App.css";
 import Logo from "../Components/Logo";
+import pageData from "../data/data.json";
 
 function DriverAppNotice({ setPage }) {
+  const driverPageData = pageData.driverAppNotice;
+
   return (
     <div className="reset">
       <Logo setPage={setPage} transfer="signin" />
       <div className="reset__content">
-        <h3 className="get_otp__content--title">Driver Account Detected</h3>
+        <h3 className="get_otp__content--title">{driverPageData.title}</h3>
         <p className="get_otp__content--description">
-          Your account is registered as a driver. Please use the mobile app to continue.
+          {driverPageData.description}
         </p>
         <div className="dispflexcoulumn">
           <a
@@ -17,7 +20,7 @@ function DriverAppNotice({ setPage }) {
             target="_blank"
             rel="noreferrer"
           >
-            Download on Google Play
+            {driverPageData.googlePlay}
           </a>
           <a
             className="signup_form__form--button"
@@ -25,10 +28,10 @@ function DriverAppNotice({ setPage }) {
             target="_blank"
             rel="noreferrer"
           >
-            Download on App Store
+            {driverPageData.appStore}
           </a>
           <button className="resend" onClick={() => setPage("signin")}>
-            Back to Sign In
+            {driverPageData.back}
           </button>
         </div>
       </div>

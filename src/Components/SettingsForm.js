@@ -1,8 +1,10 @@
 import "../App.css";
 import { useState, useEffect } from "react";
 import { supabase } from "../data/supabase";
+import pageData from "../data/data.json";
 
 function SettingsForm({title, description, data}) {
+    const formText = pageData.content.settings.formCommon;
     const [formValues, setFormValues] = useState({});
     const [status, setStatus] = useState(null); // "success" | "error" | null
 
@@ -51,7 +53,7 @@ function SettingsForm({title, description, data}) {
                                     value={formValues[item.dbKey] ?? ""}
                                     onChange={(e) => handleChange(item.dbKey, e.target.value)}
                                 >
-                                    <option value="">Select {item.title.toLowerCase()}</option>
+                                    <option value="">{formText.selectPrefix} {item.title.toLowerCase()}</option>
                                     {item.options.map((option, optIndex) => (
                                         <option key={optIndex} value={option}>
                                             {option}
@@ -62,7 +64,7 @@ function SettingsForm({title, description, data}) {
                                 <input
                                     type="text"
                                     className="settings-form__input signup_form__form--input"
-                                    placeholder={`Enter your ${item.title.toLowerCase()}`}
+                                    placeholder={`${formText.enterPrefix} ${item.title.toLowerCase()}`}
                                     value={formValues[item.dbKey] ?? ""}
                                     onChange={(e) => handleChange(item.dbKey, e.target.value)}
                                 />
@@ -70,9 +72,9 @@ function SettingsForm({title, description, data}) {
                         </div>
                     ))
                 }
-                {status === "success" && <p className="settings-form__status settings-form__status--success">Changes saved successfully.</p>}
-                {status === "error" && <p className="settings-form__status settings-form__status--error">Failed to save changes.</p>}
-                <button type="submit" className="settings-form__button overview__header--button">Save Changes</button>
+                {status === "success" && <p className="settings-form__status settings-form__status--success">{formText.status.success}</p>}
+                {status === "error" && <p className="settings-form__status settings-form__status--error">{formText.status.error}</p>}
+                <button type="submit" className="settings-form__button overview__header--button">{formText.saveChanges}</button>
             </form>
         </div>
     );

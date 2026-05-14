@@ -1,8 +1,10 @@
 import "../../../App.css";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../../../data/supabase";
+import pageData from "../../../data/data.json";
 
 function TwoFactorAuth({ onClose, onEnabled }) {
+    const twoFaText = pageData.fleet.twoFactorSetup;
     const [setupFactorId, setSetupFactorId] = useState("");
     const [setupQrCode, setSetupQrCode] = useState("");
     const [setupSecret, setSetupSecret] = useState("");
@@ -64,14 +66,14 @@ function TwoFactorAuth({ onClose, onEnabled }) {
             if (!isMounted) return;
 
             if (factorsError) {
-                setStatus({ type: "error", text: factorsError.message || "Failed to load MFA factors." });
+                setStatus({ type: "error", text: factorsError.message || twoFaText.messages.loadFactorsFailed });
                 setIsSubmitting(false);
                 return;
             }
 
             const verifiedTotpFactor = (factorsData?.totp || []).find((factor) => factor.status === "verified");
             if (verifiedTotpFactor) {
-                setStatus({ type: "success", text: "2FA is already enabled for this account." });
+                setStatus({ type: "success", text: twoFaText.messages.alreadyEnabled });
                 setIsSubmitting(false);
                 return;
             }
@@ -83,13 +85,13 @@ function TwoFactorAuth({ onClose, onEnabled }) {
 
             const { data: enrollData, error: enrollError } = await withAuthLockRetry(() => supabase.auth.mfa.enroll({
                 factorType: "totp",
-                friendlyName: "Fleet Authenticator",
+                friendlyName: twoFaText.friendlyName,
             }));
 
             if (!isMounted) return;
 
             if (enrollError || !enrollData?.id) {
-                setStatus({ type: "error", text: enrollError?.message || "Failed to create 2FA setup." });
+                setStatus({ type: "error", text: enrollError?.message || twoFaText.messages.setupFailed });
                 setIsSubmitting(false);
                 return;
             }
@@ -105,19 +107,19 @@ function TwoFactorAuth({ onClose, onEnabled }) {
         return () => {
             isMounted = false;
         };
-    }, [withAuthLockRetry]);
+    }, [withAuthLockRetry, twoFaText.friendlyName, twoFaText.messages.alreadyEnabled, twoFaText.messages.loadFactorsFailed, twoFaText.messages.setupFailed]);
 
     const handleConfirm = async (event) => {
         event.preventDefault();
         setStatus({ type: "", text: "" });
 
         if (!setupFactorId) {
-            setStatus({ type: "error", text: "2FA factor is missing." });
+            setStatus({ type: "error", text: twoFaText.messages.factorMissing });
             return;
         }
 
         if (setupCode.length !== 6) {
-            setStatus({ type: "error", text: "Enter a valid 6-digit code." });
+            setStatus({ type: "error", text: twoFaText.messages.invalidCode });
             return;
         }
 
@@ -128,7 +130,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
         }));
 
         if (challengeError || !challengeData?.id) {
-            setStatus({ type: "error", text: challengeError?.message || "Failed to request verification challenge." });
+            setStatus({ type: "error", text: challengeError?.message || twoFaText.messages.challengeFailed });
             setIsSubmitting(false);
             return;
         }
@@ -140,12 +142,12 @@ function TwoFactorAuth({ onClose, onEnabled }) {
         }));
 
         if (verifyError) {
-            setStatus({ type: "error", text: verifyError.message || "Invalid authenticator code." });
+            setStatus({ type: "error", text: verifyError.message || twoFaText.messages.verifyFailed });
             setIsSubmitting(false);
             return;
         }
 
-        setStatus({ type: "success", text: "2FA enabled successfully." });
+        setStatus({ type: "success", text: twoFaText.messages.enabled });
         setIsSubmitting(false);
 
         if (onEnabled) {
@@ -163,17 +165,17 @@ function TwoFactorAuth({ onClose, onEnabled }) {
                 style={{ maxWidth: 520, width: "92%" }}
             >
                 <div className="popup__title">
-                    <h2>Two-Factor Authentication</h2>
-                    <p onClick={onClose} style={{ cursor: "pointer" }}>Close</p>
+                    <h2>{twoFaText.title}</h2>
+                    <p onClick={onClose} style={{ cursor: "pointer" }}>{twoFaText.close}</p>
                 </div>
 
-                <p className="description">Scan the QR code with Google Authenticator or Authy.</p>
+                <p className="description">{twoFaText.description}</p>
 
                 {setupQrCode ? (
                     <div style={{ display: "flex", justifyContent: "center", margin: "1em auto" }}>
                         <img
                             src={normalizeQrCodeSrc(setupQrCode)}
-                            alt="2FA QR"
+                            alt={twoFaText.qrAlt}
                             width={240}
                             height={240}
                             style={{
@@ -186,23 +188,23 @@ function TwoFactorAuth({ onClose, onEnabled }) {
                         />
                     </div>
                 ) : (
-                    <p className="description">Generating QR code...</p>
+                    <p className="description">{twoFaText.generating}</p>
                 )}
 
                 {setupSecret && (
                     <p className="description" style={{ wordBreak: "break-all" }}>
-                        Secret: {setupSecret}
+                        {twoFaText.secretPrefix} {setupSecret}
                     </p>
                 )}
 
                 <form onSubmit={handleConfirm}>
-                    <label className="signup_form__form--label" htmlFor="fleet-totp-code">Authenticator code</label>
+                    <label className="signup_form__form--label" htmlFor="fleet-totp-code">{twoFaText.codeLabel}</label>
                     <input
                         id="fleet-totp-code"
                         type="text"
                         inputMode="numeric"
                         className="signup_form__form--input"
-                        placeholder="123456"
+                        placeholder={twoFaText.codePlaceholder}
                         value={setupCode}
                         onChange={(event) => setSetupCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
                         required
@@ -220,7 +222,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
                         disabled={isSubmitting || !setupQrCode}
                         style={{ marginTop: 16 }}
                     >
-                        {isSubmitting ? "Processing..." : "Confirm 2FA"}
+                        {isSubmitting ? twoFaText.processing : twoFaText.confirm}
                     </button>
                 </form>
             </div>

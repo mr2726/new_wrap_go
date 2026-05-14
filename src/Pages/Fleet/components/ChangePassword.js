@@ -1,8 +1,10 @@
 import "../../../App.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../data/supabase";
+import pageData from "../../../data/data.json";
 
 function ChangePassword({ onClose }) {
+    const passwordText = pageData.fleet.changePassword;
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,19 +30,19 @@ function ChangePassword({ onClose }) {
 
         if (!currentPassword || !newPassword || !confirmPassword) {
             setIsError(true);
-            setMessage("Please fill in all fields.");
+            setMessage(passwordText.messages.fillAll);
             return;
         }
 
         if (newPassword.length < 6) {
             setIsError(true);
-            setMessage("New password must be at least 6 characters.");
+            setMessage(passwordText.messages.minLength);
             return;
         }
 
         if (newPassword !== confirmPassword) {
             setIsError(true);
-            setMessage("New password and confirmation do not match.");
+            setMessage(passwordText.messages.mismatch);
             return;
         }
 
@@ -51,7 +53,7 @@ function ChangePassword({ onClose }) {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user?.email) {
                 setIsError(true);
-                setMessage("User session not found. Please sign in again.");
+                setMessage(passwordText.messages.sessionMissing);
                 return;
             }
 
@@ -62,7 +64,7 @@ function ChangePassword({ onClose }) {
 
             if (signInError) {
                 setIsError(true);
-                setMessage("Current password is incorrect.");
+                setMessage(passwordText.messages.wrongCurrent);
                 return;
             }
 
@@ -72,18 +74,18 @@ function ChangePassword({ onClose }) {
 
             if (updateError) {
                 setIsError(true);
-                setMessage(updateError.message || "Failed to update password.");
+                setMessage(updateError.message || passwordText.messages.updateFailed);
                 return;
             }
 
             setIsError(false);
-            setMessage("Password updated successfully.");
+            setMessage(passwordText.messages.success);
             setCurrentPassword("");
             setNewPassword("");
             setConfirmPassword("");
         } catch (error) {
             setIsError(true);
-            setMessage(error?.message || "Unexpected error.");
+            setMessage(error?.message || passwordText.messages.unexpected);
         } finally {
             setSaving(false);
         }
@@ -101,34 +103,34 @@ function ChangePassword({ onClose }) {
                 style={{ maxWidth: 460, width: "92%" }}
             >
                 <div className="popup__title">
-                    <h2>Change Password</h2>
-                    <p onClick={onClose} style={{ cursor: "pointer" }}>Close</p>
+                    <h2>{passwordText.title}</h2>
+                    <p onClick={onClose} style={{ cursor: "pointer" }}>{passwordText.close}</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <label className="signup_form__form--label">Current password</label>
+                    <label className="signup_form__form--label">{passwordText.labels.current}</label>
                     <input
                         className="signup_form__form--input"
                         type="password"
-                        placeholder="Enter current password"
+                        placeholder={passwordText.placeholders.current}
                         value={currentPassword}
                         onChange={(event) => setCurrentPassword(event.target.value)}
                     />
 
-                    <label className="signup_form__form--label">New password</label>
+                    <label className="signup_form__form--label">{passwordText.labels.new}</label>
                     <input
                         className="signup_form__form--input"
                         type="password"
-                        placeholder="Enter new password"
+                        placeholder={passwordText.placeholders.new}
                         value={newPassword}
                         onChange={(event) => setNewPassword(event.target.value)}
                     />
 
-                    <label className="signup_form__form--label">Confirm new password</label>
+                    <label className="signup_form__form--label">{passwordText.labels.confirm}</label>
                     <input
                         className="signup_form__form--input"
                         type="password"
-                        placeholder="Confirm new password"
+                        placeholder={passwordText.placeholders.confirm}
                         value={confirmPassword}
                         onChange={(event) => setConfirmPassword(event.target.value)}
                     />
@@ -145,7 +147,7 @@ function ChangePassword({ onClose }) {
                         disabled={saving}
                         style={{ marginTop: 16 }}
                     >
-                        {saving ? "Saving..." : "Change Password"}
+                        {saving ? passwordText.buttons.saving : passwordText.buttons.submit}
                     </button>
                 </form>
             </div>

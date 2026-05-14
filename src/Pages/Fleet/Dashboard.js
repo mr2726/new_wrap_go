@@ -7,8 +7,10 @@ import AddDriverForm from './components/AddDriverForm';
 import SignContract from './components/SignContract';
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../data/supabase';
+import pageData from '../../data/data.json';
 
 function Dashboard({ setFleetPage }) {
+    const dashboardText = pageData.fleet.dashboard;
     const [addVehicleModal, setAddVehicleModal] = useState(false);
     const [addDriverModal, setAddDriverModal] = useState(false);
     const [signContractPopup, setSignContractPopup] = useState(false);
@@ -117,21 +119,21 @@ function Dashboard({ setFleetPage }) {
             <TopMenu setFleetPage={setFleetPage} currentPage="dashboard" />
             <div className='fleet__content'>
                 <div className='fleet-dashboard__header'>
-                    <h1 className='title'>Fleet Dashboard</h1>
-                    <p className='description'>Manage your vehicles, drivers and advertising contracts.</p>
+                    <h1 className='title'>{dashboardText.title}</h1>
+                    <p className='description'>{dashboardText.description}</p>
                 </div>
 
                 <div className='DashInfo'>
-                    <DashInfo info={{ type: "vehicles", title: "Vehicles", value: vehicles.length, additionalInfo: "Active Vehicles" }} />
-                    <DashInfo info={{ type: "drivers", title: "Drivers", value: drivers.length, additionalInfo: "Active Drivers" }} />
-                    <DashInfo info={{ type: "earn", title: "Earnings", value: `AMD ${earnThisMonth.toLocaleString()}`, additionalInfo: "Earn this Month" }} />
-                    <DashInfo info={{ type: "km", title: "Total Distance", value: `${totalKm.toLocaleString()} km`, additionalInfo: "All drivers combined" }} />
+                    <DashInfo info={{ type: "vehicles", title: dashboardText.cards.vehicles.title, value: vehicles.length, additionalInfo: dashboardText.cards.vehicles.meta }} />
+                    <DashInfo info={{ type: "drivers", title: dashboardText.cards.drivers.title, value: drivers.length, additionalInfo: dashboardText.cards.drivers.meta }} />
+                    <DashInfo info={{ type: "earn", title: dashboardText.cards.earnings.title, value: `AMD ${earnThisMonth.toLocaleString()}`, additionalInfo: dashboardText.cards.earnings.meta }} />
+                    <DashInfo info={{ type: "km", title: dashboardText.cards.distance.title, value: `${totalKm.toLocaleString()} km`, additionalInfo: dashboardText.cards.distance.meta }} />
                 </div>
 
                 <div className='fleet__controls'>
-                    <button className='cta add_driver' style={{marginRight: '1em'}} onClick={() => setAddDriverModal(true)}>Invite Driver</button>
-                    <button className='cta add_vehicle' style={{marginRight: '1em'}} onClick={() => setAddVehicleModal(true)}>Add Vehicle</button>
-                    <button className='cta sign_contract' style={{marginRight: '1em'}} onClick={() => setSignContractPopup(true)}>Sign Contract</button>
+                    <button className='cta add_driver' style={{marginRight: '1em'}} onClick={() => setAddDriverModal(true)}>{dashboardText.actions.inviteDriver}</button>
+                    <button className='cta add_vehicle' style={{marginRight: '1em'}} onClick={() => setAddVehicleModal(true)}>{dashboardText.actions.addVehicle}</button>
+                    <button className='cta sign_contract' style={{marginRight: '1em'}} onClick={() => setSignContractPopup(true)}>{dashboardText.actions.signContract}</button>
                 </div>
 
                 {addDriverModal && (
@@ -153,13 +155,9 @@ function Dashboard({ setFleetPage }) {
                     <table>
                         <thead>
                             <tr>
-                                <th>Vehicle</th>
-                                <th>Contact</th>
-                                <th>Driver Status</th>
-                                <th>Driver</th>
-                                <th>Start Date</th>
-                                <th>Weekly KM</th>
-                                <th>Zone Hourse</th>
+                                {dashboardText.table.headers.map((header) => (
+                                    <th key={header}>{header}</th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>

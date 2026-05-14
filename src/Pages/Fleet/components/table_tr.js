@@ -1,6 +1,8 @@
 import "../../../App.css";
+import pageData from "../../../data/data.json";
 
 function TableTr({ vehicleData, contractData, driverData }) {
+    const tableText = pageData.fleet.tableRow;
   const vehicle = vehicleData || {};
   const contract = contractData || {};
   const driver = driverData || {};
@@ -34,8 +36,8 @@ function TableTr({ vehicleData, contractData, driverData }) {
             <div>
                 <img src={contract.image_link || "https://placehold.co/50x50.png"} alt="Contract Logo" className='table_img' />
                 <div>
-                    <p className='table_title'>{contract.name || "No Contract"}</p>
-                    <p className='plate'>{contract.reclamtype === "side" ? "One Side" : "Full Wrap"}</p>
+                    <p className='table_title'>{contract.name || tableText.noContract}</p>
+                    <p className='plate'>{contract.reclamtype === "side" ? tableText.oneSide : tableText.fullWrap}</p>
                 </div>
             </div>
         </td>
@@ -43,22 +45,22 @@ function TableTr({ vehicleData, contractData, driverData }) {
             <div>
                 <div className={driver.name ? "step--done" : "step--pending"}>
                     <div></div>
-                    <p className="table_sub_title">Invite sent</p>
+                    <p className="table_sub_title">{tableText.statusSteps.inviteSent}</p>
                     <p className='table_description'></p>
                 </div>
                 <div className={(vehicle.left_img && vehicle.right_img) ? "step--done" : "step--pending"}>
                     <div></div>
-                    <p className="table_sub_title">Photo check</p>
+                    <p className="table_sub_title">{tableText.statusSteps.photoCheck}</p>
                     <p className='table_description'></p>
                 </div>
                 <div className={vehicle.wraped ? "step--done" : "step--pending"}>
                     <div></div>
-                    <p className="table_sub_title">Wrapping</p>
+                    <p className="table_sub_title">{tableText.statusSteps.wrapping}</p>
                     <p className='table_description'></p>
                 </div>
                 <div className={(vehicle.left_img && vehicle.right_img && driver.name && vehicle.wraped) ? "step--done" : "step--pending"}>
                     <div></div>
-                    <p className="table_sub_title">Active</p>
+                    <p className="table_sub_title">{tableText.statusSteps.active}</p>
                     <p className='table_description'></p>
                 </div>
             </div>
@@ -67,7 +69,7 @@ function TableTr({ vehicleData, contractData, driverData }) {
             <div>
                 <img src="https://placehold.co/50x50.png" alt="Driver" className='table_img' />
                 <div>
-                    <p className='table_title'>{driver.name || "Not assigned"}</p>
+                    <p className='table_title'>{driver.name || tableText.notAssigned}</p>
                     <p className='table_description'>{driver.phone || "-"}</p>
                 </div>
             </div>

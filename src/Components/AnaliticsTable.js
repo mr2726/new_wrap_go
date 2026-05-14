@@ -1,10 +1,11 @@
 import "../App.css";
+import appData from "../data/data.json";
 
 function AnatiticTable ({data, pageData, state, page, setChoosedCampaign}) {
-    
+    const fallbackText = appData.ui.common;
     const formatNumber = (num) => num.toLocaleString('en-US');
     if (!Array.isArray(data)) {
-        return <div>No data available</div>;
+        return <div>{pageData?.emptyState || fallbackText.noDataAvailable}</div>;
     }
     const formatDate = (isoString) => {
         const date = new Date(isoString);
@@ -40,10 +41,10 @@ function AnatiticTable ({data, pageData, state, page, setChoosedCampaign}) {
                     <td>
                         {formatDate(item.created_at)} - {addMonths(item.created_at, parseInt(item.duration))}
                     </td>
-                    <td>{formatNumber(Math.round(item.budget))} <span className="article"> AMD</span></td>
+                    <td>{formatNumber(Math.round(item.budget))} <span className="article"> {pageData?.currency || fallbackText.currency}</span></td>
                     <td>{item.driverCount}</td>
                     <td>
-                        <span className={`status status--${item.status}`}>{item.status}</span>
+                        <span className={`status status--${item.status}`}>{pageData?.statusLabels?.[item.status] || item.status}</span>
                     </td>
                 </tr>
             </tbody>

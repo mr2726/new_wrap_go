@@ -1,6 +1,7 @@
 import "../../App.css";
 import { useState, useEffect } from "react";
 import { supabase } from "../../data/supabase";
+import pageData from "../../data/data.json";
 import Profile from "./Settings/Profile";
 import Company from "./Settings/Company";
 import Notifications from "./Settings/Notification";
@@ -12,6 +13,8 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { MdOutlineShield } from "react-icons/md";
 
 function Settings() {
+    const settingsPageData = pageData.content.settings.page;
+    const settingsFields = pageData.content.settings;
     const [content, setContent] = useState("profile");
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -32,19 +35,19 @@ function Settings() {
     }
     const _profileData = [
         {
-            "title": "Full Name",
+            "title": settingsFields.profileFields.fullName,
             "dbKey": "name",
             "article": "",
             "value": profileData?.name || ""
         },
         {
-            "title": "Email",
+            "title": settingsFields.profileFields.email,
             "dbKey": "email",
             "article": "",
             "value": profileData?.email || ""
         },
         {
-            "title": "Phone Number",
+            "title": settingsFields.profileFields.phone,
             "dbKey": "phone",
             "article": "",
             "value": profileData?.phone || ""
@@ -53,45 +56,45 @@ function Settings() {
 
     const _companyData = [
         {
-            "title": "Company Name",
+            "title": settingsFields.companyFields.companyName,
             "dbKey": "companyname",
             "article": "",
             "value": profileData?.companyname
         },
         {
-            "title": "Industry",
+            "title": settingsFields.companyFields.industry,
             "dbKey": "industry",
             "article": "",
             "value": profileData?.industry,
-            "options": ["Automotive", "Marketing", "Logistics", "Transportation", "Retail", "Other"]
+            "options": settingsFields.companyFields.industryOptions
         },
         {
-            "title" : "TAX",
+            "title" : settingsFields.companyFields.tax,
             "dbKey" : "tax",
             "article" : "",
             "value": profileData?.tax,
         },
         {
-            "title": "Website",
+            "title": settingsFields.companyFields.website,
             "dbKey": "web",
             "article": "",
             "value": profileData?.web
         },
         {
-            "title": "Country",
+            "title": settingsFields.companyFields.country,
             "dbKey": "country",
             "article": "",
             "value": profileData?.country,
-            "options": ["Armenia", "Georgia", "UAE", "Other"]
+            "options": settingsFields.companyFields.countryOptions
         },
         {
-            "title": "City",
+            "title": settingsFields.companyFields.city,
             "dbKey": "city",
             "article": "",
             "value": profileData?.city
         },
         {
-            "title": "Address",
+            "title": settingsFields.companyFields.address,
             "dbKey": "street",
             "article": "",
             "value": profileData?.street
@@ -107,22 +110,22 @@ function Settings() {
         <div className="settings">
             {loading && <Loader />}
             <div className="settings__header">
-                <h1 className="title">Settings</h1>
-                <p className="description">Manage your account and preferences</p>
+                <h1 className="title">{settingsPageData.title}</h1>
+                <p className="description">{settingsPageData.description}</p>
             </div>
             <div className="settings__content">
                 <ul className="settings__menu">
                     <li>
-                        <p className={content === "profile" ? "highlight row_center" : "row_center"} onClick={() => setContent("profile")}><FaRegUser fontSize={20} /><span style={{marginLeft: 10}}>Profile</span></p>
+                        <p className={content === "profile" ? "highlight row_center" : "row_center"} onClick={() => setContent("profile")}><FaRegUser fontSize={20} /><span style={{marginLeft: 10}}>{settingsPageData.menu.profile}</span></p>
                     </li>
                     <li>
-                        <p className={content === "company" ? "highlight row_center" : "row_center"} onClick={() => setContent("company")}><BiSolidFactory fontSize={20} /><span style={{marginLeft: 10}}>Company</span></p>
+                        <p className={content === "company" ? "highlight row_center" : "row_center"} onClick={() => setContent("company")}><BiSolidFactory fontSize={20} /><span style={{marginLeft: 10}}>{settingsPageData.menu.company}</span></p>
                     </li>
                     <li>
-                        <p className={content === "notifications" ? "highlight row_center" : "row_center"} onClick={() => setContent("notifications")}><IoMdNotificationsOutline fontSize={20} /><span style={{marginLeft: 10}}>Notifications</span></p>
+                        <p className={content === "notifications" ? "highlight row_center" : "row_center"} onClick={() => setContent("notifications")}><IoMdNotificationsOutline fontSize={20} /><span style={{marginLeft: 10}}>{settingsPageData.menu.notifications}</span></p>
                     </li>
                     <li>
-                        <p className={content === "security" ? "highlight row_center" : "row_center"} onClick={() => setContent("security")}><MdOutlineShield fontSize={20} /><span style={{marginLeft: 10}}>Security</span></p>
+                        <p className={content === "security" ? "highlight row_center" : "row_center"} onClick={() => setContent("security")}><MdOutlineShield fontSize={20} /><span style={{marginLeft: 10}}>{settingsPageData.menu.security}</span></p>
                     </li>
                 </ul>
                 <div className="settings__main">

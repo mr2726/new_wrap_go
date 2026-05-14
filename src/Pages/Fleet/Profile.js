@@ -8,9 +8,11 @@ import { supabase } from "../../data/supabase";
 import Loader from "../../Components/Loader";
 import ChangePassword from "./components/ChangePassword";
 import TwoFactorAuth from "./components/2FA";
+import pageData from "../../data/data.json";
 
 
 function Profile({ setFleetPage }) {
+    const profileText = pageData.fleet.profile;
     const [formData, setFormData] = useState({
         contactpersone: "",
         fleetname: "",
@@ -67,7 +69,7 @@ function Profile({ setFleetPage }) {
                         .single();
                     if (error) {
                         console.error("Error fetching profile:", error);
-                        setMessage("Error loading profile: " + error.message);
+                        setMessage(`${profileText.messages.loadErrorPrefix} ${error.message}`);
                     } else {
                         console.log("Profile data:", data);
                         setFormData({
@@ -101,7 +103,7 @@ function Profile({ setFleetPage }) {
             
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                setMessage("User not authenticated");
+                setMessage(profileText.messages.userNotAuthenticated);
                 return;
             }
 
@@ -117,14 +119,14 @@ function Profile({ setFleetPage }) {
 
             if (error) {
                 console.error("Error saving profile:", error);
-                setMessage("Error saving profile: " + error.message);
+                setMessage(`${profileText.messages.saveErrorPrefix} ${error.message}`);
             } else {
-                setMessage("Profile saved successfully!");
+                setMessage(profileText.messages.saveSuccess);
                 setTimeout(() => setMessage(""), 3000);
             }
         } catch (err) {
             console.error("Unexpected error:", err);
-            setMessage("Unexpected error: " + err.message);
+            setMessage(`${profileText.messages.unexpectedPrefix} ${err.message}`);
         } finally {
             setSaving(false);
         }
@@ -142,7 +144,7 @@ function Profile({ setFleetPage }) {
 
             const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
             if (factorsError) {
-                setMessage("Error disabling 2FA: " + factorsError.message);
+                setMessage(`${profileText.messages.disable2faErrorPrefix} ${factorsError.message}`);
                 return;
             }
 
@@ -150,16 +152,16 @@ function Profile({ setFleetPage }) {
             for (const factor of totpFactors) {
                 const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
                 if (error) {
-                    setMessage("Error disabling 2FA: " + error.message);
+                    setMessage(`${profileText.messages.disable2faErrorPrefix} ${error.message}`);
                     return;
                 }
             }
 
             setIs2FAEnabled(false);
-            setMessage("2FA disabled successfully!");
+            setMessage(profileText.messages.disable2faSuccess);
             setTimeout(() => setMessage(""), 3000);
         } catch (error) {
-            setMessage("Unexpected error: " + error.message);
+            setMessage(`${profileText.messages.unexpectedPrefix} ${error.message}`);
         } finally {
             setIs2FALoading(false);
         }
@@ -169,8 +171,8 @@ function Profile({ setFleetPage }) {
         <div className="Profile">
             <TopMenu sendto="dashboard" setFleetPage={setFleetPage} currentPage="profile" />
 
-            <h1 className="title">Fleet Profile</h1>
-            <p className="description">Here you can manage your fleet profile, update your information, and customize your settings.</p>
+            <h1 className="title">{profileText.title}</h1>
+            <p className="description">{profileText.description}</p>
             
             {loading && <Loader />}
             {message && <p style={{color: message.includes("successfully") ? "green" : "red", padding: "1em"}}>{message}</p>}
@@ -181,7 +183,7 @@ function Profile({ setFleetPage }) {
                     <div className="profile__block--item">
                         <div style={{display: "flex", gap: "1em"}}>
                             <FaRegUser size={15} color="#94A3B8"/>
-                            <p>Full Name</p>
+                            <p>{profileText.fields.fullName}</p>
                         </div>
                         <input 
                             type="text" 
@@ -194,7 +196,7 @@ function Profile({ setFleetPage }) {
                     <div className="profile__block--item">
                         <div style={{display: "flex", gap: "1em"}}>
                             <RiBankFill size={15} color="#94A3B8"/>
-                            <p>Company Name</p>
+                            <p>{profileText.fields.companyName}</p>
                         </div>
                         <input 
                             type="text" 
@@ -207,7 +209,7 @@ function Profile({ setFleetPage }) {
                     <div className="profile__block--item">
                         <div style={{display: "flex", gap: "1em"}}>
                             <MdAlternateEmail size={15} color="#94A3B8"/>
-                            <p>Email</p>
+                            <p>{profileText.fields.email}</p>
                         </div>
                         <input 
                             type="email" 
@@ -221,7 +223,7 @@ function Profile({ setFleetPage }) {
                     <div className="profile__block--item">
                         <div style={{display: "flex", gap: "1em"}}>
                             <FaPhoneAlt size={15} color="#94A3B8"/>
-                            <p>Phone</p>
+                            <p>{profileText.fields.phone}</p>
                         </div>
                         <input 
                             type="text" 
@@ -236,19 +238,19 @@ function Profile({ setFleetPage }) {
                         onClick={handleSave}
                         disabled={saving}
                     >
-                        {saving ? "Saving..." : "Save Changes"}
+                        {saving ? profileText.buttons.saving : profileText.buttons.save}
                     </button>
                 </div>
                 <div className="profile__block">
-                    <h2 className="profile__block--title">Account Settings</h2>
+                    <h2 className="profile__block--title">{profileText.accountSettings.title}</h2>
                     <div className="profile__block--item">
-                        <p>Change Password</p>
-                        <button className="change_password_btn cta" onClick={() => setChangePasswordVisible(true)}>Change</button>
+                        <p>{profileText.accountSettings.changePassword}</p>
+                        <button className="change_password_btn cta" onClick={() => setChangePasswordVisible(true)}>{profileText.buttons.change}</button>
                     </div>
                     <div className="profile__block--item">
-                        <p>Two-Factor Authentication</p>
+                        <p>{profileText.accountSettings.twoFactor}</p>
                         <button className="change_password_btn cta" onClick={handleTwoFactorAction} disabled={is2FALoading}>
-                            {is2FALoading ? "Processing..." : is2FAEnabled ? "Cancel" : "Enable"}
+                            {is2FALoading ? profileText.buttons.processing : is2FAEnabled ? profileText.buttons.cancel : profileText.buttons.enable}
                         </button>
                     </div>
                 </div>

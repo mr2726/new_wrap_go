@@ -2,8 +2,10 @@ import "../../../App.css";
 import { useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
 import { supabase } from "../../../data/supabase";
+import pageData from "../../../data/data.json";
 
 function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
+  const signText = pageData.fleet.signContract;
   const [selectedDriverId, setSelectedDriverId] = useState("");
   const [selectedContractId, setSelectedContractId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,10 +16,10 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
         .filter((driver) => driver.contractid == null)
         .map((driver) => ({
           value: String(driver.id),
-          label: driver.name || `Driver ${driver.id}`,
+          label: driver.name || `${signText.driverFallback} ${driver.id}`,
           logo: "",
         })),
-    [drivers]
+    [drivers, signText.driverFallback]
   );
 
   const contractOptions = useMemo(
@@ -27,11 +29,11 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
         else{
             return {
             value: String(contract.id),
-            label: contract.name || `Contract ${contract.id}`,
+            label: contract.name || `${signText.contractFallback} ${contract.id}`,
             logo: (
                 <img
                 src={contract.image_link || "https://placehold.co/50x50.png"}
-                alt={contract.name || "Contract"}
+                alt={contract.name || signText.contractFallback}
                 style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 8 }}
                 />
             ),
@@ -45,7 +47,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
             }
         };
       }).filter(Boolean),
-    [contracts]
+    [contracts, signText.contractFallback]
   );
 
   const canAssign = Boolean(selectedDriverId && selectedContractId && !isSubmitting);
@@ -63,7 +65,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
 
     if (error) {
       console.error("Error assigning contract:", error);
-      alert("Failed to assign contract. Please try again.");
+      alert(signText.alerts.assignFailed);
       return;
     }
 
@@ -71,7 +73,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
       await onAssigned();
     }
 
-    alert("Contract assigned successfully!");
+    alert(signText.alerts.assigned);
     onClose();
   };
 
@@ -79,19 +81,19 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
     <div className="add_form_modal" style={{alignItems: 'self-start', justifyContent: 'end'}} onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-content__header">
-            <h2>Assign Contract</h2>
-            <button type="button" className="add_form__ghost" style={{border: "none"}} onClick={onClose}>X</button>
+            <h2>{signText.title}</h2>
+            <button type="button" className="add_form__ghost" style={{border: "none"}} onClick={onClose}>{signText.close}</button>
         </div>
         <div className="modal-content__body">
             <CustomSelect
-              label="Select Driver"
+              label={signText.selectDriver}
               options={driverOptions}
               value={selectedDriverId}
               onChange={setSelectedDriverId}
             />
 
             <CustomSelect
-              label="Select Contract"
+              label={signText.selectContract}
               options={contractOptions}
               value={selectedContractId}
               onChange={setSelectedContractId}
@@ -99,7 +101,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
         </div>
         <div className="add_form__actions" style={{marginTop: '1em'}}>
             <button className="cta" style={{width: '100%'}} onClick={handleAssignContract} disabled={!canAssign}>
-              {isSubmitting ? "Assigning..." : "Assign Contract"}
+              {isSubmitting ? signText.submitting : signText.submit}
             </button>
         </div>
       </div>

@@ -3,8 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { BiSolidFactory } from "react-icons/bi";
 import { supabase } from "../data/supabase";
+import pageData from "../data/data.json";
 
 function ChangeImage({title, type, imageField}) {
+    const textData = pageData.ui.changeImage;
     const fileInputRef = useRef(null);
     const [imageUrl, setImageUrl] = useState("");
     const [uploading, setUploading] = useState(false);
@@ -47,13 +49,13 @@ function ChangeImage({title, type, imageField}) {
         if (!file) return;
 
         if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-            setStatus({ type: "error", text: "Only JPG, PNG or GIF files are allowed." });
+            setStatus({ type: "error", text: textData.errors.invalidType });
             event.target.value = "";
             return;
         }
 
         if (file.size > 2 * 1024 * 1024) {
-            setStatus({ type: "error", text: "Image size must be 2MB or less." });
+            setStatus({ type: "error", text: textData.errors.maxSize });
             event.target.value = "";
             return;
         }
@@ -64,7 +66,7 @@ function ChangeImage({title, type, imageField}) {
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                setStatus({ type: "error", text: "You need to sign in to upload an image." });
+                setStatus({ type: "error", text: textData.errors.notSignedIn });
                 return;
             }
 
@@ -78,7 +80,7 @@ function ChangeImage({title, type, imageField}) {
 
             if (uploadError) {
                 console.log(uploadError.message);
-                setStatus({ type: "error", text: "Failed to upload image to storage." });
+                setStatus({ type: "error", text: textData.errors.uploadFailed });
                 return;
             }
 
@@ -89,7 +91,7 @@ function ChangeImage({title, type, imageField}) {
 
             const publicUrl = publicData?.publicUrl;
             if (!publicUrl) {
-                setStatus({ type: "error", text: "Failed to get image URL." });
+                setStatus({ type: "error", text: textData.errors.urlFailed });
                 return;
             }
 
@@ -100,15 +102,15 @@ function ChangeImage({title, type, imageField}) {
 
             if (profileError) {
                 console.log(profileError.message);
-                setStatus({ type: "error", text: "Image uploaded, but failed to save URL in profile." });
+                setStatus({ type: "error", text: textData.errors.saveProfileFailed });
                 return;
             }
 
             setImageUrl(publicUrl);
-            setStatus({ type: "success", text: "Image uploaded successfully." });
+            setStatus({ type: "success", text: textData.success.uploaded });
         } catch (error) {
             console.log(error);
-            setStatus({ type: "error", text: "Unexpected error while uploading image." });
+            setStatus({ type: "error", text: textData.errors.unexpected });
         } finally {
             setUploading(false);
             event.target.value = "";
@@ -119,12 +121,12 @@ function ChangeImage({title, type, imageField}) {
         <div className="change-image">
             <div className="change-image__header">
                 <h2 className="change-image__title title">{title}</h2>
-                <p className="change-image__description description">Upload a new image to update your profile picture.</p>
+                <p className="change-image__description description">{textData.description}</p>
             </div>
             <div className="change-image__content">
                 <div className="image__">
                     {imageUrl ? (
-                        <img src={imageUrl} alt={`${type} preview`} className="image__preview" />
+                        <img src={imageUrl} alt={`${type} ${textData.alt.preview}`} className="image__preview" />
                     ) : (
                         type === "profile" ? <FaRegUser /> : <BiSolidFactory />
                     )}
@@ -143,9 +145,9 @@ function ChangeImage({title, type, imageField}) {
                         onClick={handleOpenFilePicker}
                         disabled={uploading}
                     >
-                        {uploading ? "Uploading..." : "Upload New Image"}
+                        {uploading ? textData.buttonUploading : textData.buttonUpload}
                     </button>
-                    <p>JPG, PNG or GIF. Max size 2MB</p>
+                    <p>{textData.requirements}</p>
                     {status?.type === "success" && <p className="settings-form__status settings-form__status--success">{status.text}</p>}
                     {status?.type === "error" && <p className="settings-form__status settings-form__status--error">{status.text}</p>}
                 </div>

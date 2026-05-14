@@ -1,26 +1,15 @@
 import "../App.css";
 // import { useState } from "react";
+import pageData from "../data/data.json";
 
 export default function AdPlacement({setSelected, selected}) {
   // const [selected, setSelected] = useState("side");
 
-  const options = [
-    {      
-      id: "side",
-      title: "Side Doors (2 doors)",
-      price: "Included",
-    },
-    {
-      
-      id: "full",
-      title: "Both sides (4 Doors)",
-      price: "+50k AMD",
-    }
-  ];
+  const options = pageData.ui.adPlacement.options;
 
   return (
     <div className="wrapper_component">
-      <h2 className="title planSelector--title">Ad Placement</h2>
+      <h2 className="title planSelector--title">{pageData.ui.adPlacement.title}</h2>
 
       {options.map((item) => (
         <div

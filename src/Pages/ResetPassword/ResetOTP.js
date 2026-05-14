@@ -29,7 +29,7 @@ function ResetOTP({data, setPage, setSender}) {
         const normalizedEmail = email.trim().toLowerCase();
 
         if (!normalizedEmail) {
-            alert("Please enter your email");
+            alert(data.enterEmailAlert);
             return;
         }
 

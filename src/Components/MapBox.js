@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { FaMoon, FaSun  } from "react-icons/fa";
 import { supabase } from "../data/supabase";
+import pageData from "../data/data.json";
 
 const MAPBOX_ACCESS_TOKEN = (process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || "").trim();
 const DARK_MAP_STYLE = (process.env.REACT_APP_MAPBOX_STYLE_URL_DARK || "").trim();
@@ -15,12 +16,8 @@ const SQUARE_FILL_LAYER_ID = "active-zones-squares-fill";
 const SQUARE_LINE_LAYER_ID = "active-zones-squares-line";
 const DRIVER_REFRESH_MS = 15000;
 const DEFAULT_DRIVER_COORDS = [44.51475588393247, 40.18299309990458];
-const DEFAULT_DRIVER_INFO = {
-  fullName: "Alex Morgan",
-  activeContractName: "Downtown Delivery Route",
-  carPhotoLeft: "https://placehold.co/520x320/121722/39FF14?text=Car+Left+Side",
-  carPhotoRight: "https://placehold.co/520x320/121722/39FF14?text=Car+Right+Side",
-};
+const DEFAULT_DRIVER_INFO = pageData.ui.mapBox.defaultDriver;
+const MAP_DRAWER_TEXT = pageData.ui.mapBox.drawer;
 
 const EMPTY_ZONES = {
   type: "FeatureCollection",
@@ -402,29 +399,29 @@ export default function Map() {
 
       <aside className={`driver-drawer ${isDriverDrawerOpen ? "driver-drawer--open" : ""}`}>
         <div className="driver-drawer__header">
-          <h3>Driver info</h3>
+          <h3>{MAP_DRAWER_TEXT.title}</h3>
           <button
             className="driver-drawer__close"
             onClick={() => setIsDriverDrawerOpen(false)}
             type="button"
           >
-            Close
+            {MAP_DRAWER_TEXT.close}
           </button>
         </div>
 
         <div className="driver-drawer__group">
-          <p className="driver-drawer__label">Full Name</p>
+          <p className="driver-drawer__label">{MAP_DRAWER_TEXT.fullName}</p>
           <p className="driver-drawer__value">{driverInfo.fullName}</p>
         </div>
 
         <div className="driver-drawer__group">
-          <p className="driver-drawer__label">Active campaing name</p>
+          <p className="driver-drawer__label">{MAP_DRAWER_TEXT.activeCampaign}</p>
           <p className="driver-drawer__value">{driverInfo.activeContractName}</p>
         </div>
 
         <div className="driver-drawer__photos">
-          <img src={driverInfo.carPhotoLeft} alt="Car left side" />
-          <img src={driverInfo.carPhotoRight} alt="Car right side" />
+          <img src={driverInfo.carPhotoLeft} alt={MAP_DRAWER_TEXT.carLeftAlt} />
+          <img src={driverInfo.carPhotoRight} alt={MAP_DRAWER_TEXT.carRightAlt} />
         </div>
       </aside>
 

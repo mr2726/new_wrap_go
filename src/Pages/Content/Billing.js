@@ -14,8 +14,10 @@ import { RiBankFill } from "react-icons/ri";
 import { FaCheckCircle } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
 import { FaRegCheckCircle } from "react-icons/fa";
+import pageData from "../../data/data.json";
 
 function Billing({setPage}) {
+    const billingText = pageData.content.billing;
     const [loading, setLoading] = useState(true);
     const [currentBillingMethod, setCurrentBillingMethod] = useState("card");
     const [invoices, setInvoices] = useState([]);
@@ -273,9 +275,9 @@ function Billing({setPage}) {
         });
 
         const status = String(invoice?.campaignStatus || "").toLowerCase();
-        if (status === "pending") return `Scheduled: ${fromDate} - ${toDate}`;
-        if (status === "live") return `Live Period: ${fromDate} - ${toDate}`;
-        return `Campaign Period: ${fromDate} - ${toDate}`;
+        if (status === "pending") return `${billingText.invoiceDrawer.scheduledPrefix} ${fromDate} - ${toDate}`;
+        if (status === "live") return `${billingText.invoiceDrawer.livePrefix} ${fromDate} - ${toDate}`;
+        return `${billingText.invoiceDrawer.periodPrefix} ${fromDate} - ${toDate}`;
     };
 
     const handleOpenInvoice = (invoice) => {
@@ -322,7 +324,7 @@ function Billing({setPage}) {
         if (numericValue === "") {
             setAmountError("");
         } else if (Number(numericValue) < 1000) {
-            setAmountError("Minimum: 1,000 ֏");
+            setAmountError(billingText.addFunds.minAmount);
         } else {
             setAmountError("");
         }
@@ -337,7 +339,7 @@ function Billing({setPage}) {
         const amount = Number(topupAmount);
         
         if (!topupAmount || amount < 1000) {
-            setAmountError("Minimum: 1,000 ֏");
+            setAmountError(billingText.addFunds.minAmount);
             return;
         }
 
@@ -392,7 +394,7 @@ function Billing({setPage}) {
         }
 
         if (shouldShowTaxInfo) {
-            alert("Tax information is required. Please fill in your Company TIN (ՀՎՀՀ) first.");
+            alert(billingText.alerts.taxRequired);
             return;
         }
 
@@ -400,12 +402,12 @@ function Billing({setPage}) {
         const currentBalance = parseAmount(balance);
 
         if (invoiceAmount <= 0) {
-            alert("Invalid invoice amount.");
+            alert(billingText.alerts.invalidInvoiceAmount);
             return;
         }
 
         if (currentBalance < invoiceAmount) {
-            alert("Insufficient balance. Please top up your account.");
+            alert(billingText.alerts.insufficientBalance);
             return;
         }
 
@@ -420,7 +422,7 @@ function Billing({setPage}) {
 
             if (balanceError) {
                 console.log("Balance update error:", balanceError.message);
-                alert("Failed to update balance. Please try again.");
+                alert(billingText.alerts.balanceUpdateFailed);
                 return;
             }
 
@@ -437,7 +439,7 @@ function Billing({setPage}) {
                     .eq("userid", currentUserId);
 
                 console.log("Invoice status update error:", invoiceError.message);
-                alert("Failed to mark invoice as paid. Please try again.");
+                alert(billingText.alerts.invoicePaidFailed);
                 return;
             }
 
@@ -503,11 +505,11 @@ function Billing({setPage}) {
     const getMethodDescription = () => {
         switch (currentBillingMethod) {
             case "card":
-                return { title: "Card Payment", time: "Instantly", fee: "0%" };
+                return { title: billingText.addFunds.methods.card.title, time: billingText.addFunds.methods.card.time, fee: "0%" };
             case "idram":
-                return { title: "IDram Wallet", time: "Through wallet", fee: "0%" };
+                return { title: billingText.addFunds.methods.idram.title, time: billingText.addFunds.methods.idram.time, fee: "0%" };
             case "bank":
-                return { title: "Account Transfer", time: "1-2 days", fee: "0%" };
+                return { title: billingText.addFunds.methods.bank.title, time: billingText.addFunds.methods.bank.time, fee: "0%" };
             default:
                 return { title: "", time: "", fee: "0%" };
         }
@@ -529,20 +531,20 @@ function Billing({setPage}) {
                         {/* Current method info */}
                         <div className="payment-method-info">
                             <div className="method-info-header">
-                                <p className="method-label">Selected: {methodDesc.title}</p>
+                                <p className="method-label">{billingText.addFunds.selectedPrefix} {methodDesc.title}</p>
                                 <p className="method-time">{methodDesc.time}</p>
                             </div>
-                            <p className="method-fee">Commission: {methodDesc.fee}</p>
+                            <p className="method-fee">{billingText.addFunds.commission} {methodDesc.fee}</p>
                         </div>
 
                         {/* Amount input */}
                         <div className="payment-amount-section">
-                            <label className="payment-label">Amount to Top Up</label>
+                            <label className="payment-label">{billingText.addFunds.amountLabel}</label>
                             <div className="amount-input-wrapper">
                                 <input
                                     value={topupAmount}
                                     onChange={handleTopupAmountChange}
-                                    placeholder="Enter amount"
+                                    placeholder={billingText.addFunds.amountPlaceholder}
                                     className={`signup_form__form--input amount-input ${amountError ? "input-error" : ""}`}
                                     inputMode="numeric"
                                     maxLength={10}
@@ -557,7 +559,7 @@ function Billing({setPage}) {
                         {/* Quick amounts */}
                         {!isProcessingTopup && (
                             <div className="quick-amounts">
-                                <p className="quick-label">Quick select:</p>
+                                <p className="quick-label">{billingText.addFunds.quickSelect}</p>
                                 <div className="quick-buttons">
                                     {[10000, 25000, 50000, 100000].map((quickAmount) => (
                                         <button
@@ -576,15 +578,15 @@ function Billing({setPage}) {
                         {/* Total summary */}
                         <div className="payment-summary">
                             <div className="summary-row">
-                                <span className="summary-label">Refill amount:</span>
+                                <span className="summary-label">{billingText.addFunds.refillAmount}</span>
                                 <span className="summary-value">{formatAmount(amount)} ֏</span>
                             </div>
                             <div className="summary-row">
-                                <span className="summary-label">Commission:</span>
+                                <span className="summary-label">{billingText.addFunds.commission}</span>
                                 <span className="summary-value">0%</span>
                             </div>
                             <div className="summary-row summary-total">
-                                <span className="summary-label">Total to debit:</span>
+                                <span className="summary-label">{billingText.addFunds.totalDebit}</span>
                                 <span className="summary-value-total">{formatAmount(totalAmount)} ֏</span>
                             </div>
                         </div>
@@ -595,18 +597,18 @@ function Billing({setPage}) {
                             onClick={handleProcessTopup}
                             disabled={isButtonDisabled}
                         >
-                            {isProcessingTopup ? "Processing..." : isValidAmount ? `Pay ${formatAmount(totalAmount)} ֏` : "Enter valid amount"}
+                            {isProcessingTopup ? billingText.addFunds.processing : isValidAmount ? `${billingText.addFunds.payPrefix} ${formatAmount(totalAmount)} ֏` : billingText.addFunds.enterValid}
                         </button>
 
                         {/* Security info */}
                         <div className="security-info">
-                            <p className="security-text">🔒 Secure payment - PCI DSS compliant</p>
+                            <p className="security-text">{billingText.addFunds.securityText}</p>
                         </div>
 
                         {/* Transaction history */}
                         {transactionHistory.length > 0 && (
                             <div className="transaction-history">
-                                <p className="history-title">Last transactions:</p>
+                                <p className="history-title">{billingText.addFunds.transactionsTitle}</p>
                                 {transactionHistory.map((tx) => {
                                     const txDate = new Date(tx.timestamp);
                                     const txDateStr = txDate.toLocaleDateString("en-US", {
@@ -635,19 +637,19 @@ function Billing({setPage}) {
         <div className="settings">
             {loading && <Loader />}
             <div className="settings__header">
-                <h1 className="title">Billing & Payments</h1>
-                <p className="description">Direct invoice payment and transaction history.</p>
+                <h1 className="title">{billingText.page.title}</h1>
+                <p className="description">{billingText.page.description}</p>
             </div>
             
             <div className="billing__main_content">
                 <div style={{width: "100%"}}>
                     <div className="account__balance">
                         <div>
-                            <p className="label">Account balance</p>
+                            <p className="label">{billingText.page.accountBalance}</p>
                             <h2 className="title">{formatAmount(balance)} ֏</h2>
-                            <p className="description">Available balance for campaigns</p>
+                            <p className="description">{billingText.page.availableBalance}</p>
                         </div>
-                        <button className="cta" onClick={() => setAddFunds(!addFunds)}>+ Add Funds</button>
+                        <button className="cta" onClick={() => setAddFunds(!addFunds)}>{billingText.page.addFunds}</button>
                     </div>
 
                     {shouldShowTaxInfo && (
@@ -655,8 +657,8 @@ function Billing({setPage}) {
                             <div className="tax_info__info">
                                 <div className="warn"><PiWarningOctagonBold fontSize={18} className="warn__icon"/></div>
                                 <div>
-                                    <p className="warn__title">Tax Information Required</p>
-                                    <p className="description">Please confirm your Company TIN (ՀՎՀՀ) to generate your Tax Invoice.</p>
+                                    <p className="warn__title">{billingText.tax.requiredTitle}</p>
+                                    <p className="description">{billingText.tax.requiredDescription}</p>
                                 </div>
                             </div>
                             <div style={{display: "flex"}}>
@@ -665,7 +667,7 @@ function Billing({setPage}) {
                                     inputMode="numeric"
                                     maxLength={10}
                                     pattern="[0-9]*"
-                                    placeholder="Company TIN (ՀՎՀՀ)"
+                                    placeholder={billingText.tax.placeholder}
                                     className="signup_form__form--input"
                                     style={{margin: 0}}
                                     value={taxInput}
@@ -677,7 +679,7 @@ function Billing({setPage}) {
                                     onClick={handleConfirmTax}
                                     type="button"
                                 >
-                                    {isSavingTax ? "Saving..." : "Confirm"}
+                                    {isSavingTax ? billingText.tax.save : billingText.tax.confirm}
                                 </button>
                             </div>
                         </div>
@@ -687,16 +689,16 @@ function Billing({setPage}) {
                         addFunds && (
                             <div className="addfounds">
                                 <div className="addfounds__header">
-                                    <h2 className="title" style={{fontSize: "1.8em"}}>Add Founds to Your Account</h2>
-                                    <p className="description" style={{fontSize: "1.4em"}}>Top up your balance to run campaigns without interruptions.</p>
+                                    <h2 className="title" style={{fontSize: "1.8em"}}>{billingText.addFunds.title}</h2>
+                                    <p className="description" style={{fontSize: "1.4em"}}>{billingText.addFunds.description}</p>
                                 </div>
                                 <div className="addfounds__methods">
 
                                     <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
                                         {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
                                         <div style={{width: 50}}><IoCard fontSize={50} /></div>
-                                        <p className="addfounds__method--title">Card Payment</p>
-                                        <p className="addfounds__method--description">Visa, MasterCard, ArCa</p>
+                                        <p className="addfounds__method--title">{billingText.addFunds.methods.card.title}</p>
+                                        <p className="addfounds__method--description">{billingText.addFunds.methods.card.description}</p>
                                         <div style={{display: "flex", gap: "1.5em", alignItems: "center"}}>
                                             <div className="visaIcon"><SiVisa fontSize={30} color="blue" /></div>
                                             <div className="masterIcon"></div>
@@ -707,17 +709,17 @@ function Billing({setPage}) {
                                     <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
                                         {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
                                         <div className="idramIcon"></div>
-                                        <p className="addfounds__method--title">IDram</p>
-                                        <p className="addfounds__method--description">Instant payment</p>
-                                        <p style={{color: "#fff", fontSize: "1.4em"}}>via Idram wallet</p>
+                                        <p className="addfounds__method--title">{billingText.addFunds.methods.idram.title}</p>
+                                        <p className="addfounds__method--description">{billingText.addFunds.methods.idram.description}</p>
+                                        <p style={{color: "#fff", fontSize: "1.4em"}}>{billingText.addFunds.methods.idram.extra}</p>
                                     </div>
 
                                     <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
                                         {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
                                         <div><RiBankFill fontSize={50} /></div>
-                                        <p className="addfounds__method--title">Account Transfer</p>
-                                        <p className="addfounds__method--description">From bank account</p>
-                                        <p className="addfounds__method--description--label">24-48 hours</p>
+                                        <p className="addfounds__method--title">{billingText.addFunds.methods.bank.title}</p>
+                                        <p className="addfounds__method--description">{billingText.addFunds.methods.bank.description}</p>
+                                        <p className="addfounds__method--description--label">{billingText.addFunds.methods.bank.eta}</p>
                                     </div>
 
                                 </div>
@@ -732,16 +734,15 @@ function Billing({setPage}) {
 
                 <div className="billing__sidebar">
                     <div className="billing__sidebar--notes">
-                        <p className="title" style={{fontSize: "1.5em"}}>Why top up with wrapgo</p>
-                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> Instant campaign activation</p>
-                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> 100% secure payments</p>
-                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> Multiple payment methods</p>
-                        <p className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> 24/7 customer support</p>
+                        <p className="title" style={{fontSize: "1.5em"}}>{billingText.sidebar.benefitsTitle}</p>
+                        {billingText.sidebar.benefits.map((benefit) => (
+                            <p key={benefit} className="billing__sidebar--notes-p checkwithtext"><FaRegCheckCircle color="#39ff19"/> {benefit}</p>
+                        ))}
                     </div>
                     <div className="billing__sidebar--contact">
-                        <p className="title" style={{fontSize: "1.5em"}}>Need help?</p>
-                        <p className="billing__sidebar--notes-p">Contact our support team for assistance with billing and payments.</p>
-                        <button className="contact__button" onClick={() => setPage("contacts")}>Contact Support</button>
+                        <p className="title" style={{fontSize: "1.5em"}}>{billingText.sidebar.helpTitle}</p>
+                        <p className="billing__sidebar--notes-p">{billingText.sidebar.helpDescription}</p>
+                        <button className="contact__button" onClick={() => setPage("contacts")}>{billingText.sidebar.contactSupport}</button>
                     </div>
                 </div>
 
@@ -750,15 +751,12 @@ function Billing({setPage}) {
 
             {/* Invoice History */}
             <div className="invoice-history">
-                <h2 className="invoice-history__title title">Invoice History</h2>
+                <h2 className="invoice-history__title title">{billingText.invoiceHistory.title}</h2>
                 <div className="invoice-history__table">
                     <div className="invoice-history__head">
-                        <span>Invoice ID</span>
-                        <span>Campaign Name</span>
-                        <span>Amount</span>
-                        <span>Invoice Date</span>
-                        <span>Status</span>
-                        <span>Action</span>
+                        {billingText.invoiceHistory.columns.map((column) => (
+                            <span key={column}>{column}</span>
+                        ))}
                     </div>
                     <div className="invoice-history__body">
                         {invoices.map((invoice) => {
@@ -777,19 +775,19 @@ function Billing({setPage}) {
                                     <span>{formatInvoiceDate(invoice.created_at)}</span>
                                     <span>
                                         <span className={`invoice-history__badge ${isPaid ? "invoice-history__badge--paid" : "invoice-history__badge--pending"}`}>
-                                            {isPaid ? "Paid" : "Pending"}
+                                            {isPaid ? billingText.invoiceHistory.statusPaid : billingText.invoiceHistory.statusPending}
                                         </span>
                                     </span>
                                     <span>
                                         {isPaid ? (
-                                            <button className="invoice-history__action--tax">↓ Tax Invoice</button>
+                                            <button className="invoice-history__action--tax">{billingText.invoiceHistory.taxInvoice}</button>
                                         ) : (
                                             <button
                                                 className="invoice-history__action--paynow"
                                                 onClick={(event) => handlePayNow(event, invoice)}
                                                 disabled={isPayingCurrent || shouldShowTaxInfo}
                                             >
-                                                {isPayingCurrent ? "Paying..." : "Pay Now"}
+                                                {isPayingCurrent ? billingText.invoiceHistory.paying : billingText.invoiceHistory.payNow}
                                             </button>
                                         )}
                                     </span>
@@ -799,7 +797,7 @@ function Billing({setPage}) {
                         {invoices.length === 0 && (
                             <div className="invoice-history__row">
                                 <span className="invoice-history__row--id">-</span>
-                                <span>No invoices yet</span>
+                                <span>{billingText.invoiceHistory.empty}</span>
                                 <span>-</span>
                                 <span>-</span>
                                 <span>-</span>
@@ -814,48 +812,48 @@ function Billing({setPage}) {
                 <div className="invoice-drawer__overlay" onClick={handleCloseInvoice}>
                     <aside className="invoice-drawer" onClick={(e) => e.stopPropagation()}>
                         <div className="invoice-drawer__header">
-                            <h3 className="title">Invoice Details</h3>
+                            <h3 className="title">{billingText.invoiceDrawer.title}</h3>
                             <button className="invoice-drawer__close" onClick={handleCloseInvoice} type="button">×</button>
                         </div>
 
                         <div className="invoice-drawer__section">
-                            <p className="invoice-drawer__label">Invoice Number</p>
+                            <p className="invoice-drawer__label">{billingText.invoiceDrawer.invoiceNumber}</p>
                             <p className="invoice-drawer__value">{selectedInvoice.invoiceid || "-"}</p>
                         </div>
 
                         <div className="invoice-drawer__section">
-                            <p className="invoice-drawer__label">Amount</p>
+                            <p className="invoice-drawer__label">{billingText.invoiceDrawer.amount}</p>
                             <p className="invoice-drawer__amount title">{formatAmount(selectedInvoice.amount)}</p>
                         </div>
 
                         <div className="invoice-drawer__section">
-                            <p className="invoice-drawer__label">Status</p>
+                            <p className="invoice-drawer__label">{billingText.invoiceDrawer.status}</p>
                             <span
                                 className={`invoice-history__badge ${String(selectedInvoice.status || "").toLowerCase() === "paid" ? "invoice-history__badge--paid" : "invoice-history__badge--pending"}`}
                             >
-                                {String(selectedInvoice.status || "").toLowerCase() === "paid" ? "Paid" : "Pending"}
+                                {String(selectedInvoice.status || "").toLowerCase() === "paid" ? billingText.invoiceHistory.statusPaid : billingText.invoiceHistory.statusPending}
                             </span>
                         </div>
 
                         <div className="invoice-drawer__separator" />
 
                         <div className="invoice-drawer__section">
-                            <p className="invoice-drawer__label">Campaign Name</p>
+                            <p className="invoice-drawer__label">{billingText.invoiceDrawer.campaignName}</p>
                             <div className="invoice-drawer__box">{selectedInvoice.campaignName || "-"}</div>
                         </div>
 
                         <div className="invoice-drawer__section">
-                            <p className="invoice-drawer__label">Duration</p>
+                            <p className="invoice-drawer__label">{billingText.invoiceDrawer.duration}</p>
                             <div className="invoice-drawer__box">{getInvoiceDescription(selectedInvoice)}</div>
                         </div>
 
                         <div className="invoice-drawer__footer">
                             <div>
-                                <p className="invoice-drawer__label">Invoice Date</p>
+                                <p className="invoice-drawer__label">{billingText.invoiceDrawer.invoiceDate}</p>
                                 <p className="invoice-drawer__value">{formatLongDate(selectedInvoice.created_at)}</p>
                             </div>
                             <div>
-                                <p className="invoice-drawer__label">Due Date</p>
+                                <p className="invoice-drawer__label">{billingText.invoiceDrawer.dueDate}</p>
                                 <p className="invoice-drawer__value">{getDueDate(selectedInvoice.created_at)}</p>
                             </div>
                         </div>
@@ -870,27 +868,27 @@ function Billing({setPage}) {
                         {topupResult.success ? (
                             <>
                                 <div className="result-success">✔</div>
-                                <h2 className="result-title">Balance Replenished</h2>
+                                <h2 className="result-title">{billingText.topupModal.successTitle}</h2>
                                 <p className="result-amount">+{formatAmount(topupResult.amount)} ֏</p>
-                                <p className="result-label">New balance:</p>
+                                <p className="result-label">{billingText.topupModal.newBalanceLabel}</p>
                                 <p className="result-new-balance">{formatAmount(balance)} ֏</p>
                                 <button
                                     className="cta result-button"
                                     onClick={() => setTopupResult(null)}
                                 >
-                                    Continue
+                                    {billingText.topupModal.continue}
                                 </button>
                             </>
                         ) : (
                             <>
                                 <div className="result-error">❌</div>
-                                <h2 className="result-title">Payment Failed</h2>
-                                <p className="result-error-message">Unable to process your payment. Please try again.</p>
+                                <h2 className="result-title">{billingText.topupModal.failedTitle}</h2>
+                                <p className="result-error-message">{billingText.topupModal.failedMessage}</p>
                                 <button
                                     className="cta result-button"
                                     onClick={() => setTopupResult(null)}
                                 >
-                                    Try Again
+                                    {billingText.topupModal.tryAgain}
                                 </button>
                             </>
                         )}

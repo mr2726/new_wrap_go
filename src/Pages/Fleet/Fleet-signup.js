@@ -3,8 +3,10 @@ import "./fleetResize.css";
 import Logo from "../../Components/Logo";
 import { useState, useEffect } from "react";
 import { supabase } from "../../data/supabase";
+import pageData from "../../data/data.json";
 
 function FleetSignup({ setPage, setFleetPage }) {
+    const signupText = pageData.fleet.signup;
     const [userData, setUserData] = useState({
         fleetName: "",
         contactPerson: "",
@@ -57,7 +59,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                 // User came via magic link — already authenticated
                 const { data: authData, error: authError } = await supabase.auth.getUser();
                 if (authError || !authData?.user?.id) {
-                    setError("Session expired. Please request a new registration link.");
+                    setError(signupText.messages.sessionExpired);
                     setIsSubmitting(false);
                     return;
                 }
@@ -66,12 +68,12 @@ function FleetSignup({ setPage, setFleetPage }) {
             } else {
                 // Manual signup — validate passwords first
                 if (userData.password !== userData.confirmPassword) {
-                    setError("Passwords do not match.");
+                    setError(signupText.messages.passwordMismatch);
                     setIsSubmitting(false);
                     return;
                 }
                 if (!isPasswordValid(userData.password)) {
-                    setError("Password must contain uppercase, lowercase, number, symbol and be at least 8 characters.");
+                    setError(signupText.messages.passwordRules);
                     setIsSubmitting(false);
                     return;
                 }
@@ -86,7 +88,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                 if (checkError && checkError.code !== "PGRST116") throw checkError;
 
                 if (existingFleet) {
-                    setError("This email is already registered as a fleet.");
+                    setError(signupText.messages.emailExists);
                     setIsSubmitting(false);
                     return;
                 }
@@ -97,7 +99,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                 });
 
                 if (signupError) {
-                    setError(signupError.message || "Signup failed. Please try again.");
+                    setError(signupError.message || signupText.messages.signupFailed);
                     setIsSubmitting(false);
                     return;
                 }
@@ -107,7 +109,7 @@ function FleetSignup({ setPage, setFleetPage }) {
             }
 
             if (!userId) {
-                setError("Failed to get user account. Please try again.");
+                setError(signupText.messages.accountFailed);
                 setIsSubmitting(false);
                 return;
             }
@@ -136,18 +138,18 @@ function FleetSignup({ setPage, setFleetPage }) {
             ]);
 
             if (insertError) {
-                setError("Failed to save fleet info: " + insertError.message);
+                setError(`${signupText.messages.saveFleetFailedPrefix} ${insertError.message}`);
                 setIsSubmitting(false);
                 return;
             }
 
-            setSuccess("Registration successful!");
+            setSuccess(signupText.messages.success);
             if (setFleetPage) {
                 setTimeout(() => setFleetPage("dashboard"), 1500);
             }
 
         } catch (err) {
-            setError(err.message || "An error occurred during signup.");
+            setError(err.message || signupText.messages.unexpected);
         } finally {
             setIsSubmitting(false);
         }
@@ -159,17 +161,17 @@ function FleetSignup({ setPage, setFleetPage }) {
                 <div className="fleet-signup__logo">
                     <Logo setPage={setPage} transfer="fleet-signup" />
                 </div>
-                <h1 className="fleet-signup__title">Fleet Signup</h1>
+                <h1 className="fleet-signup__title">{signupText.title}</h1>
                 <form className="fleet-signup__form" onSubmit={handleSubmit}>
                     <div className="fleet-signup__grid">
                         <div className="fleet-signup__field">
-                            <label className="signup_form__form--label" htmlFor="fleet-name">Fleet Name</label>
+                            <label className="signup_form__form--label" htmlFor="fleet-name">{signupText.fields.fleetName.label}</label>
                             <input 
                                 className="signup_form__form--input" 
                                 id="fleet-name" 
                                 name="fleetName"
                                 type="text" 
-                                placeholder="Enter your fleet name" 
+                                placeholder={signupText.fields.fleetName.placeholder}
                                 value={userData.fleetName}
                                 onChange={handleChange}
                                 required 
@@ -177,13 +179,13 @@ function FleetSignup({ setPage, setFleetPage }) {
                         </div>
 
                         <div className="fleet-signup__field">
-                            <label className="signup_form__form--label" htmlFor="contact-person">Contact Person</label>
+                            <label className="signup_form__form--label" htmlFor="contact-person">{signupText.fields.contactPerson.label}</label>
                             <input 
                                 className="signup_form__form--input" 
                                 id="contact-person" 
                                 name="contactPerson"
                                 type="text" 
-                                placeholder="Enter the name of the contact person" 
+                                placeholder={signupText.fields.contactPerson.placeholder}
                                 value={userData.contactPerson}
                                 onChange={handleChange}
                                 required 
@@ -191,13 +193,13 @@ function FleetSignup({ setPage, setFleetPage }) {
                         </div>
 
                         <div className="fleet-signup__field">
-                            <label className="signup_form__form--label" htmlFor="contact-email">Contact Email</label>
+                            <label className="signup_form__form--label" htmlFor="contact-email">{signupText.fields.contactEmail.label}</label>
                             <input 
                                 className="signup_form__form--input" 
                                 id="contact-email" 
                                 name="contactEmail"
                                 type="email" 
-                                placeholder="Enter the contact email address" 
+                                placeholder={signupText.fields.contactEmail.placeholder}
                                 value={userData.contactEmail}
                                 onChange={handleChange}
                                 disabled={fromOtp}
@@ -206,14 +208,14 @@ function FleetSignup({ setPage, setFleetPage }) {
                         </div>
 
                         <div className="fleet-signup__field">
-                            <label className="signup_form__form--label" htmlFor="contact-phone">Contact Phone Number</label>
+                            <label className="signup_form__form--label" htmlFor="contact-phone">{signupText.fields.contactPhone.label}</label>
                             <input 
                                 className="signup_form__form--input" 
                                 id="contact-phone" 
                                 name="contactPhone"
                                 type="tel" 
                                 inputMode="tel" 
-                                placeholder="Enter the contact phone number" 
+                                placeholder={signupText.fields.contactPhone.placeholder}
                                 value={userData.contactPhone}
                                 onChange={handleChange}
                                 required 
@@ -221,14 +223,14 @@ function FleetSignup({ setPage, setFleetPage }) {
                         </div>
 
                         <div className="fleet-signup__field fleet-signup__field--full">
-                            <label className="signup_form__form--label" htmlFor="fleet-size">Fleet Size</label>
+                            <label className="signup_form__form--label" htmlFor="fleet-size">{signupText.fields.fleetSize.label}</label>
                             <input 
                                 className="signup_form__form--input" 
                                 id="fleet-size" 
                                 name="fleetSize"
                                 type="number" 
                                 min="1" 
-                                placeholder="Enter the number of vehicles in your fleet" 
+                                placeholder={signupText.fields.fleetSize.placeholder}
                                 value={userData.fleetSize}
                                 onChange={handleChange}
                                 required 
@@ -238,13 +240,13 @@ function FleetSignup({ setPage, setFleetPage }) {
                         {!fromOtp && (
                             <>
                                 <div className="fleet-signup__field">
-                                    <label className="signup_form__form--label" htmlFor="password">Set Password</label>
+                                    <label className="signup_form__form--label" htmlFor="password">{signupText.fields.password.label}</label>
                                     <input 
                                         className="signup_form__form--input" 
                                         id="password" 
                                         name="password"
                                         type="password" 
-                                        placeholder="Create a password for your account" 
+                                        placeholder={signupText.fields.password.placeholder}
                                         value={userData.password}
                                         onChange={handleChange}
                                         required 
@@ -252,13 +254,13 @@ function FleetSignup({ setPage, setFleetPage }) {
                                 </div>
 
                                 <div className="fleet-signup__field">
-                                    <label className="signup_form__form--label" htmlFor="confirm-password">Confirm Password</label>
+                                    <label className="signup_form__form--label" htmlFor="confirm-password">{signupText.fields.confirmPassword.label}</label>
                                     <input 
                                         className="signup_form__form--input" 
                                         id="confirm-password" 
                                         name="confirmPassword"
                                         type="password" 
-                                        placeholder="Confirm your password" 
+                                        placeholder={signupText.fields.confirmPassword.placeholder}
                                         value={userData.confirmPassword}
                                         onChange={handleChange}
                                         required 
@@ -271,7 +273,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                     {error && <p className="signup_form__error fleet-signup__status">{error}</p>}
                     {success && <p className="fleet-signup__status fleet-signup__status--success">{success}</p>}
                     <button className="signup_form__form--button fleet-signup__submit" type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Submitting..." : "Submit"}
+                        {isSubmitting ? signupText.buttons.submitting : signupText.buttons.submit}
                     </button>
                 </form>
             </div>

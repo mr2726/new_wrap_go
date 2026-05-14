@@ -172,6 +172,7 @@
         "otpLink" : {
             "title" : "Reset your password",
             "description" : "Enter your email address below and we'll send you a link to reset your password.",
+            "enterEmailAlert" : "Please enter your email",
             "input" : {
                 "lable" : "Email Addresss",
                 "placeholder" : "name@company.com",
@@ -277,6 +278,461 @@
             "privacy" : "Privacy & Policy"
         }
     },
+    "driverAppNotice" : {
+        "title" : "Driver Account Detected",
+        "description" : "Your account is registered as a driver. Please use the mobile app to continue.",
+        "googlePlay" : "Download on Google Play",
+        "appStore" : "Download on App Store",
+        "back" : "Back to Sign In"
+    },
+    "fleet" : {
+        "topMenu" : {
+            "items" : {
+                "dashboard" : "Dashboard",
+                "contracts" : "Contracts",
+                "billing" : "Billing",
+                "profile" : "Settings"
+            },
+            "logout" : "Logout"
+        },
+        "customSelect" : {
+            "placeholder" : "Select option"
+        },
+        "addVehicleForm" : {
+            "title" : "Add New Vehicle",
+            "subtitle" : "Fill vehicle details to register it in your fleet.",
+            "fields" : {
+                "make" : {
+                    "label" : "Make",
+                    "placeholder" : "Enter vehicle make"
+                },
+                "model" : {
+                    "label" : "Model",
+                    "placeholder" : "Enter vehicle model"
+                },
+                "year" : {
+                    "label" : "Year",
+                    "placeholder" : "Enter vehicle year"
+                },
+                "plate" : {
+                    "label" : "License Plate",
+                    "placeholder" : "Enter license plate number"
+                }
+            },
+            "buttons" : {
+                "cancel" : "Cancel",
+                "submit" : "Add Vehicle"
+            }
+        },
+        "addDriverForm" : {
+            "title" : "Add New Driver",
+            "subtitle" : "Fill driver details to register them in your fleet.",
+            "note" : "Please share the generated invite code with your driver after submission.",
+            "fields" : {
+                "vehicle" : "Vehicle",
+                "vehiclePlaceholder" : "Select Vehicle",
+                "vehicleEmpty" : "No available vehicles",
+                "email" : "Email",
+                "emailPlaceholder" : "Enter driver's email address"
+            },
+            "buttons" : {
+                "cancel" : "Cancel",
+                "submit" : "Add Driver"
+            }
+        },
+        "dashboard" : {
+            "title" : "Fleet Dashboard",
+            "description" : "Manage your vehicles, drivers and advertising contracts.",
+            "cards" : {
+                "vehicles" : {
+                    "title" : "Vehicles",
+                    "meta" : "Active Vehicles"
+                },
+                "drivers" : {
+                    "title" : "Drivers",
+                    "meta" : "Active Drivers"
+                },
+                "earnings" : {
+                    "title" : "Earnings",
+                    "meta" : "Earn this Month"
+                },
+                "distance" : {
+                    "title" : "Total Distance",
+                    "meta" : "All drivers combined"
+                }
+            },
+            "actions" : {
+                "inviteDriver" : "Invite Driver",
+                "addVehicle" : "Add Vehicle",
+                "signContract" : "Sign Contract"
+            },
+            "table" : {
+                "headers" : ["Vehicle", "Contact", "Driver Status", "Driver", "Start Date", "Weekly KM", "Zone Hourse"]
+            }
+        },
+        "contracts" : {
+            "title" : "Contracts",
+            "description" : "Browse advertised contracts and manage your fleet agreements.",
+            "filters" : {
+                "available" : "Available Contracts",
+                "my" : "My Contracts",
+                "completed" : "Completed Contracts"
+            },
+            "companyFallback" : "Company",
+            "na" : "N/A",
+            "details" : {
+                "industry" : "Industry:",
+                "locationMeta" : "Location:",
+                "location" : "Location",
+                "startDate" : "Start Date",
+                "duration" : "Duration",
+                "vehiclesNeeded" : "Vehicles Needed",
+                "vehiclesSuffix" : "Vehicles",
+                "monthSuffix" : " Month",
+                "estimatedEarnings" : "Estimated Earnings",
+                "perVehicle" : "Per Vehicle",
+                "amdPerVehicle" : "AMD / vehicle"
+            },
+            "buttons" : {
+                "book" : "Book Contract",
+                "booking" : "Booking...",
+                "view" : "View Details",
+                "close" : "Close"
+            },
+            "alerts" : {
+                "booked" : "Contract successfully booked!",
+                "bookError" : "Error booking contract"
+            },
+            "modalFallbackTitle" : "Contract"
+        },
+        "billing" : {
+            "title" : "Billing",
+            "description" : "Manage your balance, payment methods, and transaction history.",
+            "stats" : {
+                "currentBalance" : "Current Balance",
+                "availableWithdrawal" : "Available for withdrawal",
+                "pendingWithdrawals" : "Pending Withdrawals",
+                "processing" : "Processing",
+                "totalWithdrawn" : "Total Withdrawn",
+                "allTime" : "All time"
+            },
+            "withdraw" : {
+                "title" : "Withdraw Funds",
+                "subtitle" : "Transfer your earnings to your bank account or card.",
+                "availableBalance" : "Available Balance",
+                "amountLabel" : "Withdraw Amount",
+                "minMaxPrefix" : "Min: ֏100",
+                "paymentMethod" : "Payment Method",
+                "noCards" : "No saved cards",
+                "selectedPrefix" : "Selected:",
+                "addCardHint" : "Add a card to enable withdrawals.",
+                "youReceive" : "You Will Receive",
+                "loading" : "Loading...",
+                "withdrawPrefix" : "Withdraw"
+            },
+            "methods" : {
+                "title" : "Payment Methods",
+                "subtitle" : "Manage your saved payout methods.",
+                "addNew" : "Add New Method",
+                "empty" : "You do not have any saved cards yet.",
+                "addFirst" : "Add Your First Card",
+                "default" : "Default",
+                "expires" : "Expires",
+                "cardId" : "Card ID:",
+                "setDefault" : "Set as Default",
+                "remove" : "Remove"
+            },
+            "history" : {
+                "headers" : ["Date", "Type", "Description", "Amount", "Status", "Payment Method", "Reference"],
+                "showing" : "Showing",
+                "to" : "to",
+                "of" : "of",
+                "transactions" : "transactions"
+            },
+            "modal" : {
+                "successTitle" : "Withdraw is Done",
+                "done" : "Done",
+                "addCardTitle" : "Add New Card",
+                "addCardDescription" : "Card data is saved in Supabase. Local preferences are linked by cardid in localStorage.",
+                "cardNumber" : "Card Number",
+                "cardNumberPlaceholder" : "4242424242424242",
+                "expires" : "Expires",
+                "expiresPlaceholder" : "12/26",
+                "cvv" : "CVV",
+                "cvvPlaceholder" : "123",
+                "owner" : "Name and Surname",
+                "ownerPlaceholder" : "John Mitchell",
+                "cancel" : "Cancel",
+                "saving" : "Saving...",
+                "saveCard" : "Save Card"
+            },
+            "alerts" : {
+                "addSelectCard" : "Please add and select a card first.",
+                "minWithdrawal" : "Minimum withdrawal amount is ֏100.",
+                "balanceUpdateFailed" : "Failed to update balance.",
+                "transferNotSaved" : "Withdrawal was not saved to transfers."
+            }
+        },
+        "profile" : {
+            "title" : "Fleet Profile",
+            "description" : "Here you can manage your fleet profile, update your information, and customize your settings.",
+            "fields" : {
+                "fullName" : "Full Name",
+                "companyName" : "Company Name",
+                "email" : "Email",
+                "phone" : "Phone"
+            },
+            "buttons" : {
+                "saving" : "Saving...",
+                "save" : "Save Changes",
+                "change" : "Change",
+                "processing" : "Processing...",
+                "cancel" : "Cancel",
+                "enable" : "Enable"
+            },
+            "accountSettings" : {
+                "title" : "Account Settings",
+                "changePassword" : "Change Password",
+                "twoFactor" : "Two-Factor Authentication"
+            },
+            "messages" : {
+                "loadErrorPrefix" : "Error loading profile:",
+                "userNotAuthenticated" : "User not authenticated",
+                "saveErrorPrefix" : "Error saving profile:",
+                "saveSuccess" : "Profile saved successfully!",
+                "disable2faErrorPrefix" : "Error disabling 2FA:",
+                "disable2faSuccess" : "2FA disabled successfully!",
+                "unexpectedPrefix" : "Unexpected error:"
+            }
+        },
+        "changePassword" : {
+            "title" : "Change Password",
+            "close" : "Close",
+            "labels" : {
+                "current" : "Current password",
+                "new" : "New password",
+                "confirm" : "Confirm new password"
+            },
+            "placeholders" : {
+                "current" : "Enter current password",
+                "new" : "Enter new password",
+                "confirm" : "Confirm new password"
+            },
+            "buttons" : {
+                "saving" : "Saving...",
+                "submit" : "Change Password"
+            },
+            "messages" : {
+                "fillAll" : "Please fill in all fields.",
+                "minLength" : "New password must be at least 6 characters.",
+                "mismatch" : "New password and confirmation do not match.",
+                "sessionMissing" : "User session not found. Please sign in again.",
+                "wrongCurrent" : "Current password is incorrect.",
+                "updateFailed" : "Failed to update password.",
+                "success" : "Password updated successfully.",
+                "unexpected" : "Unexpected error."
+            }
+        },
+        "twoFactorSetup" : {
+            "title" : "Two-Factor Authentication",
+            "close" : "Close",
+            "description" : "Scan the QR code with Google Authenticator or Authy.",
+            "qrAlt" : "2FA QR",
+            "generating" : "Generating QR code...",
+            "secretPrefix" : "Secret:",
+            "codeLabel" : "Authenticator code",
+            "codePlaceholder" : "123456",
+            "confirm" : "Confirm 2FA",
+            "processing" : "Processing...",
+            "friendlyName" : "Fleet Authenticator",
+            "messages" : {
+                "loadFactorsFailed" : "Failed to load MFA factors.",
+                "alreadyEnabled" : "2FA is already enabled for this account.",
+                "setupFailed" : "Failed to create 2FA setup.",
+                "factorMissing" : "2FA factor is missing.",
+                "invalidCode" : "Enter a valid 6-digit code.",
+                "challengeFailed" : "Failed to request verification challenge.",
+                "verifyFailed" : "Invalid authenticator code.",
+                "enabled" : "2FA enabled successfully."
+            }
+        },
+        "fleetContent2fa" : {
+            "title" : "Two-Factor Authentication",
+            "description" : "Enter the 6-digit code from Google Authenticator to continue.",
+            "codeLabel" : "Authenticator Code",
+            "placeholder" : "123456",
+            "signOut" : "Sign out",
+            "retryChallenge" : "Retry challenge",
+            "verify" : "Verify",
+            "verifying" : "Verifying...",
+            "errors" : {
+                "loadFactors" : "Failed to load 2FA factors.",
+                "createChallenge" : "Failed to create 2FA challenge.",
+                "missingChallenge" : "2FA challenge is missing. Please sign in again.",
+                "invalidCode" : "Enter a valid 6-digit code.",
+                "invalidFactor" : "2FA factor is missing. Please sign in again.",
+                "invalidCodeVerify" : "Invalid authenticator code."
+            }
+        },
+        "signup" : {
+            "title" : "Fleet Signup",
+            "fields" : {
+                "fleetName" : {
+                    "label" : "Fleet Name",
+                    "placeholder" : "Enter your fleet name"
+                },
+                "contactPerson" : {
+                    "label" : "Contact Person",
+                    "placeholder" : "Enter the name of the contact person"
+                },
+                "contactEmail" : {
+                    "label" : "Contact Email",
+                    "placeholder" : "Enter the contact email address"
+                },
+                "contactPhone" : {
+                    "label" : "Contact Phone Number",
+                    "placeholder" : "Enter the contact phone number"
+                },
+                "fleetSize" : {
+                    "label" : "Fleet Size",
+                    "placeholder" : "Enter the number of vehicles in your fleet"
+                },
+                "password" : {
+                    "label" : "Set Password",
+                    "placeholder" : "Create a password for your account"
+                },
+                "confirmPassword" : {
+                    "label" : "Confirm Password",
+                    "placeholder" : "Confirm your password"
+                }
+            },
+            "buttons" : {
+                "submitting" : "Submitting...",
+                "submit" : "Submit"
+            },
+            "messages" : {
+                "sessionExpired" : "Session expired. Please request a new registration link.",
+                "passwordMismatch" : "Passwords do not match.",
+                "passwordRules" : "Password must contain uppercase, lowercase, number, symbol and be at least 8 characters.",
+                "emailExists" : "This email is already registered as a fleet.",
+                "signupFailed" : "Signup failed. Please try again.",
+                "accountFailed" : "Failed to get user account. Please try again.",
+                "saveFleetFailedPrefix" : "Failed to save fleet info:",
+                "success" : "Registration successful!",
+                "unexpected" : "An error occurred during signup."
+            }
+        },
+        "signContract" : {
+            "title" : "Assign Contract",
+            "close" : "X",
+            "selectDriver" : "Select Driver",
+            "selectContract" : "Select Contract",
+            "submit" : "Assign Contract",
+            "submitting" : "Assigning...",
+            "driverFallback" : "Driver",
+            "contractFallback" : "Contract",
+            "alerts" : {
+                "assignFailed" : "Failed to assign contract. Please try again.",
+                "assigned" : "Contract assigned successfully!"
+            }
+        },
+        "tableRow" : {
+            "noContract" : "No Contract",
+            "oneSide" : "One Side",
+            "fullWrap" : "Full Wrap",
+            "statusSteps" : {
+                "inviteSent" : "Invite sent",
+                "photoCheck" : "Photo check",
+                "wrapping" : "Wrapping",
+                "active" : "Active"
+            },
+            "notAssigned" : "Not assigned"
+        }
+    },
+    "ui" : {
+        "common" : {
+            "noDataAvailable" : "No data available",
+            "currency" : "AMD"
+        },
+        "overviewChart" : {
+            "title" : "Impression Analytics",
+            "ranges" : {
+                "7" : "Last 7 Days",
+                "30" : "Last 30 Days"
+            }
+        },
+        "planSelector" : {
+            "title" : "Campaign Duration",
+            "options" : [
+                { "id" : "1m", "label" : "1 Month" },
+                { "id" : "3m", "label" : "3 Months" },
+                { "id" : "6m", "label" : "6 Months" },
+                { "id" : "custom", "label" : "Custom" }
+            ]
+        },
+        "dateRanges" : {
+            "today" : "Today",
+            "week" : "1 Week",
+            "month" : "1 Month",
+            "year" : "1 Year"
+        },
+        "analyticsChart" : {
+            "impressionsTitle" : "Impressions Over Time",
+            "distanceTitle" : "Distance Covered"
+        },
+        "adPlacement" : {
+            "title" : "Ad Placement",
+            "options" : [
+                {
+                    "id" : "side",
+                    "title" : "Side Doors (2 doors)",
+                    "price" : "Included"
+                },
+                {
+                    "id" : "full",
+                    "title" : "Both sides (4 Doors)",
+                    "price" : "+50k AMD"
+                }
+            ]
+        },
+        "changeImage" : {
+            "description" : "Upload a new image to update your profile picture.",
+            "requirements" : "JPG, PNG or GIF. Max size 2MB",
+            "buttonUpload" : "Upload New Image",
+            "buttonUploading" : "Uploading...",
+            "errors" : {
+                "invalidType" : "Only JPG, PNG or GIF files are allowed.",
+                "maxSize" : "Image size must be 2MB or less.",
+                "notSignedIn" : "You need to sign in to upload an image.",
+                "uploadFailed" : "Failed to upload image to storage.",
+                "urlFailed" : "Failed to get image URL.",
+                "saveProfileFailed" : "Image uploaded, but failed to save URL in profile.",
+                "unexpected" : "Unexpected error while uploading image."
+            },
+            "success" : {
+                "uploaded" : "Image uploaded successfully."
+            },
+            "alt" : {
+                "preview" : "preview"
+            }
+        },
+        "mapBox" : {
+            "defaultDriver" : {
+                "fullName" : "Alex Morgan",
+                "activeContractName" : "Downtown Delivery Route",
+                "carPhotoLeft" : "https://placehold.co/520x320/121722/39FF14?text=Car+Left+Side",
+                "carPhotoRight" : "https://placehold.co/520x320/121722/39FF14?text=Car+Right+Side"
+            },
+            "drawer" : {
+                "title" : "Driver info",
+                "close" : "Close",
+                "fullName" : "Full Name",
+                "activeCampaign" : "Active campaign name",
+                "carLeftAlt" : "Car left side",
+                "carRightAlt" : "Car right side"
+            }
+        }
+    },
     "content": {
         "sidebar" : {
             "sidebar_pages" : [
@@ -358,6 +814,13 @@
             },
             "campaignTable" : {
                 "title" : "Live Campaigns",
+                "emptyState" : "No data available",
+                "currency" : "AMD",
+                "pay" : "Pay",
+                "statusLabels" : {
+                    "live" : "live",
+                    "pending" : "pending"
+                },
                 "tableInfo" : [
                     {
                         "id" : 0,
@@ -450,8 +913,22 @@
             }
         },
         "analitics" : {
+            "page" : {
+                "title" : "Analitics",
+                "description" : "Detailed campaign performance and insights",
+                "tabs" : {
+                    "active" : "Active Campaignes",
+                    "history" : "Campaign History"
+                }
+            },
             "table": {
                 "title" : "",
+                "emptyState" : "No data available",
+                "currency" : "AMD",
+                "statusLabels" : {
+                    "live" : "live",
+                    "completed" : "completed"
+                },
                 "tableInfo" : [
                     {
                         "id" : 0,
@@ -478,6 +955,252 @@
                         "title": "STATUS"
                     }
                 ]
+            }
+        },
+        "settings" : {
+            "page" : {
+                "title" : "Settings",
+                "description" : "Manage your account and preferences",
+                "menu" : {
+                    "profile" : "Profile",
+                    "company" : "Company",
+                    "notifications" : "Notifications",
+                    "security" : "Security"
+                }
+            },
+            "profilePage" : {
+                "changeImageTitle" : "Change Profile Picture",
+                "formTitle" : "Personal Information",
+                "formDescription" : "Update your personal details and contact information"
+            },
+            "companyPage" : {
+                "changeImageTitle" : "Change Company Logo",
+                "formTitle" : "Company Information",
+                "formDescription" : "Update your company details and contact information"
+            },
+            "formCommon" : {
+                "selectPrefix" : "Select",
+                "enterPrefix" : "Enter your",
+                "saveChanges" : "Save Changes",
+                "status" : {
+                    "success" : "Changes saved successfully.",
+                    "error" : "Failed to save changes."
+                }
+            },
+            "profileFields" : {
+                "fullName" : "Full Name",
+                "email" : "Email",
+                "phone" : "Phone Number"
+            },
+            "companyFields" : {
+                "companyName" : "Company Name",
+                "industry" : "Industry",
+                "tax" : "TAX",
+                "website" : "Website",
+                "country" : "Country",
+                "city" : "City",
+                "address" : "Address",
+                "industryOptions" : ["Automotive", "Marketing", "Logistics", "Transportation", "Retail", "Other"],
+                "countryOptions" : ["Armenia", "Georgia", "UAE", "Other"]
+            },
+            "security" : {
+                "title" : "Security Settings",
+                "twoFa" : {
+                    "title" : "Google Authenticator 2FA",
+                    "description" : "Use 6-digit TOTP code on each sign in.",
+                    "loading" : "Loading...",
+                    "enable" : "Enable 2FA",
+                    "disable" : "Disable 2FA",
+                    "setupTitle" : "Set up Google Authenticator",
+                    "setupDescription" : "Scan QR in Google Authenticator and enter the 6-digit code.",
+                    "secretPrefix" : "Secret:",
+                    "authCodeLabel" : "Authenticator Code",
+                    "authCodePlaceholder" : "123456",
+                    "cancel" : "Cancel",
+                    "confirm" : "Confirm",
+                    "verifying" : "Verifying...",
+                    "friendlyName" : "Google Authenticator",
+                    "qrAlt" : "Google Authenticator QR",
+                    "status" : {
+                        "enabled" : "2FA enabled.",
+                        "disabled" : "2FA disabled.",
+                        "enabledSuccess" : "2FA enabled successfully."
+                    },
+                    "errors" : {
+                        "loadFailed" : "Failed to load 2FA settings.",
+                        "userNotAuthenticated" : "User is not authenticated.",
+                        "updateFailed" : "Failed to update 2FA setting.",
+                        "loadFactorsFailed" : "Failed to load MFA factors.",
+                        "disableFactorFailed" : "Failed to disable authenticator factor.",
+                        "setupCreateFailed" : "Failed to create Google Authenticator setup.",
+                        "toggleFailed" : "Failed to change 2FA setting.",
+                        "factorMissing" : "2FA factor is missing.",
+                        "invalidCode" : "Enter a valid 6-digit code.",
+                        "challengeFailed" : "Failed to request verification challenge.",
+                        "verifyFailed" : "Invalid authenticator code.",
+                        "persistFailed" : "Failed to persist 2FA setting."
+                    }
+                },
+                "password" : {
+                    "title" : "Change Password",
+                    "description" : "Update your password regularly to keep your account secure.",
+                    "modalTitle" : "Change Password",
+                    "modalText" : "Enter your new password and confirm it to update your account credentials.",
+                    "newLabel" : "New Password",
+                    "newPlaceholder" : "Enter new password",
+                    "confirmLabel" : "Confirm New Password",
+                    "confirmPlaceholder" : "Confirm new password",
+                    "cancel" : "Cancel",
+                    "submit" : "Change Password",
+                    "submitting" : "Changing...",
+                    "status" : {
+                        "changed" : "Password changed successfully."
+                    },
+                    "errors" : {
+                        "minLength" : "Password must be at least 8 characters long.",
+                        "missingUpper" : "Password must include at least one uppercase letter.",
+                        "missingLower" : "Password must include at least one lowercase letter.",
+                        "missingDigit" : "Password must include at least one digit.",
+                        "missingSymbol" : "Password must include at least one special symbol.",
+                        "mismatch" : "Passwords do not match.",
+                        "updateFailed" : "Failed to update password."
+                    }
+                }
+            },
+            "notifications" : {
+                "title" : "Notification Preferences",
+                "items" : [
+                    {
+                        "id" : "email",
+                        "title" : "Email Notifications",
+                        "description" : "Receive notifications via email",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "campaign",
+                        "title" : "Campaign Updates",
+                        "description" : "Get notified about campaign performance",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "weekly",
+                        "title" : "Weekly Reports",
+                        "description" : "Receive weekly analytics summary",
+                        "enabled" : false
+                    },
+                    {
+                        "id" : "payments",
+                        "title" : "Payment Alerts",
+                        "description" : "Notifications for invoices and payments",
+                        "enabled" : true
+                    }
+                ],
+                "aria" : {
+                    "disablePrefix" : "Disable",
+                    "enablePrefix" : "Enable"
+                }
+            }
+        },
+        "billing" : {
+            "page" : {
+                "title" : "Billing & Payments",
+                "description" : "Direct invoice payment and transaction history.",
+                "accountBalance" : "Account balance",
+                "availableBalance" : "Available balance for campaigns",
+                "addFunds" : "+ Add Funds"
+            },
+            "tax" : {
+                "requiredTitle" : "Tax Information Required",
+                "requiredDescription" : "Please confirm your Company TIN (ՀՎՀՀ) to generate your Tax Invoice.",
+                "placeholder" : "Company TIN (ՀՎՀՀ)",
+                "save" : "Saving...",
+                "confirm" : "Confirm"
+            },
+            "addFunds" : {
+                "title" : "Add Founds to Your Account",
+                "description" : "Top up your balance to run campaigns without interruptions.",
+                "methods" : {
+                    "card" : {
+                        "title" : "Card Payment",
+                        "description" : "Visa, MasterCard, ArCa",
+                        "time" : "Instantly"
+                    },
+                    "idram" : {
+                        "title" : "IDram",
+                        "description" : "Instant payment",
+                        "time" : "Through wallet",
+                        "extra" : "via Idram wallet"
+                    },
+                    "bank" : {
+                        "title" : "Account Transfer",
+                        "description" : "From bank account",
+                        "time" : "1-2 days",
+                        "eta" : "24-48 hours"
+                    }
+                },
+                "selectedPrefix" : "Selected:",
+                "commission" : "Commission:",
+                "amountLabel" : "Amount to Top Up",
+                "amountPlaceholder" : "Enter amount",
+                "quickSelect" : "Quick select:",
+                "refillAmount" : "Refill amount:",
+                "totalDebit" : "Total to debit:",
+                "processing" : "Processing...",
+                "payPrefix" : "Pay",
+                "enterValid" : "Enter valid amount",
+                "securityText" : "🔒 Secure payment - PCI DSS compliant",
+                "transactionsTitle" : "Last transactions:",
+                "minAmount" : "Minimum: 1,000 ֏"
+            },
+            "sidebar" : {
+                "benefitsTitle" : "Why top up with wrapgo",
+                "benefits" : [
+                    "Instant campaign activation",
+                    "100% secure payments",
+                    "Multiple payment methods",
+                    "24/7 customer support"
+                ],
+                "helpTitle" : "Need help?",
+                "helpDescription" : "Contact our support team for assistance with billing and payments.",
+                "contactSupport" : "Contact Support"
+            },
+            "invoiceHistory" : {
+                "title" : "Invoice History",
+                "columns" : ["Invoice ID", "Campaign Name", "Amount", "Invoice Date", "Status", "Action"],
+                "statusPaid" : "Paid",
+                "statusPending" : "Pending",
+                "taxInvoice" : "↓ Tax Invoice",
+                "payNow" : "Pay Now",
+                "paying" : "Paying...",
+                "empty" : "No invoices yet"
+            },
+            "invoiceDrawer" : {
+                "title" : "Invoice Details",
+                "invoiceNumber" : "Invoice Number",
+                "amount" : "Amount",
+                "status" : "Status",
+                "campaignName" : "Campaign Name",
+                "duration" : "Duration",
+                "invoiceDate" : "Invoice Date",
+                "dueDate" : "Due Date",
+                "scheduledPrefix" : "Scheduled:",
+                "livePrefix" : "Live Period:",
+                "periodPrefix" : "Campaign Period:"
+            },
+            "topupModal" : {
+                "successTitle" : "Balance Replenished",
+                "newBalanceLabel" : "New balance:",
+                "continue" : "Continue",
+                "failedTitle" : "Payment Failed",
+                "failedMessage" : "Unable to process your payment. Please try again.",
+                "tryAgain" : "Try Again"
+            },
+            "alerts" : {
+                "taxRequired" : "Tax information is required. Please fill in your Company TIN (ՀՎՀՀ) first.",
+                "invalidInvoiceAmount" : "Invalid invoice amount.",
+                "insufficientBalance" : "Insufficient balance. Please top up your account.",
+                "balanceUpdateFailed" : "Failed to update balance. Please try again.",
+                "invoicePaidFailed" : "Failed to mark invoice as paid. Please try again."
             }
         },
         "contacts" : {

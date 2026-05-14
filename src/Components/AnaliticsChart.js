@@ -1,5 +1,6 @@
 import "../App.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import pageData from "../data/data.json";
 
 const CustomDot = (props) => {
     const { cx, cy } = props;
@@ -15,6 +16,7 @@ const CustomDot = (props) => {
 };
 
 function AnaliticsChart({currentDate, analyticsData}) {
+    const chartData = pageData.ui.analyticsChart;
 
     const data = analyticsData?.[currentDate] ?? [];
 
@@ -25,7 +27,7 @@ function AnaliticsChart({currentDate, analyticsData}) {
                 
                 {/* Impressions */}
                 <div className="analitics__chart__block--data">
-                    <h3>Impressions Over Time</h3>
+                    <h3>{chartData.impressionsTitle}</h3>
                     <ResponsiveContainer>
                         <LineChart data={data}>
                             <XAxis dataKey="name" />
@@ -46,7 +48,7 @@ function AnaliticsChart({currentDate, analyticsData}) {
 
                 {/* Distance */}
                 <div className="analitics__chart__block--data">
-                    <h3>Distance Covered</h3>
+                    <h3>{chartData.distanceTitle}</h3>
                     <ResponsiveContainer>
                         <BarChart data={data}>
                             <XAxis dataKey="name" />

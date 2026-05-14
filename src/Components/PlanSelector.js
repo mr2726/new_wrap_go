@@ -1,20 +1,17 @@
 import "../App.css";
 // import { useState } from "react";
+import pageData from "../data/data.json";
 
 export default function PlanSelector({setRoute, route}) {
   // const [selected, setSelected] = useState("3m");
 
-  const options = [
-    { id: "1m", label: "1 Month" },
-    { id: "3m", label: "3 Months" },
-    { id: "6m", label: "6 Months" },
-    { id: "custom", label: "Custom" },
-  ];
+  const planText = pageData.ui.planSelector;
+  const options = planText.options;
 
   return (
     
     <div className="planSelector">
-        <h2 className="title planSelector--title">Campaign Duration</h2>
+      <h2 className="title planSelector--title">{planText.title}</h2>
         <div className="grid">
         {options.map((item) => (
             <button

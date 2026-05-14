@@ -1,12 +1,15 @@
 import "../../../App.css";
 import ChangeImage from "../../../Components/ChangeImage";
 import SettingsForm from "../../../Components/SettingsForm";
+import pageData from "../../../data/data.json";
 
 function Company({_companyData}) {
+    const companyText = pageData.content.settings.companyPage;
+
     return (
         <div className="settings__block">
-            <ChangeImage title="Change Company Logo" type="company" />
-            <SettingsForm title="Company Information" description="Update your company details and contact information" data={_companyData} />
+            <ChangeImage title={companyText.changeImageTitle} type="company" />
+            <SettingsForm title={companyText.formTitle} description={companyText.formDescription} data={_companyData} />
         </div>
     );
 }

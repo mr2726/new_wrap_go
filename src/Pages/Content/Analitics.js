@@ -1,6 +1,7 @@
 import "../../App.css";
 import { useEffect, useState } from "react";
 import { supabase } from "../../data/supabase";
+import pageData from "../../data/data.json";
 import Loader from "../../Components/Loader";
 /* Pages */
 import Active from "./Analitics/Active";
@@ -9,6 +10,7 @@ import AnaliticsChart from "../../Components/AnaliticsChart";
 import AnatiticTable from "../../Components/AnaliticsTable";
 
 function Analitics({ tableData }) {
+    const analyticsPageData = pageData.content.analitics.page;
     const [currentPage, setCurrentPage] = useState("active");
     const [currentDate, setCurrentDate] = useState("today");
     const [campaignData, setCampaignData] = useState([]);
@@ -76,15 +78,15 @@ function Analitics({ tableData }) {
         <div className="analitics">
             {loading && <Loader />}
             <div className="analitics__header">
-                <h1 className="analitics__header--title title">Analitics</h1>
-                <p className="analitics__header--description description">Detailed campaign performance and insights</p>
+                <h1 className="analitics__header--title title">{analyticsPageData.title}</h1>
+                <p className="analitics__header--description description">{analyticsPageData.description}</p>
             </div>
             <div className="analitics_switcher">
                 <button className={"analitics_switcher--button " + (currentPage === "active" ? "analitics_switcher--button_active" : "")} onClick={() => setCurrentPage("active")}>
-                    Active Campaignes
+                    {analyticsPageData.tabs.active}
                 </button>
                 <button className={"analitics_switcher--button " + (currentPage === "history" ? "analitics_switcher--button_active" : "")} onClick={() => setCurrentPage("history")}>
-                    Campaign History
+                    {analyticsPageData.tabs.history}
                 </button>
             </div>
             <div className="line"></div>

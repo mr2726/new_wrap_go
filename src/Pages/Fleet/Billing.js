@@ -4,10 +4,12 @@ import { FiArrowUp, FiCreditCard, FiDownload, FiPlus, FiTrash2 } from "react-ico
 import { HiOutlineBuildingLibrary, HiOutlineWallet } from "react-icons/hi2";
 import { RiBankCardLine } from "react-icons/ri";
 import { supabase } from "../../data/supabase";
+import pageData from "../../data/data.json";
 
 import TopMenu from "../../Components/TopMenu";
 
 function Billing({ setFleetPage }) {
+    const billingText = pageData.fleet.billing;
     const [withdrawAmount, setWithdrawAmount] = useState("10000");
     const [selectedMethodId, setSelectedMethodId] = useState("");
     const [fleetData, setFleetData] = useState(null);
@@ -278,7 +280,7 @@ function Billing({ setFleetPage }) {
         if (!user) return;
 
         if (!selectedMethod) {
-            alert("Please add and select a card first.");
+            alert(billingText.alerts.addSelectCard);
             return;
         }
 
@@ -286,7 +288,7 @@ function Billing({ setFleetPage }) {
         const amountToWithdraw = Math.min(Math.max(parsedWithdrawAmount || 0, 0), currentBalance);
 
         if (amountToWithdraw < 100) {
-            alert("Minimum withdrawal amount is ֏100.");
+            alert(billingText.alerts.minWithdrawal);
             return;
         }
 
@@ -302,7 +304,7 @@ function Billing({ setFleetPage }) {
 
             if (balanceError) {
                 console.error("Error updating balance:", balanceError);
-                alert("Failed to update balance.");
+                alert(billingText.alerts.balanceUpdateFailed);
                 return;
             }
 
@@ -325,7 +327,7 @@ function Billing({ setFleetPage }) {
 
             if (transferError) {
                 console.error("Error creating transfer:", transferError);
-                alert("Withdrawal was not saved to transfers.");
+                alert(billingText.alerts.transferNotSaved);
                 return;
             }
 
@@ -345,8 +347,9 @@ function Billing({ setFleetPage }) {
     const totalPages = Math.max(1, Math.ceil(totalTransactions / itemsPerPage));
 
     const paginatedTransactions = useMemo(() => {
+        const sortedTransactions = [...transactionsData].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Сортировка по убыванию даты
         const startIndex = (currentPage - 1) * itemsPerPage;
-        return transactionsData.slice(startIndex, startIndex + itemsPerPage);
+        return sortedTransactions.slice(startIndex, startIndex + itemsPerPage);
     }, [transactionsData, currentPage]);
 
     const currentRangeStart = totalTransactions === 0 ? 0 : ((currentPage - 1) * itemsPerPage) + 1;
@@ -389,8 +392,8 @@ function Billing({ setFleetPage }) {
             <div className="dashboard__content fleet-billing__content">
                 <div className="fleet-billing__header">
                     <div>
-                        <h1 className="title">Billing</h1>
-                        <p className="description">Manage your balance, payment methods, and transaction history.</p>
+                        <h1 className="title">{billingText.title}</h1>
+                        <p className="description">{billingText.description}</p>
                     </div>
                 </div>
 
@@ -400,9 +403,9 @@ function Billing({ setFleetPage }) {
                             <HiOutlineWallet size={20} />
                         </div>
                         <div>
-                            <p className="fleet-billing__stat-label">Current Balance</p>
+                            <p className="fleet-billing__stat-label">{billingText.stats.currentBalance}</p>
                             <h3 className="fleet-billing__stat-value">{formatMoney(fleetData ? fleetData.balance : 0)} <span>AMD</span></h3>
-                            <p className="fleet-billing__stat-meta">Available for withdrawal</p>
+                            <p className="fleet-billing__stat-meta">{billingText.stats.availableWithdrawal}</p>
                         </div>
                     </article>
 
@@ -411,9 +414,9 @@ function Billing({ setFleetPage }) {
                             <FiArrowUp size={18} />
                         </div>
                         <div>
-                            <p className="fleet-billing__stat-label">Pending Withdrawals</p>
+                            <p className="fleet-billing__stat-label">{billingText.stats.pendingWithdrawals}</p>
                             <h3 className="fleet-billing__stat-value">{formatMoney(pendingWithdrawals)} <span>AMD</span></h3>
-                            <p className="fleet-billing__stat-meta">Processing</p>
+                            <p className="fleet-billing__stat-meta">{billingText.stats.processing}</p>
                         </div>
                     </article>
 
@@ -422,24 +425,24 @@ function Billing({ setFleetPage }) {
                             <FiDownload size={18} />
                         </div>
                         <div>
-                            <p className="fleet-billing__stat-label">Total Withdrawn</p>
+                            <p className="fleet-billing__stat-label">{billingText.stats.totalWithdrawn}</p>
                             <h3 className="fleet-billing__stat-value">{formatMoney(totalWithdrawn)} <span>AMD</span></h3>
-                            <p className="fleet-billing__stat-meta">All time</p>
+                            <p className="fleet-billing__stat-meta">{billingText.stats.allTime}</p>
                         </div>
                     </article>
                 </div>
 
                 <section className="fleet-billing__main-grid">
                     <article className="fleet-billing__panel fleet-billing__panel--withdraw">
-                        <h2 className="fleet-billing__panel-title">Withdraw Funds</h2>
-                        <p className="fleet-billing__panel-subtitle">Transfer your earnings to your bank account or card.</p>
+                        <h2 className="fleet-billing__panel-title">{billingText.withdraw.title}</h2>
+                        <p className="fleet-billing__panel-subtitle">{billingText.withdraw.subtitle}</p>
 
                         <div className="fleet-billing__field-row">
-                            <span>Available Balance</span>
+                            <span>{billingText.withdraw.availableBalance}</span>
                             <strong>{formatMoney(fleetData ? fleetData.balance : 0)} AMD</strong>
                         </div>
 
-                        <label className="fleet-billing__label" htmlFor="withdrawAmount">Withdraw Amount</label>
+                        <label className="fleet-billing__label" htmlFor="withdrawAmount">{billingText.withdraw.amountLabel}</label>
                         <div className="fleet-billing__input-wrap">
                             <span>֏</span>
                             <input
@@ -452,9 +455,9 @@ function Billing({ setFleetPage }) {
                             />
                             <small>AMD</small>
                         </div>
-                        <p className="fleet-billing__hint">Min: ֏100 <b>•</b> Max: {formatMoney(fleetData ? fleetData.balance : 0)}</p>
+                        <p className="fleet-billing__hint">{billingText.withdraw.minMaxPrefix} <b>•</b> Max: {formatMoney(fleetData ? fleetData.balance : 0)}</p>
 
-                        <label className="fleet-billing__label" htmlFor="paymentMethod">Payment Method</label>
+                        <label className="fleet-billing__label" htmlFor="paymentMethod">{billingText.withdraw.paymentMethod}</label>
                         <div className="fleet-billing__method-picker">
                             <select
                                 id="paymentMethod"
@@ -462,7 +465,7 @@ function Billing({ setFleetPage }) {
                                 onChange={(event) => setSelectedMethodId(event.target.value)}
                                 disabled={!bankData.length}
                             >
-                                {!bankData.length && <option value="">No saved cards</option>}
+                                {!bankData.length && <option value="">{billingText.withdraw.noCards}</option>}
                                 {bankData.map((method) => (
                                     <option key={method.cardid} value={method.cardid}>
                                         {method.type} •••• {method.tail}
@@ -472,36 +475,36 @@ function Billing({ setFleetPage }) {
                         </div>
                         <p className="fleet-billing__hint">
                             {selectedMethod
-                                ? `Selected: ${selectedMethod.type} •••• ${selectedMethod.tail}`
-                                : "Add a card to enable withdrawals."}
+                                ? `${billingText.withdraw.selectedPrefix} ${selectedMethod.type} •••• ${selectedMethod.tail}`
+                                : billingText.withdraw.addCardHint}
                         </p>
 
                         <div className="fleet-billing__receive-row">
-                            <span>You Will Receive</span>
+                            <span>{billingText.withdraw.youReceive}</span>
                             <strong>{formatMoney(netReceive)} USD</strong>
                         </div>
 
                         <button type="button" className="fleet-billing__withdraw-btn" onClick={handleWithdraw} disabled={isWithdrawing || !selectedMethod}>
-                            {isWithdrawing ? "Loading..." : `Withdraw ${formatMoney(Math.min(parsedWithdrawAmount || 0, fleetData ? fleetData.balance : 0))}`}
+                            {isWithdrawing ? billingText.withdraw.loading : `${billingText.withdraw.withdrawPrefix} ${formatMoney(Math.min(parsedWithdrawAmount || 0, fleetData ? fleetData.balance : 0))}`}
                         </button>
                     </article>
 
                     <article className="fleet-billing__panel fleet-billing__panel--methods">
                         <div className="fleet-billing__panel-header-row">
                             <div>
-                                <h2 className="fleet-billing__panel-title">Payment Methods</h2>
-                                <p className="fleet-billing__panel-subtitle">Manage your saved payout methods.</p>
+                                <h2 className="fleet-billing__panel-title">{billingText.methods.title}</h2>
+                                <p className="fleet-billing__panel-subtitle">{billingText.methods.subtitle}</p>
                             </div>
                             <button type="button" className="fleet-billing__new-btn" onClick={() => setShowAddCardModal(true)}>
-                                <FiPlus size={14} /> Add New Method
+                                <FiPlus size={14} /> {billingText.methods.addNew}
                             </button>
                         </div>
 
                         {!bankData.length ? (
                             <div className="fleet-billing__empty-cards">
-                                <p>You do not have any saved cards yet.</p>
+                                <p>{billingText.methods.empty}</p>
                                 <button type="button" className="fleet-billing__new-btn" onClick={() => setShowAddCardModal(true)}>
-                                    <FiPlus size={14} /> Add Your First Card
+                                    <FiPlus size={14} /> {billingText.methods.addFirst}
                                 </button>
                             </div>
                         ) : (
@@ -513,19 +516,19 @@ function Billing({ setFleetPage }) {
                                             <div>
                                                 <p className="fleet-billing__method-title">
                                                     {method.type} •••• {method.tail}
-                                                    {method.isDefault && <span>Default</span>}
+                                                    {method.isDefault && <span>{billingText.methods.default}</span>}
                                                 </p>
-                                                <p className="fleet-billing__method-meta">Expires {method.expires}</p>
+                                                <p className="fleet-billing__method-meta">{billingText.methods.expires} {method.expires}</p>
                                                 <p className="fleet-billing__method-meta">{method.owner}</p>
-                                                <p className="fleet-billing__method-meta">Card ID: {method.cardid}</p>
+                                                <p className="fleet-billing__method-meta">{billingText.methods.cardId} {method.cardid}</p>
                                             </div>
                                         </div>
                                         <div className="fleet-billing__method-actions">
                                             {!method.isDefault && (
-                                                <button type="button" onClick={() => handleSetDefaultCard(method.cardid)}>Set as Default</button>
+                                                <button type="button" onClick={() => handleSetDefaultCard(method.cardid)}>{billingText.methods.setDefault}</button>
                                             )}
                                             <button type="button" className="fleet-billing__danger-btn" onClick={() => handleRemoveCard(method)}>
-                                                <FiTrash2 size={13} /> Remove
+                                                <FiTrash2 size={13} /> {billingText.methods.remove}
                                             </button>
                                         </div>
                                     </div>
@@ -540,19 +543,17 @@ function Billing({ setFleetPage }) {
                         <table className="fleet-billing__table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Payment Method</th>
-                                    <th>Reference</th>
+                                    {billingText.history.headers.map((header) => (
+                                        <th key={header}>{header}</th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {paginatedTransactions.map((transaction) => (
+                                {paginatedTransactions
+                                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Сортировка по убыванию даты
+                                    .map((transaction) => (
                                     <tr key={transaction.withdraw_id}>
-                                        <td>{transaction.created_at}</td>
+                                        <td>{new Date(transaction.created_at).toLocaleString("en-US", {month: "short", day: "numeric", year: "numeric"})}</td>
                                         <td>{transaction.method}</td>
                                         <td>{transaction.description}</td>
                                         <td>{renderAmount(transaction.amount)}</td>
@@ -566,7 +567,7 @@ function Billing({ setFleetPage }) {
                     </div>
 
                     <div className="fleet-billing__table-footer">
-                        <p>Showing {currentRangeStart} to {currentRangeEnd} of {totalTransactions} transactions</p>
+                        <p>{billingText.history.showing} {currentRangeStart} {billingText.history.to} {currentRangeEnd} {billingText.history.of} {totalTransactions} {billingText.history.transactions}</p>
                         <div className="fleet-billing__pager">
                             {Array.from({ length: totalPages }, (_, index) => {
                                 const pageNumber = index + 1;
@@ -591,10 +592,10 @@ function Billing({ setFleetPage }) {
                 <div className="fleet-billing__modal-overlay" onClick={() => setWithdrawSuccess(null)}>
                     <div className="fleet-billing__success-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="fleet-billing__success-icon">✓</div>
-                        <h3>Withdraw is Done</h3>
+                        <h3>{billingText.modal.successTitle}</h3>
                         <p className="fleet-billing__success-amount">{formatMoney(withdrawSuccess.amount)}</p>
                         <p className="fleet-billing__success-id">{withdrawSuccess.withdrawId}</p>
-                        <button type="button" className="fleet-billing__cta-btn" onClick={() => setWithdrawSuccess(null)}>Done</button>
+                        <button type="button" className="fleet-billing__cta-btn" onClick={() => setWithdrawSuccess(null)}>{billingText.modal.done}</button>
                     </div>
                 </div>
             )}
@@ -602,26 +603,26 @@ function Billing({ setFleetPage }) {
             {showAddCardModal && (
                 <div className="fleet-billing__modal-overlay">
                     <div className="fleet-billing__modal">
-                        <h3>Add New Card</h3>
-                        <p>Card data is saved in Supabase. Local preferences are linked by cardid in localStorage.</p>
+                        <h3>{billingText.modal.addCardTitle}</h3>
+                        <p>{billingText.modal.addCardDescription}</p>
 
                         <form onSubmit={handleAddCard} className="fleet-billing__modal-form">
-                            <label htmlFor="cardNumber">Card Number</label>
+                            <label htmlFor="cardNumber">{billingText.modal.cardNumber}</label>
                             <input
                                 id="cardNumber"
                                 type="text"
                                 inputMode="numeric"
                                 maxLength={19}
-                                placeholder="4242424242424242"
+                                placeholder={billingText.modal.cardNumberPlaceholder}
                                 value={cardForm.cardNumber}
                                 onChange={(event) => setCardForm((prev) => ({ ...prev, cardNumber: formatCardNumberInput(event.target.value) }))}
                             />
 
-                            <label htmlFor="cardExpires">Expires</label>
+                            <label htmlFor="cardExpires">{billingText.modal.expires}</label>
                             <input
                                 id="cardExpires"
                                 type="text"
-                                placeholder="12/26"
+                                placeholder={billingText.modal.expiresPlaceholder}
                                 value={cardForm.expires}
                                 onChange={(event) => {
                                     const normalized = event.target.value.replace(/[^\d/]/g, "").slice(0, 5);
@@ -632,32 +633,32 @@ function Billing({ setFleetPage }) {
                                 }}
                             />
 
-                            <label htmlFor="cardCvv">CVV</label>
+                            <label htmlFor="cardCvv">{billingText.modal.cvv}</label>
                             <input
                                 id="cardCvv"
                                 type="password"
                                 inputMode="numeric"
                                 maxLength={4}
-                                placeholder="123"
+                                placeholder={billingText.modal.cvvPlaceholder}
                                 value={cardForm.cvv}
                                 onChange={(event) => setCardForm((prev) => ({ ...prev, cvv: event.target.value.replace(/\D/g, "") }))}
                             />
 
-                            <label htmlFor="cardOwner">Name and Surname</label>
+                            <label htmlFor="cardOwner">{billingText.modal.owner}</label>
                             <input
                                 id="cardOwner"
                                 type="text"
-                                placeholder="John Mitchell"
+                                placeholder={billingText.modal.ownerPlaceholder}
                                 value={cardForm.fullName}
                                 onChange={(event) => setCardForm((prev) => ({ ...prev, fullName: event.target.value }))}
                             />
 
                             <div className="fleet-billing__modal-actions">
                                 <button type="button" className="fleet-billing__ghost-btn fleet-billing__ghost-btn--small" onClick={() => setShowAddCardModal(false)}>
-                                    Cancel
+                                    {billingText.modal.cancel}
                                 </button>
                                 <button type="submit" className="fleet-billing__cta-btn" disabled={isAddingCard}>
-                                    {isAddingCard ? "Saving..." : "Save Card"}
+                                    {isAddingCard ? billingText.modal.saving : billingText.modal.saveCard}
                                 </button>
                             </div>
                         </form>
