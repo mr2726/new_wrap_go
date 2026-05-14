@@ -9,6 +9,16 @@ function Signup({data, setPage, setEmail}) {
     const [passNotValid, setPassNotValid] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+
+    useEffect(() => {
+        // Автоматический вход, если есть сессия
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
+            if (session?.user) {
+                setPage && setPage("content");
+            }
+        });
+    }, [setPage]);
+
     useEffect(() => {
         if (!data?.signup_form?.signup_form_inputs) return;
 

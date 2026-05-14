@@ -12,6 +12,21 @@ function Singin({data, setPage}) {
     const [challengeId, setChallengeId] = useState("");
     const [totpCode, setTotpCode] = useState("");
 
+    useEffect(() => {
+        const initialState = Object.fromEntries(
+            data.inputs.map(input => [input.name, ""])
+        );
+        setFormData(initialState);
+    }, [data]);
+    // Автоматический вход, если есть сессия
+    useEffect(() => {
+        supabase.auth.getSession().then(async ({ data: { session } }) => {
+            if (session?.user) {
+                setPage && setPage("content");
+            }
+        });
+    }, [setPage]);
+
     // Get data from JSON file if it changed
     useEffect(() => {
         const initialState = Object.fromEntries(
