@@ -238,7 +238,6 @@ function CampaignBuilder({data}) {
                     <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
                         <div className="campaign__content--content--blocks">
                             <div className="campaign__content--content--block">
-                                {/* <h1 className="blocked__text"></h1> */}
                                 <img 
                                     src={data.campaigns[0].img}
                                     width={300}
@@ -258,7 +257,7 @@ function CampaignBuilder({data}) {
                                     <input 
                                         type="number" 
                                         value={economValue <= 0 ? 0 : economValue } 
-                                        onChange={(e) => setEconomValue(e.target.value <=0 ? 0 : e.target.value)}
+                                        onChange={(e) => setEconomValue(e.target.value <=1 ? 1 : e.target.value)}
                                         className="block__input"
                                     />
                                 </div>
@@ -353,11 +352,6 @@ function CampaignBuilder({data}) {
                             <p className="campaign__builder--info--title">{data.builder.start}{economValue} ({multiplier} months)</p>
                             <p className="campaign__builder--info--data">{formatNumber(economValue * priceStandart * multiplier)} {data.builder.sufix}</p>
                         </div>
-
-                        {/* <div className="campaign__builder--info">
-                            <p className="campaign__builder--info--title">Business Tier x{standartValue} ({multiplier} months)</p>
-                            <p className="campaign__builder--info--data">{formatNumber(standartValue * priceBusiness * multiplier)} AMD</p>
-                        </div> */}
                         <div className="campaign__builder--info">
                             <p className="campaign__builder--info--title">{data.builder.subtotal}</p>
                             <p className="campaign__builder--info--data">{formatNumber(baseTotal)} {data.builder.sufix}</p>
