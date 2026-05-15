@@ -76,7 +76,7 @@ function Security() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [twoFaData.errors.loadFailed]);
 
     const persist2FAFlag = async (enabled) => {
         const { data: authData, error: authError } = await supabase.auth.getUser();

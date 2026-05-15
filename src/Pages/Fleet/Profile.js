@@ -86,7 +86,7 @@ function Profile({ setFleetPage }) {
             }
         };
         fetchProfile();
-    }, [refresh2FAState]);
+    }, [refresh2FAState, profileText.messages.loadErrorPrefix]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

@@ -116,7 +116,7 @@ function FleetContent({ setPage }) {
         return () => {
             isMounted = false;
         };
-    }, [withAuthLockRetry]);
+    }, [withAuthLockRetry, gateText.errors.createChallenge, gateText.errors.loadFactors]);
 
     const handleVerify2FA = async (event) => {
         event.preventDefault();
