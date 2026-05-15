@@ -1,6 +1,6 @@
 ﻿﻿/* Main CSS Settings */
 :root{
-  --primary-color: #39FF19;
+  --primary-color: #39FF14;
   --primary-color-hover: #2bb912;
   --primary-color-light: #39FF1420;
   --pending-status-color: #FFB300;
@@ -5592,6 +5592,38 @@ select option{
   align-items: center;
 }
 
+
+.generate_invite_code{
+  margin: 0;
+  color: #d8ffe0;
+  text-align: center;
+  font-size: clamp(2.4em, 4vw, 3.1em);
+  letter-spacing: 0.28em;
+  line-height: 1;
+  text-shadow: 0 0 24px rgba(57, 255, 25, 0.3);
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.invite_code_card {
+  border: 1px solid rgba(57, 255, 25, 0.25);
+  border-radius: 1em;
+  background:
+    radial-gradient(circle at 50% -30%, rgba(57, 255, 25, 0.2), transparent 55%),
+    rgba(6, 12, 22, 0.9);
+  padding: 1.2em;
+}
+
+.invite_code_actions {
+  margin-top: 1em;
+  display: flex;
+  gap: 0.7em;
+  justify-content: center;
+}
+
+.invite_code_copy {
+  min-width: 115px;
+}
+
 @media (max-width: 760px) {
   .add_form {
     padding: 1.4em;
@@ -5608,6 +5640,19 @@ select option{
 
   .add_form__actions .cta,
   .add_form__actions .add_form__ghost {
+    width: 100%;
+  }
+
+  .generate_invite_code {
+    letter-spacing: 0.18em;
+  }
+
+  .invite_code_actions {
+    flex-direction: column;
+  }
+
+  .invite_code_actions .add_form__ghost,
+  .invite_code_actions .invite_code_copy {
     width: 100%;
   }
 }

@@ -48,12 +48,12 @@ function TableTr({ vehicleData, contractData, driverData }) {
                     <p className="table_sub_title">{tableText.statusSteps.inviteSent}</p>
                     <p className='table_description'></p>
                 </div>
-                <div className={(vehicle.left_img && vehicle.right_img) ? "step--done" : "step--pending"}>
+                <div className={(vehicle.left_img && vehicle.right_img && driver.name) ? "step--done" : "step--pending"}>
                     <div></div>
                     <p className="table_sub_title">{tableText.statusSteps.photoCheck}</p>
                     <p className='table_description'></p>
                 </div>
-                <div className={vehicle.wraped ? "step--done" : "step--pending"}>
+                <div className={(vehicle.left_img && vehicle.right_img && driver.name && vehicle.wraped) ? "step--done" : "step--pending"}>
                     <div></div>
                     <p className="table_sub_title">{tableText.statusSteps.wrapping}</p>
                     <p className='table_description'></p>

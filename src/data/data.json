@@ -333,11 +333,15 @@
                 "vehiclePlaceholder" : "Select Vehicle",
                 "vehicleEmpty" : "No available vehicles",
                 "email" : "Email",
-                "emailPlaceholder" : "Enter driver's email address"
+                "emailPlaceholder" : "Enter driver's email address",
+                "inviteCode" : "Invite Code"
             },
             "buttons" : {
                 "cancel" : "Cancel",
-                "submit" : "Add Driver"
+                "submit" : "Add Driver",
+                "regenerate" : "Regenerate",
+                "copy" : "Copy",
+                "copied" : "Copied"
             }
         },
         "dashboard" : {
