@@ -40,6 +40,7 @@ function AddForm({ onClose }) {
             if(error){
                 console.error("Failed to update vehicle with invite code:", error);
             }else{  
+                console.log("Vehicle added successfully:", data);
                 onClose();
             }
     }
