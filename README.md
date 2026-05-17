@@ -68,6 +68,16 @@
 ### v1.7.0
 > - Landing Page (Need to change)
 
+### v 2.0.0
+> - Fleets added
+
+### v2.0.1
+> - Transfer from Login to LandingPage 
+> - Overview Table shows activs and needed driver on campaign
+> - Product name is Capitalize
+> - Added Custom Input to chose the custom monthe
+> - Changed the doors titles
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -102,3 +112,10 @@
 - [x] GPS Data getting every 15s or once it changes in db
 - [x] 2FA in Settings
 - [x] Contact Page
+
+## TODO tasks to fix
+- [x] Transfer from Login to LandingPage
+- [x] Adventures Overview Page need to change vehicle to active vehicles / vehicles needs 
+- [x] Company name input need to be Upercase (Only first letter)
+- [x] After click on Custom Need to add input where the customer can add his monthes
+- [x] Chenge Side Doors  (Front Doors) Both Sides ( All Doors)

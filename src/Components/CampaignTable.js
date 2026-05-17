@@ -37,7 +37,7 @@ function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage}
                                 </td>
 
                                 <td>{item.city}</td>
-                                <td>{item.driverCount}</td>
+                                <td>{item.driverCount} / {item.economValue}</td>
                                 <td>{formatNumber(Math.round(item.budget))} <span className="article"> {pageData?.currency || fallbackText.currency}</span></td>
 
                                 <td>

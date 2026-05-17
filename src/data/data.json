@@ -689,12 +689,12 @@
             "options" : [
                 {
                     "id" : "side",
-                    "title" : "Side Doors (2 doors)",
+                    "title" : "Front Doors (2 doors)",
                     "price" : "Included"
                 },
                 {
                     "id" : "full",
-                    "title" : "Both sides (4 Doors)",
+                    "title" : "All Doors (4 Doors)",
                     "price" : "+50k AMD"
                 }
             ]
@@ -836,7 +836,7 @@
                     },
                     {
                         "id" : 2,
-                        "title" : "VEHICLES"
+                        "title" : "ACTIVE VEHICLES / CONTRACT VEHICLES"
                     },
                     {
                         "id" : 3,
@@ -888,7 +888,9 @@
                 "productNameLabel" : "Product Name",
                 "productNamePlaceholder" : "Product name",
                 "productDescriptionLabel" : "Product Description",
-                "productDescriptionPlaceholder" : "Product description"
+                "productDescriptionPlaceholder" : "Product description",
+                "customDurationLabel": "Custom Duration (months)",
+                "customDurationPlaceholder": "Enter duration in months"
             },
             "alerts" : {
                 "productNameRequired" : "Product Name is required!",

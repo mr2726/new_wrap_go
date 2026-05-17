@@ -18,9 +18,9 @@ function CampaignBuilder({data}) {
     const [productDescription, setProductDescription] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [customSelected, setCustomSelected] = useState(false);
 
-
-    const multiplier = route === "1m" ? 1 : route === "3m" ? 3 : route === "6m" ? 6 : 1;
+    const multiplier = route === "1m" ? 1 : route === "3m" ? 3 : route === "6m" ? 6 : route;
     const priceStandart = adPlacement === "side" ? 119000 : 169000;
     const priceBusiness = 175000;
     const baseTotal = ((economValue * priceStandart) + (standartValue * priceBusiness)) * multiplier;
@@ -120,7 +120,7 @@ function CampaignBuilder({data}) {
 
             const userId = session?.user?.id;
             const payload = {
-                ownerid : userId, // замените на реальный ID пользователя
+                ownerid : userId,
                 name: productName,
                 description: productDescription,
                 duration: route,
@@ -131,10 +131,7 @@ function CampaignBuilder({data}) {
                 city : "Yerevan",
                 driverCount: 0,
                 document: fileUrl, // ссылка на файл
-                budget:
-                    route === "custom"
-                    ? "Will contact with you"
-                    : discountedTotal,
+                budget: discountedTotal,
             };
 
             console.log("SENDING:", payload);
@@ -193,7 +190,7 @@ function CampaignBuilder({data}) {
                     invoiceid: invoiceId,
                     campaign_id: newCampaignId,
                     owner_id: userId,
-                    amount: route === "custom" ? null : Math.round(discountedTotal),
+                    amount: Math.round(discountedTotal),
                     campaign_name: productName,
                     status: "pending",
                 };
@@ -294,12 +291,30 @@ function CampaignBuilder({data}) {
 
                         </div>
                         <div className="campaign__settings">
-                            <PlanSelector setRoute={setRoute} route={route} />
+                            <PlanSelector setRoute={setRoute} route={route} setCustomSelected={setCustomSelected}/>
                             <AdPlacement setSelected={setAdPlacement} selected={adPlacement} />
                         </div>
 
                         {/* INFO */}
                         <div className="info">
+                            
+                            {
+                                customSelected && (
+                                    <div className="inputandlable">
+                                        <label htmlFor="customDuration" className="info__label">{data.infoForm.customDurationLabel}</label>
+                                        <input
+                                            id="customDuration"
+                                            name="customDuration"
+                                            placeholder={data.infoForm.customDurationPlaceholder}
+                                            className="info__input"
+                                            required
+                                            value={route}
+                                            onChange={(e) => setRoute(e.target.value)}
+                                            type="number"
+                                        />
+                                    </div>
+                                )
+                            }
                             <div className="inputandlable">
                                 <label htmlFor="productName" className="info__label">{data.infoForm.productNameLabel}</label>
                                 <input
@@ -310,6 +325,7 @@ function CampaignBuilder({data}) {
                                     required
                                     value={productName}
                                     onChange={(e) => setProductName(e.target.value)}
+                                    style={{textTransform: "capitalize"}}
                                 />
                             </div>
                             <div className="inputandlable">
@@ -365,10 +381,8 @@ function CampaignBuilder({data}) {
                         <div className="campaign__builder--total">
                             <p className="campaign__builder--total--title">{data.builder.calc}</p>
                             <p className="campaign__builder--total--data">
-                                {route === "custom"
-                                    ? data.builder.customEstimate
-                                    : `${formatNumber(Math.round(discountedTotal))} `}
-                                {route !== "custom" && <span className="campaign__builder--total--data--article">{data.builder.sufix}</span>}
+                                {customSelected ? `${formatNumber(Math.round(discountedTotal))} ` : `${formatNumber(Math.round(discountedTotal))} `}
+                                <span className="campaign__builder--total--data--article">{data.builder.sufix}</span>
                             </p>
                         </div>
 

@@ -226,7 +226,7 @@ function Singin({data, setPage}) {
     return(
         <div className="singin">
             <div className="signin__content">
-                <Logo setPage={setPage} transfer="signup"/>
+                <Logo setPage={setPage} transfer="/"/>
                 <h2 className="signup_form__title">{data.title}</h2>
                 <p className="signup_form__description">{data.description}</p>
                 <form className="signin__form" onSubmit={handleSubmit}>

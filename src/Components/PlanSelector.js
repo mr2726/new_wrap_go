@@ -2,7 +2,7 @@ import "../App.css";
 // import { useState } from "react";
 import pageData from "../data/data.json";
 
-export default function PlanSelector({setRoute, route}) {
+export default function PlanSelector({setRoute, route, setCustomSelected}) {
   // const [selected, setSelected] = useState("3m");
 
   const planText = pageData.ui.planSelector;
@@ -18,6 +18,7 @@ export default function PlanSelector({setRoute, route}) {
               key={item.id}
               onClick={() => {
                   setRoute(item.id);
+                  setCustomSelected(item.id === "custom");
               }}
               className={`card ${route === item.id ? "active" : ""}`}
               >
