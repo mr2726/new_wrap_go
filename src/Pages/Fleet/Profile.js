@@ -13,12 +13,17 @@ import pageData from "../../data/data.json";
 
 function Profile({ setFleetPage }) {
     const profileText = pageData.fleet.profile;
+    const fallbackEmailRequired = "Email is required";
+    const fallbackEmailInvalid = "Please enter a valid email address";
+    const fallbackEmailDomain = "Email must end with .ru or .com";
+    const fallbackGmailDomain = "Gmail addresses must end with .com";
     const [formData, setFormData] = useState({
         contactpersone: "",
         fleetname: "",
         email: "",
         phone: ""
     });
+    const [emailError, setEmailError] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
@@ -27,6 +32,38 @@ function Profile({ setFleetPage }) {
     const [twoFactorVisible, setTwoFactorVisible] = useState(false);
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [is2FALoading, setIs2FALoading] = useState(false);
+
+    const getEmailValidationError = useCallback((value) => {
+        const normalizedValue = (value || "").trim().toLowerCase();
+
+        if (!normalizedValue) {
+            return profileText.messages.emailRequired || fallbackEmailRequired;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(normalizedValue)) {
+            return profileText.messages.emailInvalid || fallbackEmailInvalid;
+        }
+
+        if (!normalizedValue.endsWith(".ru") && !normalizedValue.endsWith(".com")) {
+            return profileText.messages.emailDomainInvalid || fallbackEmailDomain;
+        }
+
+        const domainPart = normalizedValue.split("@")[1] || "";
+        if (domainPart.startsWith("gmail.") && !domainPart.endsWith(".com")) {
+            return profileText.messages.gmailDomainInvalid || fallbackGmailDomain;
+        }
+
+        return "";
+    }, [
+        profileText.messages.emailRequired,
+        profileText.messages.emailInvalid,
+        profileText.messages.emailDomainInvalid,
+        profileText.messages.gmailDomainInvalid,
+        fallbackEmailRequired,
+        fallbackEmailInvalid,
+        fallbackEmailDomain,
+        fallbackGmailDomain,
+    ]);
 
     const withAuthLockRetry = useCallback(async (callback, retries = 1) => {
         try {
@@ -78,6 +115,7 @@ function Profile({ setFleetPage }) {
                             email: data.email || "",
                             phone: data.phone || ""
                         });
+                        setEmailError(getEmailValidationError(data.email || ""));
                     }
                 }
                 await refresh2FAState();
@@ -86,10 +124,15 @@ function Profile({ setFleetPage }) {
             }
         };
         fetchProfile();
-    }, [refresh2FAState, profileText.messages.loadErrorPrefix]);
+    }, [refresh2FAState, profileText.messages.loadErrorPrefix, getEmailValidationError]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+
+        if (name === "email") {
+            setEmailError(getEmailValidationError(value));
+        }
+
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -100,6 +143,15 @@ function Profile({ setFleetPage }) {
         try {
             setSaving(true);
             setMessage("");
+
+            const normalizedEmail = (formData.email || "").trim().toLowerCase();
+            const validationError = getEmailValidationError(normalizedEmail);
+            if (validationError) {
+                setEmailError(validationError);
+                setMessage(validationError);
+                return;
+            }
+            setEmailError("");
             
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
@@ -112,7 +164,7 @@ function Profile({ setFleetPage }) {
                 .update({
                     contactpersone: formData.contactpersone,
                     fleetname: formData.fleetname,
-                    email: formData.email,
+                    email: normalizedEmail,
                     phone: formData.phone
                 })
                 .eq("userid", user.id);
@@ -211,13 +263,20 @@ function Profile({ setFleetPage }) {
                             <MdAlternateEmail size={15} color="#94A3B8"/>
                             <p>{profileText.fields.email}</p>
                         </div>
-                        <input 
-                            type="email" 
-                            name="email"
-                            value={formData.email} 
-                            className="editable_input" 
-                            onChange={handleInputChange}
-                        />
+                        <div style={{display: "flex", flexDirection: "column", width: "60%"}}>
+                            <input 
+                                type="email" 
+                                name="email"
+                                value={formData.email} 
+                                className="editable_input" 
+                                onChange={handleInputChange}
+                                aria-invalid={Boolean(emailError)}
+                                required
+                                style={{width: "100%"}}
+                            />
+                            <br />
+                            {emailError && <p className="signup_form__error">{emailError}</p>}
+                        </div>
                     </div>
 
                     <div className="profile__block--item">
@@ -236,7 +295,7 @@ function Profile({ setFleetPage }) {
                     <button 
                         className="save_btn cta" 
                         onClick={handleSave}
-                        disabled={saving}
+                        disabled={saving || Boolean(emailError)}
                     >
                         {saving ? profileText.buttons.saving : profileText.buttons.save}
                     </button>

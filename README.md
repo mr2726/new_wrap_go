@@ -77,6 +77,8 @@
 > - Product name is Capitalize
 > - Added Custom Input to chose the custom monthe
 > - Changed the doors titles
+> - Email Validation
+> - Discount if >3 and <6 and if >6
 
 ## TODO
 - [x] Complite Settings FrontEnd
@@ -119,3 +121,5 @@
 - [x] Company name input need to be Upercase (Only first letter)
 - [x] After click on Custom Need to add input where the customer can add his monthes
 - [x] Chenge Side Doors  (Front Doors) Both Sides ( All Doors)
+
+- [x] Email Validation in Fleet ovners

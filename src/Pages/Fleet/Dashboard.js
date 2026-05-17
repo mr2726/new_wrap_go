@@ -116,7 +116,7 @@ function Dashboard({ setFleetPage }) {
 
     return (
         <div className="fleet-dashboard">
-            <TopMenu setFleetPage={setFleetPage} currentPage="dashboard" />
+            <TopMenu setFleetPage={setFleetPage} currentPage="dashboard" sendto="dashboard" />
             <div className='fleet__content'>
                 <div className='fleet-dashboard__header'>
                     <h1 className='title'>{dashboardText.title}</h1>
