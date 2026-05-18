@@ -16,6 +16,34 @@ import { SiVisa } from "react-icons/si";
 import { FaRegCheckCircle } from "react-icons/fa";
 import pageData from "../../data/data.json";
 
+const IDRAM_PAYMENT_URL = "https://banking.idram.am/Payment/GetPayment";
+const IDRAM_MIN_TOPUP = 1000;
+
+const buildIdramPaymentForm = ({ merchantId, amount, orderId, description }) => {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = IDRAM_PAYMENT_URL;
+    form.style.display = "none";
+
+    const fields = {
+        EDP_LANGUAGE: "EN",
+        EDP_REC_ACCOUNT: merchantId,
+        EDP_DESCRIPTION: description,
+        EDP_AMOUNT: String(amount),
+        EDP_BILL_NO: orderId,
+    };
+
+    Object.entries(fields).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    });
+
+    return form;
+};
+
 function Billing({setPage}) {
     const billingText = pageData.content.billing;
     const [loading, setLoading] = useState(true);
@@ -248,7 +276,7 @@ function Billing({setPage}) {
         // Inline validation
         if (numericValue === "") {
             setAmountError("");
-        } else if (Number(numericValue) < 1000) {
+        } else if (Number(numericValue) < IDRAM_MIN_TOPUP) {
             setAmountError(billingText.addFunds.minAmount);
         } else {
             setAmountError("");
@@ -263,13 +291,57 @@ function Billing({setPage}) {
     const handleProcessTopup = async () => {
         const amount = Number(topupAmount);
         
-        if (!topupAmount || amount < 1000) {
+        if (!topupAmount || amount < IDRAM_MIN_TOPUP) {
             setAmountError(billingText.addFunds.minAmount);
             return;
         }
 
         setIsProcessingTopup(true);
-        
+
+        if (currentBillingMethod === "idram") {
+            try {
+                const merchantId = process.env.REACT_APP_IDRAM_REC_ACCOUNT || process.env.REACT_APP_IDRAM_MERCHANT_ID;
+
+                if (!merchantId) {
+                    throw new Error("Missing Idram merchant account configuration");
+                }
+
+                const { data, error } = await supabase.functions.invoke("create-idram-order", {
+                    body: {
+                        amount,
+                        description: "Balance topup",
+                    },
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                const orderId = data?.orderId;
+                const redirectAmount = Number(data?.amount ?? amount);
+
+                if (!orderId || Number.isNaN(redirectAmount) || redirectAmount <= 0) {
+                    throw new Error("Invalid Idram order response");
+                }
+
+                const form = buildIdramPaymentForm({
+                    merchantId,
+                    amount: redirectAmount,
+                    orderId,
+                    description: "Balance topup",
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                return;
+            } catch (error) {
+                console.log("Idram order error:", error.message);
+                setTopupResult({ success: false, amount: 0 });
+                setIsProcessingTopup(false);
+                return;
+            }
+        }
+
         try {
             // Simulate payment processing
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -397,36 +469,6 @@ function Billing({setPage}) {
 
     const shouldShowTaxInfo = String(profileTax || "").trim().length === 0;
 
-    // const getBaseInvoiceDate = () => {
-    //     const pendingInvoice = invoices.find((invoice) => String(invoice.status || "").toLowerCase() === "pending");
-    //     const sourceDate = pendingInvoice?.created_at || invoices[0]?.created_at;
-
-    //     if (!sourceDate) return null;
-
-    //     const parsedDate = new Date(sourceDate);
-    //     if (Number.isNaN(parsedDate.getTime())) return null;
-    //     return parsedDate;
-    // };
-
-    // const getDateFromInvoicePlusDays = (daysToAdd) => {
-    //     const baseDate = getBaseInvoiceDate();
-    //     if (!baseDate) return "-";
-
-    //     const resultDate = new Date(baseDate);
-    //     resultDate.setDate(resultDate.getDate() + daysToAdd);
-    //     return resultDate.toLocaleDateString("en-US", {
-    //         month: "long",
-    //         day: "numeric",
-    //         year: "numeric",
-    //     });
-    // };
-
-    // const nextCampaignStartDate = getDateFromInvoicePlusDays(7);
-    // const paymentDeadlineDate = getDateFromInvoicePlusDays(2);
-    // const campaignLaunchDate = getDateFromInvoicePlusDays(7);
-    // const pendingInvoicesCount = invoices.filter((invoice) => String(invoice.status || "").toLowerCase() === "pending").length;
-    // const hasPendingInvoices = pendingInvoicesCount > 0;
-
     const getMethodDescription = () => {
         switch (currentBillingMethod) {
             case "card":
@@ -445,7 +487,7 @@ function Billing({setPage}) {
         const amount = Number(topupAmount) || 0;
         const totalAmount = amount; // Commission is 0%, so total = amount
         const isValidAmount = amount >= 1000;
-        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup || isProcessingTopup;
+        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup;
 
         switch (currentBillingMethod) {
             case "card":
