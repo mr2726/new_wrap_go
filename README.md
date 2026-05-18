@@ -123,13 +123,3 @@
 - [x] Chenge Side Doors  (Front Doors) Both Sides ( All Doors)
 
 - [x] Email Validation in Fleet ovners
-
-## Idram integration
-
-- Frontend topup flow now calls the Supabase Edge Function `create-idram-order` and then redirects to Idram with a POST form.
-- Webhook handling lives in `supabase/functions/idram-webhook/index.ts` and updates `public.idram_orders`.
-- Required secrets and env vars:
-	- `REACT_APP_IDRAM_REC_ACCOUNT` in the React app
-	- `IDRAM_SECRET_KEY` in Supabase secrets
-	- `SUPABASE_SERVICE_ROLE_KEY` in Supabase secrets
-- Database migration: `supabase/migrations/20260518_create_idram_orders.sql`

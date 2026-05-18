@@ -16,49 +16,16 @@ import { SiVisa } from "react-icons/si";
 import { FaRegCheckCircle } from "react-icons/fa";
 import pageData from "../../data/data.json";
 
-const IDRAM_PAYMENT_URL = "https://banking.idram.am/Payment/GetPayment";
-const IDRAM_MIN_TOPUP = 1000;
-
-const buildIdramPaymentForm = ({ merchantId, amount, orderId, description }) => {
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = IDRAM_PAYMENT_URL;
-    form.style.display = "none";
-
-    const fields = {
-        EDP_LANGUAGE: "EN",
-        EDP_REC_ACCOUNT: merchantId,
-        EDP_DESCRIPTION: description,
-        EDP_AMOUNT: String(amount),
-        EDP_BILL_NO: orderId,
-    };
-
-    Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-    });
-
-    return form;
-};
-
 function Billing({setPage}) {
     const billingText = pageData.content.billing;
     const [loading, setLoading] = useState(true);
-    const [currentBillingMethod, setCurrentBillingMethod] = useState("card");
+    const [currentBillingMethod, setCurrentBillingMethod] = useState("idram");
     const [invoices, setInvoices] = useState([]);
     const [currentUserId, setCurrentUserId] = useState(null);
     const [profileTax, setProfileTax] = useState(null);
     const [taxInput, setTaxInput] = useState("");
-    // const [pendingCampaignAmount, setPendingCampaignAmount] = useState(0);
     const [isSavingTax, setIsSavingTax] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
-    // const [cardNumber, setCardNumber] = useState("");
-    // const [cardExpiry, setCardExpiry] = useState("");
-    // const [cardCvc, setCardCvc] = useState("");
-    // const [cardHolder, setCardHolder] = useState("");
     const [balance, setBalance] = useState(null);
     const [addFunds, setAddFunds] = useState(false);
     const [topupAmount, setTopupAmount] = useState("");
@@ -276,7 +243,7 @@ function Billing({setPage}) {
         // Inline validation
         if (numericValue === "") {
             setAmountError("");
-        } else if (Number(numericValue) < IDRAM_MIN_TOPUP) {
+        } else if (Number(numericValue) < 1000) {
             setAmountError(billingText.addFunds.minAmount);
         } else {
             setAmountError("");
@@ -290,58 +257,21 @@ function Billing({setPage}) {
 
     const handleProcessTopup = async () => {
         const amount = Number(topupAmount);
+
+        // const TopupIdramFunction = async () => {
+        //     // Placeholder for actual Idram integration logic
+        //     return(
+                
+        //     );
+        // }
         
-        if (!topupAmount || amount < IDRAM_MIN_TOPUP) {
+        if (!topupAmount || amount < 1000) {
             setAmountError(billingText.addFunds.minAmount);
             return;
         }
 
         setIsProcessingTopup(true);
-
-        if (currentBillingMethod === "idram") {
-            try {
-                const merchantId = process.env.REACT_APP_IDRAM_REC_ACCOUNT || process.env.REACT_APP_IDRAM_MERCHANT_ID;
-
-                if (!merchantId) {
-                    throw new Error("Missing Idram merchant account configuration");
-                }
-
-                const { data, error } = await supabase.functions.invoke("create-idram-order", {
-                    body: {
-                        amount,
-                        description: "Balance topup",
-                    },
-                });
-
-                if (error) {
-                    throw error;
-                }
-
-                const orderId = data?.orderId;
-                const redirectAmount = Number(data?.amount ?? amount);
-
-                if (!orderId || Number.isNaN(redirectAmount) || redirectAmount <= 0) {
-                    throw new Error("Invalid Idram order response");
-                }
-
-                const form = buildIdramPaymentForm({
-                    merchantId,
-                    amount: redirectAmount,
-                    orderId,
-                    description: "Balance topup",
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                return;
-            } catch (error) {
-                console.log("Idram order error:", error.message);
-                setTopupResult({ success: false, amount: 0 });
-                setIsProcessingTopup(false);
-                return;
-            }
-        }
-
+        
         try {
             // Simulate payment processing
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -482,16 +412,148 @@ function Billing({setPage}) {
         }
     };
 
+
     const renderPaymentMethod = () => {
         const methodDesc = getMethodDescription();
         const amount = Number(topupAmount) || 0;
         const totalAmount = amount; // Commission is 0%, so total = amount
         const isValidAmount = amount >= 1000;
-        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup;
+        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup || isProcessingTopup;
 
         switch (currentBillingMethod) {
             case "card":
+                 return (
+                    <div className="payment-form">
+                        {/* Current method info */}
+                        <div className="payment-method-info">
+                            <div className="method-info-header">
+                                <p className="method-label">{billingText.addFunds.selectedPrefix} {methodDesc.title}</p>
+                                <p className="method-time">{methodDesc.time}</p>
+                            </div>
+                            <p className="method-fee">{billingText.addFunds.commission} {methodDesc.fee}</p>
+                        </div>
+
+                        {/* Amount input */}
+                        <div className="payment-amount-section">
+                            <label className="payment-label">{billingText.addFunds.amountLabel}</label>
+                            <div className="amount-input-wrapper">
+                                <input
+                                    value={topupAmount}
+                                    onChange={handleTopupAmountChange}
+                                    placeholder={billingText.addFunds.amountPlaceholder}
+                                    className={`signup_form__form--input amount-input ${amountError ? "input-error" : ""}`}
+                                    inputMode="numeric"
+                                    maxLength={10}
+                                    pattern="[0-9]*"
+                                    disabled={isProcessingTopup}
+                                />
+                                <span className="currency-symbol">֏</span>
+                            </div>
+                            {amountError && <p className="error-message">{amountError}</p>}
+                        </div>
+
+                        {/* Quick amounts */}
+                        {!isProcessingTopup && (
+                            <div className="quick-amounts">
+                                <p className="quick-label">{billingText.addFunds.quickSelect}</p>
+                                <div className="quick-buttons">
+                                    {[10000, 25000, 50000, 100000].map((quickAmount) => (
+                                        <button
+                                            key={quickAmount}
+                                            className={`quick-amount-btn ${topupAmount === String(quickAmount) ? "active" : ""}`}
+                                            onClick={() => handleQuickAmount(quickAmount)}
+                                            disabled={isProcessingTopup}
+                                        >
+                                            {quickAmount.toLocaleString("en-US")} ֏
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Total summary */}
+                        <div className="payment-summary">
+                            <div className="summary-row">
+                                <span className="summary-label">{billingText.addFunds.refillAmount}</span>
+                                <span className="summary-value">{formatAmount(amount)} ֏</span>
+                            </div>
+                            <div className="summary-row">
+                                <span className="summary-label">{billingText.addFunds.commission}</span>
+                                <span className="summary-value">0%</span>
+                            </div>
+                            <div className="summary-row summary-total">
+                                <span className="summary-label">{billingText.addFunds.totalDebit}</span>
+                                <span className="summary-value-total">{formatAmount(totalAmount)} ֏</span>
+                            </div>
+                        </div>
+
+                        {/* Pay button */}
+                        <button
+                            className="cta payment-button"
+                            onClick={handleProcessTopup}
+                            disabled={isButtonDisabled}
+                        >
+                            {isProcessingTopup ? billingText.addFunds.processing : isValidAmount ? `${billingText.addFunds.payPrefix} ${formatAmount(totalAmount)} ֏` : billingText.addFunds.enterValid}
+                        </button>
+
+                        {/* Security info */}
+                        <div className="security-info">
+                            <p className="security-text">{billingText.addFunds.securityText}</p>
+                        </div>
+
+                        {/* Transaction history */}
+                        {transactionHistory.length > 0 && (
+                            <div className="transaction-history">
+                                <p className="history-title">{billingText.addFunds.transactionsTitle}</p>
+                                {transactionHistory.map((tx) => {
+                                    const txDate = new Date(tx.timestamp);
+                                    const txDateStr = txDate.toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    });
+                                    return (
+                                        <div key={tx.id} className="history-item">
+                                            <span className="history-amount">+{formatAmount(tx.amount)} ֏</span>
+                                            <span className="history-date">{txDateStr}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                );
             case "idram":
+                return(
+                    <div className="payment-amount-section">
+                        <label className="payment-label">{billingText.addFunds.amountLabel}</label>
+                        <div className="amount-input-wrapper">
+                            <input
+                                value={topupAmount}
+                                onChange={handleTopupAmountChange}
+                                placeholder={billingText.addFunds.amountPlaceholder}
+                                className={`signup_form__form--input amount-input ${amountError ? "input-error" : ""}`}
+                                inputMode="numeric"
+                                maxLength={10}
+                                pattern="[0-9]*"
+                                disabled={isProcessingTopup}
+                            />
+                            <span className="currency-symbol">֏</span>
+                        </div>
+                        {amountError && <p className="error-message">{amountError}</p>}
+                        <div>
+                            <form action="https://banking.idram.am/Payment/GetPayment" method="POST">
+                                <input type="hidden" name="EDP_LANGUAGE" value="EN"/>
+                                <input type="hidden" name="EDP_REC_ACCOUNT" value="100000114"/>
+                                <input type="hidden" name="EDP_DESCRIPTION" value="Order description"/>
+                                <input type="hidden" name="EDP_AMOUNT" value="1900"/>
+                                <input type="hidden" name="EDP_BILL_NO" value ="1806"/>
+                                <input type="submit" value="submit" className="cta payment-button"/>
+                            </form>
+                        </div> 
+                    </div>
+                );
             case "bank":
                 return (
                     <div className="payment-form">
@@ -660,7 +722,7 @@ function Billing({setPage}) {
                                     <p className="description" style={{fontSize: "1.4em"}}>{billingText.addFunds.description}</p>
                                 </div>
                                 <div className="addfounds__methods">
-
+                                    {/* Card Payment Method */}
                                     <div className={`addfounds__method ${currentBillingMethod === "card" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("card")}>
                                         {currentBillingMethod === "card" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
                                         <div style={{width: 50}}><IoCard fontSize={50} /></div>
@@ -672,7 +734,7 @@ function Billing({setPage}) {
                                             <div className="arcaIcon"></div>
                                         </div>
                                     </div>
-
+                                    {/* Idram and IDbank */}
                                     <div className={`addfounds__method ${currentBillingMethod === "idram" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("idram")}>
                                         {currentBillingMethod === "idram" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
                                         <div className="idramIcon"></div>
@@ -680,7 +742,7 @@ function Billing({setPage}) {
                                         <p className="addfounds__method--description">{billingText.addFunds.methods.idram.description}</p>
                                         <p style={{color: "#fff", fontSize: "1.4em"}}>{billingText.addFunds.methods.idram.extra}</p>
                                     </div>
-
+                                    {/* Direct deposit */}
                                     <div className={`addfounds__method ${currentBillingMethod === "bank" ? "active" : ""}`} onClick={() => setCurrentBillingMethod("bank")}>
                                         {currentBillingMethod === "bank" && <div className="checkbox_activeMethode"><FaCheckCircle fontSize={20} color="#39ff19" /></div>}
                                         <div><RiBankFill fontSize={50} /></div>
