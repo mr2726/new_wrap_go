@@ -66,34 +66,6 @@ function Billing({setPage}) {
                     setBalance(profileRow?.balance || 0);
                 }
 
-                // const { data: pendingCampaigns, error: pendingCampaignsError } = await supabase
-                //     .from("campaigns")
-                //     .select("budget")
-                //     .eq("ownerid", user.id)
-                //     .eq("status", "pending");
-
-                // // if (pendingCampaignsError) {
-                //     console.log("Pending campaigns fetch error:", pendingCampaignsError.message);
-                //     // setPendingCampaignAmount(0);
-                // } else {
-                //     // const totalPendingAmount = (pendingCampaigns || []).reduce((sum, campaign) => {
-                //     //     const rawBudget = campaign?.budget;
-                //     //     if (rawBudget === null || rawBudget === undefined || rawBudget === "") {
-                //     //         return sum;
-                //     //     }
-
-                //     //     const numericBudget = Number(
-                //     //         typeof rawBudget === "number"
-                //     //             ? rawBudget
-                //     //             : String(rawBudget).replace(/[^0-9.-]/g, "")
-                //     //     );
-
-                //     //     return Number.isNaN(numericBudget) ? sum : sum + numericBudget;
-                //     // }, 0);
-
-                //     // setPendingCampaignAmount(totalPendingAmount);
-                // }
-
                 const { data: invoiceRows, error: invoiceError } = await supabase
                     .from("invoices")
                     .select("id, invoiceid, campaign_id, amount, status, created_at")
@@ -141,53 +113,6 @@ function Billing({setPage}) {
 
         initPage();
     }, []);
-
-    // const formattedPendingCampaignAmount = pendingCampaignAmount.toLocaleString("en-US");
-
-
-    // const handleCardNumberChange = (e) => {
-    //     const raw = e.target.value.replace(/\D/g, "").slice(0, 16);
-    //     const formatted = raw.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
-    //     setCardNumber(formatted);
-    // };
-
-    // const handleCardExpiryChange = (e) => {
-    //     const raw = e.target.value.replace(/\D/g, "").slice(0, 4);
-    //     const formatted = raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw;
-    //     setCardExpiry(formatted);
-    // };
-
-    // const handleCardCvcChange = (e) => {
-    //     setCardCvc(e.target.value.replace(/\D/g, "").slice(0, 4));
-    // };
-
-    // const handleCardHolderChange = (e) => {
-    //     setCardHolder(e.target.value.toUpperCase());
-    // };
-
-    // function renderBillingMethodDetails(isDrawer = false) {
-    //     switch (currentBillingMethod) {
-    //         case "card":
-    //             if (isDrawer) {
-    //                 return (
-                        
-    //                 );
-    //             }
-    //             return (
-                    
-    //             );
-    //         case "idram":
-    //             return (
-
-    //             );
-    //         case "corporate":
-    //             return (
-
-    //             );
-    //         default:
-    //             return null;
-    //     }
-    // }
 
     const formatInvoiceDate = (dateValue) => {
         if (!dateValue) return "-";
@@ -447,7 +372,7 @@ function Billing({setPage}) {
             if (invoice.campaign_id) {
                 const { error: campaignError } = await supabase
                     .from("campaigns")
-                    .update({ status: "live" })
+                    .update({ status: "in process" })
                     .eq("id", invoice.campaign_id);
 
                 if (campaignError) {
