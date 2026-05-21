@@ -124,4 +124,4 @@
 
 - [x] Email Validation in Fleet ovners
 
-- [ ] Change the buttons structure and text in button to Sign Vehicle
+- [x] Change the buttons structure and text in button to Sign Vehicle

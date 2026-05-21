@@ -132,8 +132,8 @@ function Dashboard({ setFleetPage }) {
 
                 <div className='fleet__controls'>
                     <button className='cta add_vehicle' style={{marginRight: '1em'}} onClick={() => setAddVehicleModal(true)}>{dashboardText.actions.addVehicle}</button>
-                    <button className='cta add_driver' style={{marginRight: '1em'}} onClick={() => setAddDriverModal(true)}>{dashboardText.actions.inviteDriver}</button>
                     <button className='cta sign_contract' style={{marginRight: '1em'}} onClick={() => setSignContractPopup(true)}>{dashboardText.actions.signContract}</button>
+                    <button className='cta add_driver' style={{marginRight: '1em'}} onClick={() => setAddDriverModal(true)}>{dashboardText.actions.inviteDriver}</button>
                 </div>
 
                 {addDriverModal && (
