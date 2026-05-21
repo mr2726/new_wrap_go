@@ -9,6 +9,9 @@ import './landing.css';
 
 const LandingPage = () => {
   useEffect(() => {
+    const noRedirect = new URLSearchParams(window.location.search).has('landing');
+    if (noRedirect) return;
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         window.location.replace('/app');

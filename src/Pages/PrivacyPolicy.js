@@ -24,7 +24,7 @@ function PrivacyPolicy({data, setPage}) {
                 <div className="terms__content">
                     <div className="terms__content--links">
                         <div className="terms__content--links--fix">
-                            <p className="back" onClick={() => setPage("signup")}>{data.backBTN}</p>
+                            <p className="back" onClick={() => window.location.href = '/?landing=' + Date.now()}>{data.backBTN}</p>
                             {
                                 data.content.map((item, index) => (
                                     <p key={index} onClick={() => handleClick(item.id)} className={`terms__content--links_link ${active === item.id ? "terms__content--links_link--active" : ""}`}>{item.link}</p>

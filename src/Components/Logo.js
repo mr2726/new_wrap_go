@@ -2,6 +2,11 @@ import "../App.css";
 
 function Logo({setPage, transfer}) {
     const handleLogoClick = () => {
+        if (transfer === "/") {
+            window.location.href = '/?landing=' + Date.now();
+            return;
+        }
+
         if (typeof transfer === "string" && transfer.startsWith("/")) {
             window.location.assign(transfer);
             return;

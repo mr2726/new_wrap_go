@@ -134,4 +134,4 @@
 - [x] in process is shows in overview table
 - [x] input validation in campaings builder Custom duration input
 
-
+- [x] PrivacyPolicy and Terms of Service going back to Landing Page 
