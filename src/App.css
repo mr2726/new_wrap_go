@@ -1040,6 +1040,11 @@ body{
   color: var(--primary-color);
   text-transform: capitalize;
 }
+.status--in-process {
+  background-color: var(--pending-status-color-light);
+  color: var(--pending-status-color);
+  text-transform: capitalize;
+}
 
 .status--pending {
   background-color: var(--pending-status-color-light);
@@ -5655,4 +5660,8 @@ select option{
   .invite_code_actions .invite_code_copy {
     width: 100%;
   }
+}
+
+.campaign__row--in-process{
+  
 }

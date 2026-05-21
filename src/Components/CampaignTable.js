@@ -27,7 +27,7 @@ function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage}
 
                 {
                     data.map((item, index) => (
-                        (item.status === "live" || item.status === "pending") && <tbody key={index}>
+                        (item.status === "live" || item.status === "pending" || item.status === "in process") && <tbody key={index}>
                             <tr
                                 className={`${item.status === "live" ? "campaign__row--clickable" : ""} ${selectedId === item.id ? "campaign__row--selected" : ""}`}
                                 onClick={() => item.status === "live" && onRowClick && onRowClick(item)}
@@ -41,7 +41,7 @@ function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage}
                                 <td>{formatNumber(Math.round(item.budget))} <span className="article"> {pageData?.currency || fallbackText.currency}</span></td>
 
                                 <td>
-                                    <span className={`status status--${item.status}`}>{pageData?.statusLabels?.[item.status] || item.status}</span>
+                                    <span className={`status status--${item.status.replace(" ", "-")}`} style={item.status === "pending" ? {display: "flex", gap: "1em"} : {}}>{pageData?.statusLabels?.[item.status] || item.status}</span>
                                     {
                                         item.status === "pending" && (
                                             <button className="payButton" onClick={(e) => { e.stopPropagation(); setPage("billing"); }}>{pageData?.pay || "Pay"}</button>
