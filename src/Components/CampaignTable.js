@@ -76,7 +76,7 @@ function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage,
                                         )
                                     }
                                     {
-                                        item.status === "in process" && (
+                                        (item.status === "in process" || item.status === "live") && (
                                             <button className="detailsBtn" onClick={(e) => { e.stopPropagation(); detailsPopup && detailsPopup(item); }}>Details</button>
                                         )
                                     }

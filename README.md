@@ -135,3 +135,5 @@
 - [x] input validation in campaings builder Custom duration input
 
 - [x] PrivacyPolicy and Terms of Service going back to Landing Page 
+
+- [x] Details button Added to the campaign with live status
