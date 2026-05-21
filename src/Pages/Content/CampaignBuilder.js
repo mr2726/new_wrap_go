@@ -265,10 +265,16 @@ function CampaignBuilder({data}) {
                                 </div>
                                 <div className="block__quantity">
                                     <p className="block__quantity--title">{data.campaigns[0].quantity}</p>
-                                    <input 
-                                        type="number" 
-                                        value={economValue <= 0 ? 0 : economValue } 
-                                        onChange={(e) => setEconomValue(e.target.value <=1 ? 1 : e.target.value)}
+                                    <input
+                                        type="number"
+                                        value={economValue <= 1 ? 1 : economValue}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value, 10);
+                                            if (isNaN(val)) return;
+                                            setEconomValue(Math.min(Math.max(val, 1), 15));
+                                        }}
+                                        min={1}
+                                        max={15}
                                         className="block__input"
                                     />
                                 </div>

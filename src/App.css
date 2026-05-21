@@ -1045,24 +1045,27 @@ body{
   background-color: var(--primary-color-light);
   color: var(--primary-color);
   text-transform: capitalize;
+  margin-right: 1em;
 }
 .status--in-process {
   background-color: var(--pending-status-color-light);
   color: var(--pending-status-color);
   text-transform: capitalize;
+  margin-right: 1em;
 }
 
 .status--pending {
   background-color: var(--pending-status-color-light);
   color: var(--pending-status-color);
   text-transform: capitalize;
-  margin-right: 2em;
+  margin-right: 1em;
 }
 
 .status--completed {
   background-color: var(--completed-status-color-light);
   color: var(--completed-status-color);
   text-transform: capitalize;
+  margin-right: 1em;
 }
 
 .article{
@@ -1454,6 +1457,23 @@ body{
   background-color: var(--primary-color-hover);
 }
 
+.detailsBtn {
+  padding: 0.5em 1.5em;
+  border-radius: 5em;
+  background-color: transparent;
+  border: 2px solid var(--input-border);
+  color: var(--input-border);
+  font-size: 1em;
+  font-family: 'LufgaBold';
+  cursor: pointer;
+  transition: .2s;
+}
+
+.detailsBtn:hover{
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
 /* LOADER */
 .loader__overlay{
   position: fixed;
@@ -1556,6 +1576,18 @@ body{
   font-size: 1.2em;
   margin-top: 1.8em;
   color: var(--sign-secondary-color)
+}
+
+.popup-content__block{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2em;
+}
+
+.popup-content__block p{
+  font-size: 1.4em;
 }
 /* Analitics */
 .analitics{
@@ -5673,5 +5705,255 @@ select option{
 }
 
 .campaign__row--in-process{
-  
+
+}
+
+/* Vehicle Details Popup */
+.vdp-modal {
+  background-color: var(--block-bg);
+  border-radius: 2em;
+  padding: 2.4em;
+  width: 860px;
+  max-width: calc(100vw - 3em);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--input-border);
+}
+
+.vdp-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2em;
+}
+
+.vdp-modal__header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.vdp-modal__eyebrow {
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--primary-color);
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.vdp-modal__title {
+  font-size: 2.4em;
+  font-family: 'LufgaBold', sans-serif;
+  text-transform: capitalize;
+  color: var(--text-color);
+}
+
+.vdp-modal__close {
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--sign-secondary-color);
+  border-radius: 50%;
+  width: 3.2em;
+  height: 3.2em;
+  font-size: 1.4em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+
+.vdp-modal__close:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.vdp-modal__stats {
+  display: flex;
+  align-items: center;
+  gap: 1.6em;
+  background-color: var(--background-color);
+  border-radius: 1.2em;
+  padding: 1.4em 2em;
+  margin-bottom: 2em;
+}
+
+.vdp-modal__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.vdp-modal__stat-label {
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sign-secondary-color);
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.vdp-modal__stat-value {
+  font-size: 1.8em;
+  font-family: 'LufgaBold', sans-serif;
+  color: var(--text-color);
+}
+
+.vdp-modal__stat-secondary {
+  color: var(--sign-secondary-color);
+  font-family: 'LufgaRegular', sans-serif;
+}
+
+.vdp-modal__stat-divider {
+  width: 1px;
+  height: 3em;
+  background-color: var(--input-border);
+}
+
+.vdp-modal__list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2em;
+}
+
+.vdp-modal__list-title {
+  font-size: 1.6em;
+  font-family: 'LufgaBold', sans-serif;
+  color: var(--text-color);
+}
+
+.vdp-modal__list-badge {
+  font-size: 1.1em;
+  background-color: var(--primary-color-light);
+  color: var(--primary-color);
+  padding: 0.3em 0.9em;
+  border-radius: 5em;
+  font-family: 'LufgaBold', sans-serif;
+}
+
+.vdp-modal__list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding-right: 0.3em;
+}
+
+.vdp-modal__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.vdp-modal__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.vdp-modal__list::-webkit-scrollbar-thumb {
+  background-color: var(--input-border);
+  border-radius: 4px;
+}
+
+.vdp-modal__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3em 0;
+  gap: 1em;
+  color: var(--sign-secondary-color);
+  font-size: 1.4em;
+}
+
+.vdp-modal__state-icon {
+  font-size: 3em;
+}
+
+.vdp-modal__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--input-border);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: loader__spin 0.75s linear infinite;
+}
+
+/* Vehicle details table */
+.vdp-table__head {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 1.2fr 1fr;
+  gap: 0.8em;
+  padding: 0.8em 1.2em;
+  font-size: 1.05em;
+  font-family: 'LufgaBold', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--sign-secondary-color);
+  border-bottom: 1px solid var(--input-border);
+}
+
+.vdp-table__row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 1.2fr 1fr;
+  gap: 0.8em;
+  align-items: center;
+  padding: 1.1em 1.2em;
+  border-bottom: 1px solid var(--input-border);
+  transition: background-color 0.15s;
+}
+
+.vdp-table__row:last-child {
+  border-bottom: none;
+}
+
+.vdp-table__row:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.vdp-table__row--empty {
+  opacity: 0.55;
+}
+
+.vdp-table__vehicle {
+  font-size: 1.25em;
+  font-family: 'LufgaMedium', sans-serif;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vdp-table__no-vehicle {
+  color: var(--sign-secondary-color);
+  font-family: 'LufgaRegular', sans-serif;
+  font-style: italic;
+}
+
+.vdp-table__city {
+  font-size: 1.2em;
+  color: var(--sign-secondary-color);
+}
+
+.vdp-table__dates {
+  font-size: 1.15em;
+  color: var(--sign-secondary-color);
+  white-space: nowrap;
+}
+
+.vdp-table__budget {
+  font-size: 1.25em;
+  font-family: 'LufgaBold', sans-serif;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.vdp-table__currency {
+  font-family: 'LufgaRegular', sans-serif;
+  color: var(--sign-secondary-color);
+  font-size: 0.85em;
+}
+
+.vdp-table__status {
+  display: flex;
+  align-items: center;
 }

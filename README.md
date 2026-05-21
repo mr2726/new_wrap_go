@@ -80,6 +80,10 @@
 > - Email Validation
 > - Discount if >3 and <6 and if >6
 
+### v2.0.2
+> - Max vehicles count on each campaign is 15
+> - Campaign open show all vehicles that needed and in process
+
 ## TODO
 - [x] Complite Settings FrontEnd
 - [x] Connect Settigns to Supabase
@@ -114,6 +118,8 @@
 - [x] GPS Data getting every 15s or once it changes in db
 - [x] 2FA in Settings
 - [x] Contact Page
+- [x] max vehicles count 15 
+- [x] Popup with the Vehicles details of active and none active vehicles on campaigns
 
 ## TODO tasks to fix
 - [x] Transfer from Login to LandingPage
@@ -127,3 +133,5 @@
 - [x] Change the buttons structure and text in button to Sign Vehicle
 - [x] in process is shows in overview table
 - [x] input validation in campaings builder Custom duration input
+
+

@@ -3,6 +3,7 @@ import { supabase } from "../../data/supabase";
 import OverviewInfo from "../../Components/overviewInfo";
 import CampaignTable from "../../Components/CampaignTable";
 import Loader from "../../Components/Loader";
+import CampaignsVehicleDetailsPopup from "../../Components/CampaignsVehicleDetailsPopup";
 import { useEffect, useState } from "react";
 
 // Parse duration strings like "3m", "7d", "2w"
@@ -36,6 +37,8 @@ function Overview ({data, setPage}) {
     const [totalDistance, setTotalDistance] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [vehiclesPopup, setVehiclesPopup] = useState(false);
+    const [detailsCampaign, setDetailsCampaign] = useState(null);
 
     // Format 
     const formatNumber = (num) => (num || 0).toLocaleString('en-US');
@@ -223,17 +226,13 @@ function Overview ({data, setPage}) {
                                 </div>
                             }
                         </div>
-                        {/* <div className="budget__days">
-                            <p className="budget__days--title">{data.budgetOverview.budgetDays.title}</p>
-                            <div className="budget__days--days">
-                                <p>20 {data.budgetOverview.budgetDays.days}</p>
-                            </div>
-                        </div> */}
                     </div>
-                    <CampaignTable data={campaignData} pageData={data.campaignTable} state={false} onRowClick={handleCampaignClick} selectedId={selectedCampaign?.id} setPage={setPage} />
-                    {/* <OverviewChart data7={data7} data30={data30} /> */}
+                    <CampaignTable data={campaignData} pageData={data.campaignTable} state={false} onRowClick={handleCampaignClick} selectedId={selectedCampaign?.id} setPage={setPage} detailsPopup={(item) => { setDetailsCampaign(item); setVehiclesPopup(true); }} />
                 </div>
             </div>
+            {vehiclesPopup && (
+                <CampaignsVehicleDetailsPopup campaign={detailsCampaign} onClose={() => { setVehiclesPopup(false); setDetailsCampaign(null); }} />
+            )}
         </div>
     );
 }

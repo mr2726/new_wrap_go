@@ -368,7 +368,7 @@
             "actions" : {
                 "inviteDriver" : "Invite Driver",
                 "addVehicle" : "Add Vehicle",
-                "signContract" : "Sign Vehicle"
+                "signContract" : "Sign Contract"
             },
             "table" : {
                 "headers" : ["Vehicle", "Contact", "Driver Status", "Driver", "Start Date", "Weekly KM", "Zone Hourse"]
@@ -844,6 +844,10 @@
                     },
                     {
                         "id" : 4,
+                        "title" : "START DATE - FINISH DATE"
+                    },
+                    {
+                        "id" : 5,
                         "title" : "STATUS"
                     }
                 ]
