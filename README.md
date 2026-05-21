@@ -126,3 +126,4 @@
 
 - [x] Change the buttons structure and text in button to Sign Vehicle
 - [x] in process is shows in overview table
+- [x] input validation in campaings builder Custom duration input

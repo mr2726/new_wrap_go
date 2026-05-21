@@ -43,6 +43,24 @@ function CampaignBuilder({data}) {
         document.getElementById('fileInput').click();
     };
 
+    const handleCustomDurationChange = (e) => {
+        let rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setRoute(1);
+            return;
+        }
+
+        if(rawValue.length > 1 && rawValue.startsWith("0")) {
+            rawValue = rawValue.replace(/^0+/, "");
+            const parsedValue = Number.parseInt(rawValue, 10);
+            setRoute(Number.isNaN(parsedValue) || parsedValue <= 0 ? 1 : parsedValue);
+        } else {
+            const parsedValue = Number.parseInt(rawValue, 10);
+            setRoute(Number.isNaN(parsedValue) || parsedValue <= 0 ? 1 : parsedValue);
+        }
+    };
+
     const generateInvoiceId = async () => {
         const currentYear = new Date().getFullYear();
         const prefix = `INV-${currentYear}-`;
@@ -304,8 +322,8 @@ function CampaignBuilder({data}) {
                                             placeholder={data.infoForm.customDurationPlaceholder}
                                             className="info__input"
                                             required
-                                            value={route}
-                                            onChange={(e) => setRoute(e.target.value)}
+                                            value={route <= 0 ? 0 : route}
+                                            onChange={handleCustomDurationChange}
                                             type="number"
                                         />
                                     </div>
