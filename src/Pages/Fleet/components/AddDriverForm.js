@@ -42,7 +42,7 @@ function AddDriverForm({ onClose, vehicles }) {
             return;
         }
         else{
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from("vehicles")
                 .update({
                     "invite_code": inviteCode,
