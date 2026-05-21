@@ -137,3 +137,4 @@
 - [x] PrivacyPolicy and Terms of Service going back to Landing Page 
 
 - [x] Details button Added to the campaign with live status
+- [x] Fix dates calculation in Progress bar

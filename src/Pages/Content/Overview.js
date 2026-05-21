@@ -16,18 +16,23 @@ const parseDurationMs = (duration) => {
     return val * (msMap[unit] || 0);
 };
 
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
 const getCampaignProgress = (campaign) => {
     const durationMs = parseDurationMs(campaign.duration);
     if (!durationMs || !campaign.created_at) return 0;
-    const elapsed = Date.now() - new Date(campaign.created_at).getTime();
-    return Math.min(Math.round((elapsed / durationMs) * 100), 100);
+    const start = new Date(campaign.created_at).getTime() + WEEK_MS;
+    const end = start + durationMs;
+    const now = Date.now();
+    if (now <= start) return 0;
+    if (now >= end) return 100;
+    return Math.round(((now - start) / durationMs) * 100);
 };
-
 
 const getCampaignDaysLeft = (campaign) => {
     const durationMs = parseDurationMs(campaign.duration);
     if (!durationMs || !campaign.created_at) return 0;
-    const end = new Date(campaign.created_at).getTime() + durationMs;
+    const end = new Date(campaign.created_at).getTime() + WEEK_MS + durationMs;
     const remaining = end - Date.now();
     return Math.max(Math.ceil(remaining / (24 * 60 * 60 * 1000)), 0);
 };
