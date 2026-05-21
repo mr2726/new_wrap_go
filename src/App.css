@@ -652,6 +652,7 @@ body{
 
 .sidebar__links li p {
   margin-left: 5px;
+  font-weight: bold;
 }
 
 .sidebar__links li:hover, .sidebar__settings_links li:hover {
@@ -684,6 +685,7 @@ body{
 
 .sidebar__settings_links p {
   margin-left: 5px;
+  font-weight: bold;
 }
 
 /* Content Overview */
@@ -848,6 +850,10 @@ body{
 .campaign__row--clickable{
   cursor: pointer;
   transition: background-color .15s;
+}
+
+.campaign__name{
+  text-transform: capitalize;
 }
 
 .campaign__row--clickable:hover{
@@ -2283,6 +2289,10 @@ select option{
   border-bottom: 1px solid var(--input-border);
   align-items: center;
   font-size: 1.3em;
+}
+
+.invoice-history__row:nth-child(1){
+  text-transform: capitalize;
 }
 
 .invoice-history__row:last-child{

@@ -873,7 +873,7 @@ function Billing({setPage}) {
                         {invoices.length === 0 && (
                             <div className="invoice-history__row">
                                 <span className="invoice-history__row--id">-</span>
-                                <span>{billingText.invoiceHistory.empty}</span>
+                                <span style={{textTransform: "capitalize"}}>{billingText.invoiceHistory.empty}</span>
                                 <span>-</span>
                                 <span>-</span>
                                 <span>-</span>
