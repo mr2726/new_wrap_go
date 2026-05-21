@@ -19,19 +19,22 @@ function Settings() {
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const fetchData = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        const { data: profileData, error: profileError } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("userid", user.id)
-            .single();
-        if (profileError) {
-            console.log(profileError.message);
-            return;
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            const { data: profileData, error: profileError } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("userid", user.id)
+                .single();
+            if (profileError) {
+                console.error(profileError.message);
+                return;
+            }
+            setProfileData(profileData);
+        } finally {
+            setLoading(false);
         }
-        setProfileData(profileData);
-        setLoading(false);
     }
     const _profileData = [
         {

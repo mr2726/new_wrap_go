@@ -5,6 +5,7 @@ import Logo from "../../Components/Logo";
 function ResetPassword({data, setPage}) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
 
 
     // Password validation
@@ -15,38 +16,32 @@ function ResetPassword({data, setPage}) {
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
+        setError("");
 
-        // Checking the input
         if (!password || !confirmPassword) {
-            alert("Fill all fields");
+            setError("Fill all fields");
             return;
         }
 
-        // Validation Check
         if (!validationPassword(password)) {
-            alert("Password must be 8+ chars, include uppercase, lowercase, number and symbol");
+            setError("Password must be 8+ chars, include uppercase, lowercase, number and symbol");
             return;
         }
 
-        // Checking mutching
         if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            setError("Passwords do not match");
             return;
         }
 
-        // Update password
-        const { error } = await supabase.auth.updateUser({
+        const { error: updateError } = await supabase.auth.updateUser({
             password: password
         });
 
-        if (error) {
-            console.log(error.message);
-            alert(error.message);
+        if (updateError) {
+            setError(updateError.message);
             return;
         }
 
-
-        // Transfet to the new Page
         setPage("reset-status");
     };
 
@@ -59,7 +54,7 @@ function ResetPassword({data, setPage}) {
                 <form className="reset__content--form" onSubmit={handleUpdatePassword}>
                     {
                         data.inputs.map((input, index) => (
-                            <>
+                            <div key={index}>
                                 <label htmlFor={input.id} className="signup_form__form--label">{input.lable}</label>
                                 <input
                                     className="signup_form__form--input"
@@ -71,10 +66,10 @@ function ResetPassword({data, setPage}) {
                                     onChange={input.id === "password" ? (e) => setPassword(e.target.value) : (e) => setConfirmPassword(e.target.value)}
                                     required
                                 />
-
-                            </>
+                            </div>
                         ))
                     }
+                    {error && <p className="signup_form__error">{error}</p>}
                     <button type="submit" className="signup_form__form--button">{data.btn}</button>
                 </form>
 

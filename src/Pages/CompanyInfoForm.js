@@ -138,7 +138,7 @@ function CompanyInfo ({data, setPage, email}) {
                         id="phone"
                         name="phone"
                         placeholder={data.fields.phone.placeholder}
-                        type="numeric"
+                        type="tel"
                         required
                     />
                     <h2 className="subtitle">{data.sections.company}</h2>

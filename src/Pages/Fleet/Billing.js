@@ -20,6 +20,7 @@ function Billing({ setFleetPage }) {
     const [isAddingCard, setIsAddingCard] = useState(false);
     const [isWithdrawing, setIsWithdrawing] = useState(false);
     const [withdrawSuccess, setWithdrawSuccess] = useState(null);
+    const [withdrawError, setWithdrawError] = useState("");
     const [cardForm, setCardForm] = useState({
         cardNumber: "",
         expires: "",
@@ -276,11 +277,12 @@ function Billing({ setFleetPage }) {
     };
 
     const handleWithdraw = async () => {
+        setWithdrawError("");
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
         if (!selectedMethod) {
-            alert(billingText.alerts.addSelectCard);
+            setWithdrawError(billingText.alerts.addSelectCard);
             return;
         }
 
@@ -288,7 +290,7 @@ function Billing({ setFleetPage }) {
         const amountToWithdraw = Math.min(Math.max(parsedWithdrawAmount || 0, 0), currentBalance);
 
         if (amountToWithdraw < 100) {
-            alert(billingText.alerts.minWithdrawal);
+            setWithdrawError(billingText.alerts.minWithdrawal);
             return;
         }
 
@@ -304,7 +306,7 @@ function Billing({ setFleetPage }) {
 
             if (balanceError) {
                 console.error("Error updating balance:", balanceError);
-                alert(billingText.alerts.balanceUpdateFailed);
+                setWithdrawError(billingText.alerts.balanceUpdateFailed);
                 return;
             }
 
@@ -327,7 +329,12 @@ function Billing({ setFleetPage }) {
 
             if (transferError) {
                 console.error("Error creating transfer:", transferError);
-                alert(billingText.alerts.transferNotSaved);
+                // Rollback: restore the original balance
+                await supabase
+                    .from("fleets")
+                    .update({ balance: currentBalance })
+                    .eq("userid", user.id);
+                setWithdrawError(billingText.alerts.transferNotSaved);
                 return;
             }
 
@@ -481,9 +488,10 @@ function Billing({ setFleetPage }) {
 
                         <div className="fleet-billing__receive-row">
                             <span>{billingText.withdraw.youReceive}</span>
-                            <strong>{formatMoney(netReceive)} USD</strong>
+                            <strong>{formatMoney(netReceive)} AMD</strong>
                         </div>
 
+                        {withdrawError && <p className="signup_form__error" style={{marginBottom: "0.5em"}}>{withdrawError}</p>}
                         <button type="button" className="fleet-billing__withdraw-btn" onClick={handleWithdraw} disabled={isWithdrawing || !selectedMethod}>
                             {isWithdrawing ? billingText.withdraw.loading : `${billingText.withdraw.withdrawPrefix} ${formatMoney(Math.min(parsedWithdrawAmount || 0, fleetData ? fleetData.balance : 0))}`}
                         </button>
@@ -550,7 +558,6 @@ function Billing({ setFleetPage }) {
                             </thead>
                             <tbody>
                                 {paginatedTransactions
-                                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // Сортировка по убыванию даты
                                     .map((transaction) => (
                                     <tr key={transaction.withdraw_id}>
                                         <td>{new Date(transaction.created_at).toLocaleString("en-US", {month: "short", day: "numeric", year: "numeric"})}</td>

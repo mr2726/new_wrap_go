@@ -130,8 +130,8 @@ function Signup({data, setPage, setEmail}) {
                 <form className="signup_form__form" onSubmit={handleSubmite}>
                     {
                         data.signup_form.signup_form_inputs.map((input, index) => (
-                            <>
-                                <label key={index} htmlFor={"fullName"} className="signup_form__form--label">{input.lable}</label>
+                            <div key={index}>
+                                <label htmlFor={input.name} className="signup_form__form--label">{input.lable}</label>
                                 <input
                                     id={input.name}
                                     name={input.name}
@@ -142,7 +142,7 @@ function Signup({data, setPage, setEmail}) {
                                     onChange={handleChange}
                                     style={(input.name === "password" || input.name === "confirmpassword" ) && passNotValid ? {border: "1px solid red"}: {}}
                                 />
-                            </>
+                            </div>
                         ))
                     }
 

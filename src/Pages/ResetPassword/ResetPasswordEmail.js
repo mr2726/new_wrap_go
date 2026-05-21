@@ -24,8 +24,7 @@ function ResetPasswordEmail ({data, setPage, email}) {
         );
 
         if (error) {
-            console.log(error.message);
-            alert(error.message);
+            console.error(error.message);
             return;
         }
     }

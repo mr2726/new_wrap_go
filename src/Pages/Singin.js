@@ -18,6 +18,7 @@ function Singin({data, setPage}) {
         );
         setFormData(initialState);
     }, [data]);
+
     // Автоматический вход, если есть сессия
     useEffect(() => {
         supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -26,14 +27,6 @@ function Singin({data, setPage}) {
             }
         });
     }, [setPage]);
-
-    // Get data from JSON file if it changed
-    useEffect(() => {
-        const initialState = Object.fromEntries(
-            data.inputs.map(input => [input.name, ""])
-        );
-        setFormData(initialState);
-    }, [data]);
 
     // Handel input changes
     const handleChange = (e) => {

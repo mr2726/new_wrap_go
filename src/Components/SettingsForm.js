@@ -25,13 +25,16 @@ function SettingsForm({title, description, data}) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // Strip protected fields that must not be updated via this form
+        const { email: _email, userid: _userid, ...safeFormValues } = formValues;
+
         const { error } = await supabase
             .from("profiles")
-            .update(formValues)
+            .update(safeFormValues)
             .eq("userid", user.id);
 
         if (error) {
-            console.log(error.message);
+            console.error(error.message);
             setStatus("error");
             return;
         }

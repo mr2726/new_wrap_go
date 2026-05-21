@@ -27,7 +27,7 @@ function ChangeImage({title, type, imageField}) {
                 .single();
 
             if (error) {
-                console.log(error.message);
+                console.error(error.message);
                 return;
             }
 
@@ -79,7 +79,7 @@ function ChangeImage({title, type, imageField}) {
                 .upload(filePath, file, { upsert: true });
 
             if (uploadError) {
-                console.log(uploadError.message);
+                console.error(uploadError.message);
                 setStatus({ type: "error", text: textData.errors.uploadFailed });
                 return;
             }
@@ -101,7 +101,7 @@ function ChangeImage({title, type, imageField}) {
                 .eq("userid", user.id);
 
             if (profileError) {
-                console.log(profileError.message);
+                console.error(profileError.message);
                 setStatus({ type: "error", text: textData.errors.saveProfileFailed });
                 return;
             }
@@ -109,7 +109,7 @@ function ChangeImage({title, type, imageField}) {
             setImageUrl(publicUrl);
             setStatus({ type: "success", text: textData.success.uploaded });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             setStatus({ type: "error", text: textData.errors.unexpected });
         } finally {
             setUploading(false);

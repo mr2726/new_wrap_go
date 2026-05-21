@@ -19,6 +19,7 @@ function Contracts({setFleetPage}) {
     const [selectedContract, setSelectedContract] = useState(null);
     const [filter, setFilter] = useState("available");
     const [isBooking, setIsBooking] = useState(false);
+    const [bookingStatus, setBookingStatus] = useState({ type: "", text: "" });
     const standartPayment = 30000;
 
     const closeDetails = useCallback(() => {
@@ -72,10 +73,10 @@ function Contracts({setFleetPage}) {
                 .single();
             setMyContractIds(updatedFleet?.contracts || []);
 
-            alert(contractsText.alerts.booked);
+            setBookingStatus({ type: "success", text: contractsText.alerts.booked });
         } catch (error) {
             console.error("Error booking contract:", error);
-            alert(contractsText.alerts.bookError);
+            setBookingStatus({ type: "error", text: contractsText.alerts.bookError });
         } finally {
             setIsBooking(false);
         }
@@ -110,7 +111,7 @@ function Contracts({setFleetPage}) {
                 if (ownerIds.length > 0) {
                     const { data: profilesData, error: profilesError } = await supabase
                         .from("profiles")
-                        .select("userid, companyname, city, industry")
+                        .select("userid, companyname, city, industry, company_logo_url")
                         .in("userid", ownerIds);
 
                     if (profilesError) {
@@ -151,15 +152,20 @@ function Contracts({setFleetPage}) {
                     </div>
                     {
                         filteredContracts.map((item)=> (
-                            <div className="contracts__block">
+                            <div className="contracts__block" key={item.id}>
                                 <div style={{display: "flex"}}>
                                     <div className="contracts__block--image"><img src={item.image_link} alt="Contract" /></div>
-                                
+
                                     <div className="contracts__block--main">
 
 
                                         <div className="contracts__block--details--company_info">
-                                            <div className="company__logo"><img src="https://rshhhtxokegviwblosur.supabase.co/storage/v1/object/public/profile-images/59956ff9-7702-4ba7-b43f-001f494461c4/company-1778195849542-photo_2026-05-07_14-57-03.jpg" alt="Company Logo" /></div>
+                                            <div className="company__logo">
+                                                {profilesByUserId[String(item.ownerid)]?.company_logo_url
+                                                    ? <img src={profilesByUserId[String(item.ownerid)].company_logo_url} alt="Company Logo" />
+                                                    : <div className="company__logo--placeholder">{(profilesByUserId[String(item.ownerid)]?.companyname || "?")[0]}</div>
+                                                }
+                                            </div>
                                             <div>
                                                 <h2 className="company__name">{profilesByUserId[String(item.ownerid)]?.companyname || contractsText.companyFallback}</h2>
                                                 <div className="contracts__tags">
@@ -231,7 +237,10 @@ function Contracts({setFleetPage}) {
 
                                     <div style={{display: "flex", alignItems: "center", gap: "0.8em", marginBottom: "1.2em"}}>
                                         <div className="company__logo">
-                                            <img src="https://rshhhtxokegviwblosur.supabase.co/storage/v1/object/public/profile-images/59956ff9-7702-4ba7-b43f-001f494461c4/company-1778195849542-photo_2026-05-07_14-57-03.jpg" alt="Company Logo" />
+                                            {profilesByUserId[String(selectedContract.ownerid)]?.company_logo_url
+                                                ? <img src={profilesByUserId[String(selectedContract.ownerid)].company_logo_url} alt="Company Logo" />
+                                                : <div className="company__logo--placeholder">{(profilesByUserId[String(selectedContract.ownerid)]?.companyname || "?")[0]}</div>
+                                            }
                                         </div>
                                         <div>
                                             <h2 style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "1.3em", color: "#fff", margin: 0}}>{profilesByUserId[String(selectedContract.ownerid)]?.companyname || selectedContract.title || contractsText.modalFallbackTitle}</h2>
@@ -279,6 +288,11 @@ function Contracts({setFleetPage}) {
                                         <p style={{fontFamily: "'LufgaBold', sans-serif", fontSize: "2em", color: "var(--primary-color)", lineHeight: 1.1}}>{(Number(standartPayment)).toLocaleString('en-US')} <span style={{fontSize: "0.5em", color: "#64748b", fontFamily: "'LufgaRegular', sans-serif"}}>{contractsText.details.amdPerVehicle}</span></p>
                                     </div>
 
+                                    {bookingStatus.text && (
+                                        <p className={bookingStatus.type === "success" ? "settings-form__status settings-form__status--success" : "signup_form__error"} style={{marginBottom: "0.8em"}}>
+                                            {bookingStatus.text}
+                                        </p>
+                                    )}
                                     {(filter !== "completed" && filter !== "my") && <button className="contract__details--popup__close" onClick={bookContract} disabled={isBooking} style={{width: "100%", marginTop: "auto"}}>{isBooking ? contractsText.buttons.booking : contractsText.buttons.book}</button>}
                                     <button className="secondary_cta" onClick={closeDetails} style={{width: "100%", marginTop: filter !== "completed" ? "0.6em" : "auto"}}>{contractsText.buttons.close}</button>
                                 </div>

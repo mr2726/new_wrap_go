@@ -54,7 +54,6 @@ function AddDriverForm({ onClose, vehicles }) {
                     console.error("Failed to update vehicle with invite code:", error);
                 }
                 else{
-                    console.log("Invite code sent successfully:", data);
                     onClose();
                 }
         }

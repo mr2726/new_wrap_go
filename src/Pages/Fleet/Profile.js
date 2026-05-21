@@ -108,7 +108,6 @@ function Profile({ setFleetPage }) {
                         console.error("Error fetching profile:", error);
                         setMessage(`${profileText.messages.loadErrorPrefix} ${error.message}`);
                     } else {
-                        console.log("Profile data:", data);
                         setFormData({
                             contactpersone: data.contactpersone || "",
                             fleetname: data.fleetname || "",

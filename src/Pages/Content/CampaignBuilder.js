@@ -19,6 +19,7 @@ function CampaignBuilder({data}) {
     const [modalOpen, setModalOpen] = useState(false);
     const [isLaunching, setIsLaunching] = useState(false);
     const [customSelected, setCustomSelected] = useState(false);
+    const [launchError, setLaunchError] = useState("");
 
     const multiplier = route === "1m" ? 1 : route === "3m" ? 3 : route === "6m" ? 6 : route;
     const priceStandart = adPlacement === "side" ? 119000 : 169000;
@@ -69,17 +70,15 @@ function CampaignBuilder({data}) {
     };
 
     const handleLaunchCampaign = async () => {
-        if (isLaunching) {
-            return;
-        }
+        if (isLaunching) return;
+        setLaunchError("");
 
-        // ===== Проверка обязательных полей =====
         if (!productName.trim()) {
-            alert(data.alerts.productNameRequired);
+            setLaunchError(data.alerts.productNameRequired);
             return;
         }
         if (!uploadedFile) {
-            alert(data.alerts.fileRequired);
+            setLaunchError(data.alerts.fileRequired);
             return;
         }
 
@@ -135,8 +134,6 @@ function CampaignBuilder({data}) {
                 budget: discountedTotal,
             };
 
-            console.log("SENDING:", payload);
-
             // ===== 4. Запись в таблицу =====
             const { data, error } = await supabase
                 .from('campaigns')
@@ -147,8 +144,6 @@ function CampaignBuilder({data}) {
                 console.error("Insert error:", error);
                 return;
             }
-
-            console.log("SUCCESS:", data);
 
             // ===== 5. Запись в таблицу аналитики =====
             const newCampaignId = data[0]?.id;
@@ -387,6 +382,7 @@ function CampaignBuilder({data}) {
                             </p>
                         </div>
 
+                        {launchError && <p className="signup_form__error" style={{marginBottom: "0.5em"}}>{launchError}</p>}
                         <button
                             className="campaign__builder--button overview__header--button"
                             onClick={handleLaunchCampaign}

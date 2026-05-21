@@ -33,7 +33,6 @@ const getCampaignDaysLeft = (campaign) => {
 
 function Overview ({data, setPage}) {
     const [campaignData, setCampaignData] = useState([]);
-    // const [profile, setProfile] = useState(null);
     const [totalDistance, setTotalDistance] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -80,23 +79,10 @@ function Overview ({data, setPage}) {
                 .eq("ownerid", user.id);
 
             if (campaignsError) {
-                console.log(campaignsError.message);
+                console.error(campaignsError.message);
+                setLoading(false);
                 return;
             }
-
-            // profile
-            const { data: profileData, error: profileError } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("userid", user.id)
-                .single();
-
-            if (profileError) {
-                console.log(profileError.message);
-                return;
-            }
-            console.log(profileData);
-            // setProfile(profileData);
 
             // drivers
             const campaignIds = (campaigns || []).map(c => c.id);
@@ -112,10 +98,11 @@ function Overview ({data, setPage}) {
                 .from("drivers")
                 .select("contractid, totaldistance")
                 .in("contractid", campaignIds);
-            
-            if(driversError){
-                console.warn(driversError.message);
-                return
+
+            if (driversError) {
+                console.error(driversError.message);
+                setLoading(false);
+                return;
             }
 
             const driverCountByCampaign = (drivers || []).reduce((acc, driver) => {

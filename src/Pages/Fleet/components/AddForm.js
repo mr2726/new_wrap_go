@@ -11,23 +11,14 @@ function AddForm({ onClose }) {
         "year" : "",
         "plate" : ""
     });
+    const [formError, setFormError] = useState("");
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        if(createVehicleData.mark === "" || createVehicleData.model === "" || createVehicleData.year === "" || createVehicleData.plate === ""){
-             alert("Please fill in all fields.");
-             return;
-         }
-        else{
-            hendelAddVehicle();
-
-        }
-    };
-
-    const hendelAddVehicle = async () => {
+        setFormError("");
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from("vehicles")
             .insert({
                 "mark" : createVehicleData.mark,
@@ -36,14 +27,14 @@ function AddForm({ onClose }) {
                 "plate" : createVehicleData.plate,
                 "status" : "available",
                 "fleetownerid" : user.id
-            })
-            if(error){
-                console.error("Failed to update vehicle with invite code:", error);
-            }else{  
-                console.log("Vehicle added successfully:", data);
-                onClose();
-            }
-    }
+            });
+        if (error) {
+            console.error("Failed to add vehicle:", error);
+            setFormError(formData.errorMessage || "Failed to add vehicle. Please try again.");
+        } else {
+            onClose();
+        }
+    };
     return (
         <div className="add_form_modal" onClick={onClose}>
             <div className="add_form" onClick={(event) => event.stopPropagation()}>
@@ -68,6 +59,7 @@ function AddForm({ onClose }) {
                         <label htmlFor="plate">{formData.fields.plate.label}</label>
                         <input type="text" id="plate" name="plate" placeholder={formData.fields.plate.placeholder} required value={createVehicleData.plate} onChange={(e) => setCreateVehicleData({ ...createVehicleData, plate: e.target.value })}/>
                     </div>
+                    {formError && <p className="signup_form__error" style={{gridColumn: "1/-1"}}>{formError}</p>}
                     <div className="add_form__actions">
                         <button type="button" className="add_form__ghost" onClick={onClose}>{formData.buttons.cancel}</button>
                         <button type="submit" className="cta">{formData.buttons.submit}</button>

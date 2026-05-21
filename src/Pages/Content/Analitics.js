@@ -15,10 +15,10 @@ function Analitics({ tableData }) {
     const [currentDate, setCurrentDate] = useState("today");
     const [campaignData, setCampaignData] = useState([]);
     const [analyticsData, setAnaliticsData] = useState([]);
-    const [choosedCampaign, setChoosedCampaign] = useState(6);
+    const [choosedCampaign, setChoosedCampaign] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    function Rendering() {
+    const renderPage = () => {
         switch (currentPage){
             case "active":
                 return <Active currentDate={currentDate} setCurrentDate={setCurrentDate}/>;
@@ -27,52 +27,52 @@ function Analitics({ tableData }) {
             default:
                 return <Active currentDate={currentDate} setCurrentDate={setCurrentDate}/>;
         }
-    }
+    };
 
     async function fetchTableData() {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        // campaigns
-        const { data: campaigns, error: campaignsError } = await supabase
-            .from("campaigns")
-            .select("*")
-            .eq("ownerid", user.id);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            const { data: campaigns, error: campaignsError } = await supabase
+                .from("campaigns")
+                .select("*")
+                .eq("ownerid", user.id);
 
-        if (campaignsError) {
-            console.log(campaignsError.message);
-            return;
+            if (campaignsError) {
+                console.error(campaignsError.message);
+                return;
+            }
+
+            setCampaignData(campaigns || []);
+        } finally {
+            setLoading(false);
         }
-
-        setCampaignData(campaigns || []);
-        setLoading(false);
     }
 
     async function fetchChartData(comp) {
+        if (comp === null || comp === undefined) return;
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        console.log(user.id);
-        const {data: new_analiticsData, error: _analiticsDataError} = await supabase
+        const { data: new_analiticsData, error: _analiticsDataError } = await supabase
             .from("analitics")
             .select("*")
             .eq("owner_id", user.id)
-            .eq("campaign_id", comp)
+            .eq("campaign_id", comp);
 
         if (_analiticsDataError) {
-            console.log(_analiticsDataError.message)
-            return
+            console.error(_analiticsDataError.message);
+            return;
         }
-        console.log(new_analiticsData);
         setAnaliticsData(new_analiticsData || []);
     }
 
     useEffect(() => {
-        fetchTableData(); // Fetching Table
+        fetchTableData();
     }, []);
 
     useEffect(() => {
-        
-        fetchChartData(choosedCampaign); // Fetching Analitics Chart Data
-    }, [choosedCampaign])
+        fetchChartData(choosedCampaign);
+    }, [choosedCampaign]);
 
     return (
         <div className="analitics">
@@ -91,7 +91,7 @@ function Analitics({ tableData }) {
             </div>
             <div className="line"></div>
             <div className="analitics__content">
-                <Rendering />
+                {renderPage()}
             </div>
 
             <div className="analiticsChart">

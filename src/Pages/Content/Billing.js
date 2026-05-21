@@ -34,6 +34,8 @@ function Billing({setPage}) {
     const [isProcessingTopup, setIsProcessingTopup] = useState(false);
     const [topupResult, setTopupResult] = useState(null); // { success: bool, amount: number }
     const [transactionHistory, setTransactionHistory] = useState([]);
+    const [downloadingInvoiceId, setDownloadingInvoiceId] = useState(null);
+    const [payError, setPayError] = useState("");
 
     useEffect(() => {
         const initPage = async () => {
@@ -53,7 +55,7 @@ function Billing({setPage}) {
                     .single();
 
                 if (profileError) {
-                    console.log("Profile fetch error:", profileError.message);
+                    console.error("Profile fetch error:", profileError.message);
                 } else {
                     const loadedTax = String(profileRow?.tax || "").trim();
                     setProfileTax(loadedTax);
@@ -68,7 +70,7 @@ function Billing({setPage}) {
                     .order("created_at", { ascending: false });
 
                 if (invoiceError) {
-                    console.log("Invoice fetch error:", invoiceError.message);
+                    console.error("Invoice fetch error:", invoiceError.message);
                     setInvoices([]);
                     return;
                 }
@@ -83,7 +85,7 @@ function Billing({setPage}) {
                         .in("id", campaignIds);
 
                     if (campaignError) {
-                        console.log("Campaign fetch error:", campaignError.message);
+                        console.error("Campaign fetch error:", campaignError.message);
                     } else {
                         campaignMap = (campaignRows || []).reduce((acc, campaign) => {
                             acc[campaign.id] = campaign;
@@ -226,7 +228,7 @@ function Billing({setPage}) {
                 .eq("userid", currentUserId);
 
             if (error) {
-                console.log("Tax update error:", error.message);
+                console.error("Tax update error:", error.message);
                 return;
             }
 
@@ -285,7 +287,7 @@ function Billing({setPage}) {
                 .eq("userid", currentUserId);
 
             if (balanceError) {
-                console.log("Balance update error:", balanceError.message);
+                console.error("Balance update error:", balanceError.message);
                 setTopupResult({ success: false, amount: 0 });
                 return;
             }
@@ -306,7 +308,7 @@ function Billing({setPage}) {
             setTopupAmount("");
             setAmountError("");
         } catch (error) {
-            console.log("Topup error:", error.message);
+            console.error("Topup error:", error.message);
             setTopupResult({ success: false, amount: 0 });
         } finally {
             setIsProcessingTopup(false);
@@ -315,13 +317,14 @@ function Billing({setPage}) {
 
     const handlePayNow = async (event, invoice) => {
         event.stopPropagation();
+        setPayError("");
 
         if (!invoice?.id || !currentUserId) {
             return;
         }
 
         if (shouldShowTaxInfo) {
-            alert(billingText.alerts.taxRequired);
+            setPayError(billingText.alerts.taxRequired);
             return;
         }
 
@@ -329,12 +332,12 @@ function Billing({setPage}) {
         const currentBalance = parseAmount(balance);
 
         if (invoiceAmount <= 0) {
-            alert(billingText.alerts.invalidInvoiceAmount);
+            setPayError(billingText.alerts.invalidInvoiceAmount);
             return;
         }
 
         if (currentBalance < invoiceAmount) {
-            alert(billingText.alerts.insufficientBalance);
+            setPayError(billingText.alerts.insufficientBalance);
             return;
         }
 
@@ -348,8 +351,8 @@ function Billing({setPage}) {
                 .eq("userid", currentUserId);
 
             if (balanceError) {
-                console.log("Balance update error:", balanceError.message);
-                alert(billingText.alerts.balanceUpdateFailed);
+                console.error("Balance update error:", balanceError.message);
+                setPayError(billingText.alerts.balanceUpdateFailed);
                 return;
             }
 
@@ -365,8 +368,8 @@ function Billing({setPage}) {
                     .update({ balance: currentBalance })
                     .eq("userid", currentUserId);
 
-                console.log("Invoice status update error:", invoiceError.message);
-                alert(billingText.alerts.invoicePaidFailed);
+                console.error("Invoice status update error:", invoiceError.message);
+                setPayError(billingText.alerts.invoicePaidFailed);
                 return;
             }
 
@@ -378,7 +381,7 @@ function Billing({setPage}) {
                     .eq("id", invoice.campaign_id);
 
                 if (campaignError) {
-                    console.log("Campaign status update error:", campaignError.message);
+                    console.error("Campaign status update error:", campaignError.message);
                     // Don't fail the payment, just log the error
                 }
             }
@@ -394,6 +397,36 @@ function Billing({setPage}) {
             );
         } finally {
             setPayingInvoiceId(null);
+        }
+    };
+
+    const handleDownloadInvoice = async (event, invoice) => {
+        event.stopPropagation();
+        setDownloadingInvoiceId(invoice.id);
+        try {
+            // TODO: Replace "" with the real invoice PDF API endpoint when available
+            // e.g. const response = await fetch(`https://api.yourprovider.com/invoices/${invoice.invoiceid}/pdf`, { ... });
+            const INVOICE_API_URL = "";
+            if (!INVOICE_API_URL) {
+                // Placeholder: API not yet integrated — show inline message
+                setPayError(`Invoice download not yet available. Invoice: ${invoice.invoiceid}`);
+                return;
+            }
+            const response = await fetch(`${INVOICE_API_URL}/${invoice.invoiceid}`);
+            if (!response.ok) throw new Error("Download failed");
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `invoice-${invoice.invoiceid}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Invoice download error:", err.message);
+        } finally {
+            setDownloadingInvoiceId(null);
         }
     };
 
@@ -418,7 +451,7 @@ function Billing({setPage}) {
         const amount = Number(topupAmount) || 0;
         const totalAmount = amount; // Commission is 0%, so total = amount
         const isValidAmount = amount >= 1000;
-        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup || isProcessingTopup;
+        const isButtonDisabled = !topupAmount || !isValidAmount || isProcessingTopup;
 
         switch (currentBillingMethod) {
             case "card":
@@ -545,13 +578,18 @@ function Billing({setPage}) {
                         <div>
                             <form action="https://banking.idram.am/Payment/GetPayment" method="POST">
                                 <input type="hidden" name="EDP_LANGUAGE" value="EN"/>
-                                <input type="hidden" name="EDP_REC_ACCOUNT" value="100000114"/>
-                                <input type="hidden" name="EDP_DESCRIPTION" value="Order description"/>
-                                <input type="hidden" name="EDP_AMOUNT" value="1900"/>
-                                <input type="hidden" name="EDP_BILL_NO" value ="1806"/>
-                                <input type="submit" value="submit" className="cta payment-button"/>
+                                <input type="hidden" name="EDP_REC_ACCOUNT" value={process.env.REACT_APP_IDRAM_REC_ACCOUNT}/>
+                                <input type="hidden" name="EDP_DESCRIPTION" value={`WrapGo balance top-up for ${currentUserId}`}/>
+                                <input type="hidden" name="EDP_AMOUNT" value={topupAmount || "0"}/>
+                                <input type="hidden" name="EDP_BILL_NO" value={`${currentUserId}-${Date.now()}`}/>
+                                <input
+                                    type="submit"
+                                    value={billingText.addFunds.payPrefix + " " + (topupAmount || "0") + " ֏"}
+                                    className="cta payment-button"
+                                    disabled={!topupAmount || Number(topupAmount) < 1000}
+                                />
                             </form>
-                        </div> 
+                        </div>
                     </div>
                 );
             case "bank":
@@ -778,6 +816,9 @@ function Billing({setPage}) {
 
             </div>
 
+            {payError && (
+                <p className="signup_form__error" style={{marginBottom: "1em"}}>{payError}</p>
+            )}
             {/* Invoice History */}
             <div className="invoice-history">
                 <h2 className="invoice-history__title title">{billingText.invoiceHistory.title}</h2>
@@ -809,7 +850,13 @@ function Billing({setPage}) {
                                     </span>
                                     <span>
                                         {isPaid ? (
-                                            <button className="invoice-history__action--tax">{billingText.invoiceHistory.taxInvoice}</button>
+                                            <button
+                                                className="invoice-history__action--tax"
+                                                onClick={(event) => handleDownloadInvoice(event, invoice)}
+                                                disabled={downloadingInvoiceId === invoice.id}
+                                            >
+                                                {downloadingInvoiceId === invoice.id ? "Downloading..." : billingText.invoiceHistory.taxInvoice}
+                                            </button>
                                         ) : (
                                             <button
                                                 className="invoice-history__action--paynow"

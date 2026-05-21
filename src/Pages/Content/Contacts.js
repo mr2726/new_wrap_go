@@ -26,7 +26,6 @@ function Contacts({data}) {
         setSubmitResult({ type: "", message: "" });
 
         try {
-            console.log("Form Data:", formData); // Send to Telegram
             const BOT_TOKEN = process.env.REACT_APP_TELEGRAM_BOT_TOKEN;
             const CHAT_ID = process.env.REACT_APP_TELEGRAM_CHAT_ID;
 

@@ -6,6 +6,7 @@ import { supabase } from "../../data/supabase";
 
 function ResetOTP({data, setPage, setSender}) {
     const [email, setEmail] = useState("");
+    const [error, setError] = useState("");
 
     const resolveRedirectTo = () => {
         const envBaseUrl = (process.env.REACT_APP_WEB_URL || "").trim();
@@ -26,23 +27,23 @@ function ResetOTP({data, setPage, setSender}) {
     // send link to the user email 
 
     const handleForgotPassword = async () => {
+        setError("");
         const normalizedEmail = email.trim().toLowerCase();
 
         if (!normalizedEmail) {
-            alert(data.enterEmailAlert);
+            setError(data.enterEmailAlert);
             return;
         }
 
-        const { error } = await supabase.auth.resetPasswordForEmail(
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
             normalizedEmail,
             {
                 redirectTo: resolveRedirectTo()
             }
         );
 
-        if (error) {
-            console.log(error.message);
-            alert(error.message);
+        if (resetError) {
+            setError(resetError.message);
             return;
         }
 
@@ -68,6 +69,7 @@ function ResetOTP({data, setPage, setSender}) {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
+                    {error && <p className="signup_form__error">{error}</p>}
                     <button className="signup_form__form--button">{data.btn}</button>
                 </form>
 

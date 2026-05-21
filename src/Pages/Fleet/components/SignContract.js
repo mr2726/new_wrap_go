@@ -9,6 +9,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
   const [selectedDriverId, setSelectedDriverId] = useState("");
   const [selectedContractId, setSelectedContractId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [assignStatus, setAssignStatus] = useState({ type: "", text: "" });
 
   const driverOptions = useMemo(
     () =>
@@ -54,6 +55,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
 
   const handleAssignContract = async () => {
     if (!canAssign) return;
+    setAssignStatus({ type: "", text: "" });
 
     setIsSubmitting(true);
     const { error } = await supabase
@@ -65,7 +67,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
 
     if (error) {
       console.error("Error assigning contract:", error);
-      alert(signText.alerts.assignFailed);
+      setAssignStatus({ type: "error", text: signText.alerts.assignFailed });
       return;
     }
 
@@ -73,8 +75,8 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
       await onAssigned();
     }
 
-    alert(signText.alerts.assigned);
-    onClose();
+    setAssignStatus({ type: "success", text: signText.alerts.assigned });
+    setTimeout(() => onClose(), 1200);
   };
 
   return (
@@ -99,6 +101,11 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
               onChange={setSelectedContractId}
             />
         </div>
+        {assignStatus.text && (
+            <p className={assignStatus.type === "success" ? "settings-form__status settings-form__status--success" : "signup_form__error"} style={{marginTop: "0.5em"}}>
+                {assignStatus.text}
+            </p>
+        )}
         <div className="add_form__actions" style={{marginTop: '1em'}}>
             <button className="cta" style={{width: '100%'}} onClick={handleAssignContract} disabled={!canAssign}>
               {isSubmitting ? signText.submitting : signText.submit}
