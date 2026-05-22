@@ -2686,9 +2686,16 @@ select option{
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #39FF14;
-  /* box-shadow: 0 0 0 2px rgba(10, 10, 15, 0.55); */
+  background: var(--primary-color);
   position: relative;
+}
+
+.driver-marker-in-dark {
+  background: var(--primary-color);
+}
+
+.driver-marker-in-light {
+  background: #1a1a1a;
 }
 
 .driver-marker::after {
@@ -2699,10 +2706,14 @@ select option{
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  border: 2px solid #39FF14;
+  border: 2px solid var(--primary-color);
   transform: translate(-50%, -50%);
   opacity: 0.8;
   animation: driver-pulse 1.7s ease-out infinite;
+}
+
+.driver-marker-in-light::after {
+  border-color: #1a1a1a;
 }
 
 @keyframes driver-pulse {

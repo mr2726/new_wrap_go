@@ -138,3 +138,4 @@
 
 - [x] Details button Added to the campaign with live status
 - [x] Fix dates calculation in Progress bar
+- [x] Change the marker color
