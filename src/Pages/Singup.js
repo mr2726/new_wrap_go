@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../App.css";
 import { MdCheckCircleOutline  } from "react-icons/md";
 import { supabase } from "../data/supabase";
+import Logo from "../Components/Logo";
 
 function Signup({data, setPage, setEmail}) {
     const [formData, setFormData] = useState({});
@@ -113,6 +114,7 @@ function Signup({data, setPage, setEmail}) {
             <div className="signup_content_container">
                 <div className="singup_content_container__bg"></div>
                 <div className="signup_content_container__content">
+                    <Logo transfer="/" setPage={setPage} />
                     <div className="tag"><p>{data.tag}</p></div>
                     <h1 className="signup_content_container__title">{data.title[0]}<span className="highlight">{data.title[1]}</span></h1>
                     <p className="signup_content_container__description">{data.description}</p>
