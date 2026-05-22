@@ -122,11 +122,11 @@ body{
   height: 100vh;
   width: 50%;
 }
-
+/* https://lh3.googleusercontent.com/aida-public/AB6AXuAtjmIi6HrtYrD6KmvPUmxA1OS5BD84JRwTa4XYkFXPNnL1qsJFY07N2e2tslVyEN1WM9d-a1F2oslyn-7tNpGFQKeq_nTSUEyyF_jn65hh3Fj1pjZmy71-B88eGZMdewUZTE1-xtjWF8N4fxKPoDYDU_ewqJOY-kOHt_uLQDnvlIMejiacVPGD3i5BnTx195Up7cIMF7Qtuqb6MBC6kDqcn6gTdXxwx3i_e53futIlmMMikT9dHcyegSfqrob3b7rT66KXTlobeet7 */
 .singup_content_container__bg{
   background-image: 
     linear-gradient(rgba(12, 69, 255, 0.5), rgba(12, 69, 255, 0.5)),
-    url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtjmIi6HrtYrD6KmvPUmxA1OS5BD84JRwTa4XYkFXPNnL1qsJFY07N2e2tslVyEN1WM9d-a1F2oslyn-7tNpGFQKeq_nTSUEyyF_jn65hh3Fj1pjZmy71-B88eGZMdewUZTE1-xtjWF8N4fxKPoDYDU_ewqJOY-kOHt_uLQDnvlIMejiacVPGD3i5BnTx195Up7cIMF7Qtuqb6MBC6kDqcn6gTdXxwx3i_e53futIlmMMikT9dHcyegSfqrob3b7rT66KXTlobeet7');
+    url('../public/landing/assets/1.png');
   background-size: cover;
   background-position: center;
   width: 50%;
