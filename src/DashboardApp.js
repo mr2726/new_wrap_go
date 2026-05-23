@@ -177,7 +177,7 @@ function DashboardApp() {
           const nextPage = await resolveAuthPage(session);
           setPage(nextPage);
         } else {
-          setPage("signup");
+          setPage("signin");
         }
         setLoading(false);
       });

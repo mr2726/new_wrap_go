@@ -36,11 +36,9 @@ function SideBar ({data, page, setPage}) {
 
         if (error) {
             console.error(error.message);
-            return;
         }
 
-        setPage("signup"); // или "signup"
-        window.location.reload();
+        setPage("signin");
     };
     return (
         <div className="sidebar">
