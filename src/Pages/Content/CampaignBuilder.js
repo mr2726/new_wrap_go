@@ -250,7 +250,7 @@ function CampaignBuilder({data}) {
                         <div className="campaign__content--content--blocks">
                             <div className="campaign__content--content--block">
                                 <img 
-                                    src={data.campaigns[0].img}
+                                    src={require("../../assets/car.png")}
                                     width={300}
                                     className="block__img"
                                     alt="car"
@@ -283,7 +283,8 @@ function CampaignBuilder({data}) {
                             <div className="campaign__content--content--block blocked">
                                 <h1 className="blocked__text">{data.commingSoon}</h1>
                                 <img 
-                                    src={data.campaigns[1].img}
+                                    // src={data.campaigns[1].img}
+                                    src={require("../../assets/car.png")}
                                     width={300}
                                     className="block__img"
                                     alt="car"

@@ -860,7 +860,7 @@
             "campaigns" : [
                 {
                     "title": "Standart",
-                    "img" : "https://rentacarbaku.az/wp-content/uploads/2025/04/chevrolet-cobalt-2023-rentacarbaku.webp",
+                    "img" : "../../assets/car.png",
                     "price" : "AMD/mo",
                     "info" : {
                         "title" : "Est. Impressions:",
@@ -871,7 +871,7 @@
                 },
                 {
                     "title": "Business",
-                    "img" : "https://rentacarbaku.az/wp-content/uploads/2025/04/chevrolet-cobalt-2023-rentacarbaku.webp",
+                    "img" : "../../assets/car.png",
                     "price" : "",
                     "info" : {
                         "title" : "Est. Impressions:",
