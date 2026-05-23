@@ -18,6 +18,7 @@ const DRIVER_REFRESH_MS = 15000;
 const DEFAULT_DRIVER_COORDS = [44.51475588393247, 40.18299309990458];
 const DEFAULT_DRIVER_INFO = pageData.ui.mapBox.defaultDriver;
 const MAP_DRAWER_TEXT = pageData.ui.mapBox.drawer;
+const INITIAL_MODE = "dark";
 
 const EMPTY_ZONES = {
   type: "FeatureCollection",
@@ -118,7 +119,7 @@ export default function Map() {
   const activeZonesRef = useRef(EMPTY_ZONES);
   const driverCoordsRef = useRef(DEFAULT_DRIVER_COORDS);
   const hasCenteredOnDriverRef = useRef(false);
-  const [mode, setMode] = useState("dark");
+  const [mode, setMode] = useState(INITIAL_MODE);
   const [isDriverDrawerOpen, setIsDriverDrawerOpen] = useState(false);
   const [driverInfo, setDriverInfo] = useState(DEFAULT_DRIVER_INFO);
   const [driversData, setDriversData] = useState([]);
@@ -126,18 +127,24 @@ export default function Map() {
   const mapStyle =
     mode === "lite" ? DARK_MAP_STYLE : LITE_MAP_STYLE;
 
+  const initialMapStyle =
+    INITIAL_MODE === "lite" ? DARK_MAP_STYLE : LITE_MAP_STYLE;
+
+  const initialMarkerClass =
+    INITIAL_MODE === "dark" ? "driver-marker-in-light" : "driver-marker-in-dark";
+
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: mapStyle,
+      style: initialMapStyle,
       center: [44.514470867659284, 40.1811272387276],
       zoom: 14,
     });
 
     const markerElement = document.createElement("div");
-    markerElement.className = `driver-marker ${mode === "dark" ? "driver-marker-in-light" : "driver-marker-in-dark"}`;
+    markerElement.className = `driver-marker ${initialMarkerClass}`;
     const defaultMarkerClick = () => setIsDriverDrawerOpen(true);
     markerElement.addEventListener("click", defaultMarkerClick);
 
@@ -191,7 +198,7 @@ export default function Map() {
         map.current = null;
       }
     };
-  }, []);
+  }, [initialMapStyle, initialMarkerClass]);
 
   useEffect(() => {
     let isActive = true;
