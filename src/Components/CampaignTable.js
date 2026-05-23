@@ -70,6 +70,8 @@ function CampaignTable ({data, pageData, state, onRowClick, selectedId, setPage,
                                 <td>{formatDate(addDays(item.created_at, 7))} - {endDate(item.duration, item.created_at)}</td>
                                 <td>
                                     <span className={`status status--${item.status.replace(" ", "-")}`}>{pageData?.statusLabels?.[item.status] || item.status}</span>
+                                </td>
+                                <td>
                                     {
                                         item.status === "pending" && (
                                             <button className="payButton" onClick={(e) => { e.stopPropagation(); setPage("billing"); }}>{pageData?.pay || "Pay"}</button>

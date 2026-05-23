@@ -5716,10 +5716,6 @@ select option{
   }
 }
 
-.campaign__row--in-process{
-
-}
-
 /* Vehicle Details Popup */
 .vdp-modal {
   background-color: var(--block-bg);

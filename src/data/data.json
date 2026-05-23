@@ -849,6 +849,10 @@
                     {
                         "id" : 5,
                         "title" : "STATUS"
+                    },
+                    {
+                        "id" : 6,
+                        "title" : "ACTION"
                     }
                 ]
             }
