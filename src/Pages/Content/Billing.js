@@ -7,7 +7,15 @@ import { PiWarningOctagonBold } from "react-icons/pi";
 // import { IoPhonePortraitOutline } from "react-icons/io5";
 // import { MdCorporateFare } from "react-icons/md";
 // import { BsShieldCheck } from "react-icons/bs";
-import { supabase } from "../../data/supabase";
+import {
+  getUser,
+  getProfile,
+  getInvoicesByOwner,
+  getCampaignsByIds,
+  updateProfile,
+  updateInvoice,
+  updateCampaign,
+} from "../../data/service";
 // import { LuCircleCheckBig } from "react-icons/lu";
 import { IoCard } from "react-icons/io5";
 import { RiBankFill } from "react-icons/ri";
@@ -40,7 +48,7 @@ function Billing({setPage}) {
     useEffect(() => {
         const initPage = async () => {
             try {
-                const { data: { user } } = await supabase.auth.getUser();
+                const { data: { user } } = await getUser();
                 if (!user) {
                     setInvoices([]);
                     return;
@@ -48,11 +56,7 @@ function Billing({setPage}) {
 
                 setCurrentUserId(user.id);
 
-                const { data: profileRow, error: profileError } = await supabase
-                    .from("profiles")
-                    .select("*")
-                    .eq("userid", user.id)
-                    .single();
+                const { data: profileRow, error: profileError } = await getProfile(user.id);
 
                 if (profileError) {
                     console.error("Profile fetch error:", profileError.message);
@@ -63,11 +67,7 @@ function Billing({setPage}) {
                     setBalance(profileRow?.balance || 0);
                 }
 
-                const { data: invoiceRows, error: invoiceError } = await supabase
-                    .from("invoices")
-                    .select("id, invoiceid, campaign_id, amount, status, created_at")
-                    .eq("owner_id", user.id)
-                    .order("created_at", { ascending: false });
+                const { data: invoiceRows, error: invoiceError } = await getInvoicesByOwner(user.id);
 
                 if (invoiceError) {
                     console.error("Invoice fetch error:", invoiceError.message);
@@ -79,10 +79,7 @@ function Billing({setPage}) {
                 let campaignMap = {};
 
                 if (campaignIds.length > 0) {
-                    const { data: campaignRows, error: campaignError } = await supabase
-                        .from("campaigns")
-                        .select("id, name, status, created_at, duration")
-                        .in("id", campaignIds);
+                    const { data: campaignRows, error: campaignError } = await getCampaignsByIds(campaignIds);
 
                     if (campaignError) {
                         console.error("Campaign fetch error:", campaignError.message);
@@ -222,10 +219,7 @@ function Billing({setPage}) {
 
         setIsSavingTax(true);
         try {
-            const { error } = await supabase
-                .from("profiles")
-                .update({ tax: taxInput })
-                .eq("userid", currentUserId);
+            const { error } = await updateProfile(currentUserId, { tax: taxInput });
 
             if (error) {
                 console.error("Tax update error:", error.message);
@@ -279,12 +273,9 @@ function Billing({setPage}) {
             await new Promise(resolve => setTimeout(resolve, 2000));
             
             const newBalance = parseAmount(balance) + amount;
-            
+
             // Update balance in Supabase
-            const { error: balanceError } = await supabase
-                .from("profiles")
-                .update({ balance: newBalance })
-                .eq("userid", currentUserId);
+            const { error: balanceError } = await updateProfile(currentUserId, { balance: newBalance });
 
             if (balanceError) {
                 console.error("Balance update error:", balanceError.message);
@@ -345,10 +336,7 @@ function Billing({setPage}) {
         setPayingInvoiceId(invoice.id);
 
         try {
-            const { error: balanceError } = await supabase
-                .from("profiles")
-                .update({ balance: nextBalance })
-                .eq("userid", currentUserId);
+            const { error: balanceError } = await updateProfile(currentUserId, { balance: nextBalance });
 
             if (balanceError) {
                 console.error("Balance update error:", balanceError.message);
@@ -356,17 +344,11 @@ function Billing({setPage}) {
                 return;
             }
 
-            const { error: invoiceError } = await supabase
-                .from("invoices")
-                .update({ status: "paid" })
-                .eq("id", invoice.id);
+            const { error: invoiceError } = await updateInvoice(invoice.id, { status: "paid" });
 
             if (invoiceError) {
                 // Best-effort rollback if invoice status update failed.
-                await supabase
-                    .from("profiles")
-                    .update({ balance: currentBalance })
-                    .eq("userid", currentUserId);
+                await updateProfile(currentUserId, { balance: currentBalance });
 
                 console.error("Invoice status update error:", invoiceError.message);
                 setPayError(billingText.alerts.invoicePaidFailed);
@@ -375,10 +357,7 @@ function Billing({setPage}) {
 
             // Update campaign status if campaign_id exists
             if (invoice.campaign_id) {
-                const { error: campaignError } = await supabase
-                    .from("campaigns")
-                    .update({ status: "in process" })
-                    .eq("id", invoice.campaign_id);
+                const { error: campaignError } = await updateCampaign(invoice.campaign_id, { status: "in process" });
 
                 if (campaignError) {
                     console.error("Campaign status update error:", campaignError.message);

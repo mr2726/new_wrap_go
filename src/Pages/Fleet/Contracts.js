@@ -5,7 +5,13 @@ import { FaRegClock } from "react-icons/fa6";
 import { FaCar } from "react-icons/fa";
 import TopMenu from "../../Components/TopMenu";
 import { useState, useCallback, useEffect } from "react";
-import { supabase } from "../../data/supabase";
+import {
+  getUser,
+  getFleetContracts,
+  updateFleet,
+  getAllCampaigns,
+  getProfilesByIds,
+} from "../../data/service";
 import pageData from "../../data/data.json";
 
 
@@ -34,25 +40,18 @@ function Contracts({setFleetPage}) {
     const bookContract = useCallback(async () => {
         setIsBooking(true);
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user || !selectedContract) return;
 
             // Add contract ID to user's contracts array
-            const { data: fleetData } = await supabase
-                .from("fleets")
-                .select("contracts")
-                .eq("userid", user?.id)
-                .single();
+            const { data: fleetData } = await getFleetContracts(user?.id);
 
             const currentContracts = fleetData?.contracts || [];
             if (!currentContracts.includes(selectedContract.id)) {
                 currentContracts.push(selectedContract.id);
             }
 
-            const { error: fleetError } = await supabase
-                .from("fleets")
-                .update({ contracts: currentContracts })
-                .eq("userid", user?.id);
+            const { error: fleetError } = await updateFleet(user?.id, { contracts: currentContracts });
 
             if (fleetError) throw fleetError;
 
@@ -60,17 +59,11 @@ function Contracts({setFleetPage}) {
             closeDetails();
             
             // Reload contracts list
-            const { data: campaigns } = await supabase
-                .from("campaigns")
-                .select("*");
+            const { data: campaigns } = await getAllCampaigns();
             setContractData(campaigns || []);
 
             // Update my contracts list
-            const { data: updatedFleet } = await supabase
-                .from("fleets")
-                .select("contracts")
-                .eq("userid", user?.id)
-                .single();
+            const { data: updatedFleet } = await getFleetContracts(user?.id);
             setMyContractIds(updatedFleet?.contracts || []);
 
             setBookingStatus({ type: "success", text: contractsText.alerts.booked });
@@ -84,21 +77,15 @@ function Contracts({setFleetPage}) {
 
     useEffect(() => {
         const fetchContracts = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
 
-            const { data: fleetData, error: fleetError } = await supabase
-                .from("fleets")
-                .select("contracts")
-                .eq("userid", user?.id)
-                .single();
+            const { data: fleetData, error: fleetError } = await getFleetContracts(user?.id);
 
             if (!fleetError && fleetData?.contracts) {
                 setMyContractIds(fleetData.contracts);
             }
 
-            const { data: campaigns, error: contractsError } = await supabase
-                .from("campaigns")
-                .select("*")
+            const { data: campaigns, error: contractsError } = await getAllCampaigns()
             if (contractsError) {
                 console.error("Error fetching contracts:", contractsError);
                 return;
@@ -109,10 +96,7 @@ function Contracts({setFleetPage}) {
                 const ownerIds = [...new Set((campaigns || []).map((campaign) => campaign.ownerid).filter(Boolean))];
 
                 if (ownerIds.length > 0) {
-                    const { data: profilesData, error: profilesError } = await supabase
-                        .from("profiles")
-                        .select("userid, companyname, city, industry, company_logo_url")
-                        .in("userid", ownerIds);
+                    const { data: profilesData, error: profilesError } = await getProfilesByIds(ownerIds);
 
                     if (profilesError) {
                         console.error("Error fetching profiles:", profilesError);

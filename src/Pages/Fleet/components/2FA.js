@@ -1,6 +1,6 @@
 import "../../../App.css";
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "../../../data/supabase";
+import { mfaListFactors, mfaEnroll, mfaChallenge, mfaVerify } from "../../../data/service";
 import pageData from "../../../data/data.json";
 
 function TwoFactorAuth({ onClose, onEnabled }) {
@@ -62,7 +62,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
             setIsSubmitting(true);
             setStatus({ type: "", text: "" });
 
-            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
+            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => mfaListFactors());
             if (!isMounted) return;
 
             if (factorsError) {
@@ -83,10 +83,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
                 setSetupFactorId(unverifiedFactor.id);
             }
 
-            const { data: enrollData, error: enrollError } = await withAuthLockRetry(() => supabase.auth.mfa.enroll({
-                factorType: "totp",
-                friendlyName: twoFaText.friendlyName,
-            }));
+            const { data: enrollData, error: enrollError } = await withAuthLockRetry(() => mfaEnroll("totp", twoFaText.friendlyName));
 
             if (!isMounted) return;
 
@@ -125,9 +122,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
 
         setIsSubmitting(true);
 
-        const { data: challengeData, error: challengeError } = await withAuthLockRetry(() => supabase.auth.mfa.challenge({
-            factorId: setupFactorId,
-        }));
+        const { data: challengeData, error: challengeError } = await withAuthLockRetry(() => mfaChallenge(setupFactorId));
 
         if (challengeError || !challengeData?.id) {
             setStatus({ type: "error", text: challengeError?.message || twoFaText.messages.challengeFailed });
@@ -135,11 +130,7 @@ function TwoFactorAuth({ onClose, onEnabled }) {
             return;
         }
 
-        const { error: verifyError } = await withAuthLockRetry(() => supabase.auth.mfa.verify({
-            factorId: setupFactorId,
-            challengeId: challengeData.id,
-            code: setupCode,
-        }));
+        const { error: verifyError } = await withAuthLockRetry(() => mfaVerify(setupFactorId, challengeData.id, setupCode));
 
         if (verifyError) {
             setStatus({ type: "error", text: verifyError.message || twoFaText.messages.verifyFailed });

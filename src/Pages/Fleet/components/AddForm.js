@@ -1,7 +1,7 @@
 import "../../../App.css";
 import pageData from "../../../data/data.json";
 import { useState } from "react";
-import { supabase } from "../../../data/supabase";
+import { getUser, insertVehicle } from "../../../data/service";
 
 function AddForm({ onClose }) {
     const formData = pageData.fleet.addVehicleForm;
@@ -16,11 +16,9 @@ function AddForm({ onClose }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setFormError("");
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await getUser();
         if (!user) return;
-        const { error } = await supabase
-            .from("vehicles")
-            .insert({
+        const { error } = await insertVehicle({
                 "mark" : createVehicleData.mark,
                 "model" : createVehicleData.model,
                 "year" : createVehicleData.year,

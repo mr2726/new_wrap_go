@@ -2,7 +2,13 @@ import "../App.css";
 import { useEffect, useRef, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { BiSolidFactory } from "react-icons/bi";
-import { supabase } from "../data/supabase";
+import {
+  getUser,
+  getProfileFieldSingle,
+  uploadStorageFile,
+  getStorageFileUrl,
+  updateProfile,
+} from "../data/service";
 import pageData from "../data/data.json";
 
 function ChangeImage({title, type, imageField}) {
@@ -17,14 +23,10 @@ function ChangeImage({title, type, imageField}) {
 
     useEffect(() => {
         const loadCurrentImage = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
 
-            const { data, error } = await supabase
-                .from("profiles")
-                .select(profileImageField)
-                .eq("userid", user.id)
-                .single();
+            const { data, error } = await getProfileFieldSingle(user.id, profileImageField);
 
             if (error) {
                 console.error(error.message);
@@ -64,7 +66,7 @@ function ChangeImage({title, type, imageField}) {
         setStatus(null);
 
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) {
                 setStatus({ type: "error", text: textData.errors.notSignedIn });
                 return;
@@ -73,10 +75,7 @@ function ChangeImage({title, type, imageField}) {
             const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
             const filePath = `${user.id}/${type}-${Date.now()}-${safeFileName}`;
 
-            const { error: uploadError } = await supabase
-                .storage
-                .from(bucketName)
-                .upload(filePath, file, { upsert: true });
+            const { error: uploadError } = await uploadStorageFile(bucketName, filePath, file);
 
             if (uploadError) {
                 console.error(uploadError.message);
@@ -84,10 +83,7 @@ function ChangeImage({title, type, imageField}) {
                 return;
             }
 
-            const { data: publicData } = supabase
-                .storage
-                .from(bucketName)
-                .getPublicUrl(filePath);
+            const { data: publicData } = getStorageFileUrl(bucketName, filePath);
 
             const publicUrl = publicData?.publicUrl;
             if (!publicUrl) {
@@ -95,10 +91,7 @@ function ChangeImage({title, type, imageField}) {
                 return;
             }
 
-            const { error: profileError } = await supabase
-                .from("profiles")
-                .update({ [profileImageField]: publicUrl })
-                .eq("userid", user.id);
+            const { error: profileError } = await updateProfile(user.id, { [profileImageField]: publicUrl });
 
             if (profileError) {
                 console.error(profileError.message);

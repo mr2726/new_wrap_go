@@ -1,7 +1,7 @@
 import "../../../App.css";
 import { useState } from "react";
 import pageData from "../../../data/data.json";
-import { supabase } from "../../../data/supabase";
+import { updateVehicle } from "../../../data/service";
 
 function AddDriverForm({ onClose, vehicles }) {
     const formText = pageData.fleet.addDriverForm;
@@ -42,18 +42,14 @@ function AddDriverForm({ onClose, vehicles }) {
             return;
         }
         else{
-            const { error } = await supabase
-                .from("vehicles")
-                .update({
-                    "invite_code": inviteCode,
-                    "signeddriveremail" : document.getElementById("email").value
-                })
-                .eq("id", vehicleId)
+            const { error } = await updateVehicle(vehicleId, {
+                    invite_code: inviteCode,
+                    signeddriveremail: document.getElementById("email").value,
+                });
 
-                if(error){
+                if (error) {
                     console.error("Failed to update vehicle with invite code:", error);
-                }
-                else{
+                } else {
                     onClose();
                 }
         }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../../data/supabase";
+import { updateUserPassword } from "../../data/service";
 import Logo from "../../Components/Logo";
 
 function ResetPassword({data, setPage}) {
@@ -33,9 +33,7 @@ function ResetPassword({data, setPage}) {
             return;
         }
 
-        const { error: updateError } = await supabase.auth.updateUser({
-            password: password
-        });
+        const { error: updateError } = await updateUserPassword(password);
 
         if (updateError) {
             setError(updateError.message);

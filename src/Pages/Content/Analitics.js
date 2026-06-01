@@ -1,6 +1,6 @@
 import "../../App.css";
 import { useEffect, useState } from "react";
-import { supabase } from "../../data/supabase";
+import { getUser, getCampaignsByOwner, getAnalitics } from "../../data/service";
 import pageData from "../../data/data.json";
 import Loader from "../../Components/Loader";
 /* Pages */
@@ -31,12 +31,9 @@ function Analitics({ tableData }) {
 
     async function fetchTableData() {
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
-            const { data: campaigns, error: campaignsError } = await supabase
-                .from("campaigns")
-                .select("*")
-                .eq("ownerid", user.id);
+            const { data: campaigns, error: campaignsError } = await getCampaignsByOwner(user.id);
 
             if (campaignsError) {
                 console.error(campaignsError.message);
@@ -51,13 +48,9 @@ function Analitics({ tableData }) {
 
     async function fetchChartData(comp) {
         if (comp === null || comp === undefined) return;
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await getUser();
         if (!user) return;
-        const { data: new_analiticsData, error: _analiticsDataError } = await supabase
-            .from("analitics")
-            .select("*")
-            .eq("owner_id", user.id)
-            .eq("campaign_id", comp);
+        const { data: new_analiticsData, error: _analiticsDataError } = await getAnalitics(user.id, comp);
 
         if (_analiticsDataError) {
             console.error(_analiticsDataError.message);

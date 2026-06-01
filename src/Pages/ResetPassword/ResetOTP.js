@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../../App.css";
 import { MdLockReset } from "react-icons/md";
-import { supabase } from "../../data/supabase";
+import { resetPasswordForEmail } from "../../data/service";
 
 
 function ResetOTP({data, setPage, setSender}) {
@@ -35,12 +35,7 @@ function ResetOTP({data, setPage, setSender}) {
             return;
         }
 
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-            normalizedEmail,
-            {
-                redirectTo: resolveRedirectTo()
-            }
-        );
+        const { error: resetError } = await resetPasswordForEmail(normalizedEmail, resolveRedirectTo());
 
         if (resetError) {
             setError(resetError.message);

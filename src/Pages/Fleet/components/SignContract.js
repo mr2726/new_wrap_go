@@ -1,7 +1,7 @@
 import "../../../App.css";
 import { useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
-import { supabase } from "../../../data/supabase";
+import { updateDriverContract } from "../../../data/service";
 import pageData from "../../../data/data.json";
 
 function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
@@ -58,10 +58,7 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
     setAssignStatus({ type: "", text: "" });
 
     setIsSubmitting(true);
-    const { error } = await supabase
-      .from("drivers")
-      .update({ contractid: selectedContractId })
-      .eq("id", selectedDriverId);
+    const { error } = await updateDriverContract(selectedDriverId, selectedContractId);
 
     setIsSubmitting(false);
 

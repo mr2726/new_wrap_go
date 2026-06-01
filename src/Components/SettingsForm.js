@@ -1,6 +1,6 @@
 import "../App.css";
 import { useState, useEffect } from "react";
-import { supabase } from "../data/supabase";
+import { getUser, updateProfile } from "../data/service";
 import pageData from "../data/data.json";
 
 function SettingsForm({title, description, data}) {
@@ -22,16 +22,13 @@ function SettingsForm({title, description, data}) {
         e.preventDefault();
         setStatus(null);
 
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await getUser();
         if (!user) return;
 
         // Strip protected fields that must not be updated via this form
         const { email: _email, userid: _userid, ...safeFormValues } = formValues;
 
-        const { error } = await supabase
-            .from("profiles")
-            .update(safeFormValues)
-            .eq("userid", user.id);
+        const { error } = await updateProfile(user.id, safeFormValues);
 
         if (error) {
             console.error(error.message);

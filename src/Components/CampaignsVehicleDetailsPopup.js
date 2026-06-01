@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../data/supabase";
+import { getDriverCarIdsByContractId, getVehiclesByInviteCodes } from "../data/service";
 import "../App.css";
 
 const parseDurationMs = (duration) => {
@@ -32,10 +32,7 @@ function CampaignsVehicleDetailsPopup({ campaign, onClose }) {
             setLoading(true);
 
             // Step 1: get drivers assigned to this campaign
-            const { data: drivers, error: driversError } = await supabase
-                .from("drivers")
-                .select("carid")
-                .eq("contractid", campaign.id);
+            const { data: drivers, error: driversError } = await getDriverCarIdsByContractId(campaign.id);
 
             if (driversError || !drivers?.length) {
                 setFilledSlots([]);
@@ -46,10 +43,7 @@ function CampaignsVehicleDetailsPopup({ campaign, onClose }) {
             // Step 2: get vehicle info by invite_code = driver.carid
             const carIds = drivers.map((d) => d.carid).filter(Boolean);
 
-            const { data: vehicles } = await supabase
-                .from("vehicles")
-                .select("invite_code, year, mark, model")
-                .in("invite_code", carIds);
+            const { data: vehicles } = await getVehiclesByInviteCodes(carIds);
 
             // Step 3: map invite_code → vehicle
             const vehicleMap = {};

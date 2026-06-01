@@ -1,6 +1,6 @@
 import "../../App.css";
 import { useState, useEffect } from "react";
-import { supabase } from "../../data/supabase";
+import { getUser, getProfile } from "../../data/service";
 import pageData from "../../data/data.json";
 import Profile from "./Settings/Profile";
 import Company from "./Settings/Company";
@@ -20,13 +20,9 @@ function Settings() {
     const [loading, setLoading] = useState(true);
     const fetchData = async () => {
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
-            const { data: profileData, error: profileError } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("userid", user.id)
-                .single();
+            const { data: profileData, error: profileError } = await getProfile(user.id);
             if (profileError) {
                 console.error(profileError.message);
                 return;

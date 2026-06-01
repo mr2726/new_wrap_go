@@ -1,5 +1,5 @@
 import "../App.css";
-import { supabase } from "../data/supabase";
+import { signOut } from "../data/service";
 import Logo from "./Logo";
 import { MdOutlineDashboard, MdAdd, MdOutlineMap,MdBarChart,MdCompareArrows, MdCreditCard, MdOutlineSettings, MdLogout } from "react-icons/md";
 import { FaInfoCircle } from "react-icons/fa";
@@ -32,7 +32,7 @@ function SideBar ({data, page, setPage}) {
     }
 
     const logoutCode = async () => {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await signOut();
 
         if (error) {
             console.error(error.message);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import { MdCheckCircleOutline  } from "react-icons/md";
-import { supabase } from "../data/supabase";
+import { getSession, signUp } from "../data/service";
 import Logo from "../Components/Logo";
 
 function Signup({data, setPage, setEmail}) {
@@ -13,7 +13,7 @@ function Signup({data, setPage, setEmail}) {
 
     useEffect(() => {
         // Автоматический вход, если есть сессия
-        supabase.auth.getSession().then(async ({ data: { session } }) => {
+        getSession().then(async ({ data: { session } }) => {
             if (session?.user) {
                 setPage && setPage("content");
             }
@@ -76,13 +76,7 @@ function Signup({data, setPage, setEmail}) {
 
         const normalizedEmail = (formData.email || "").trim().toLowerCase();
 
-        const { error: signUpError } = await supabase.auth.signUp({
-            email: normalizedEmail,
-            password: formData.password,
-            options: {
-                emailRedirectTo: resolveEmailRedirectTo(),
-            },
-        });
+        const { error: signUpError } = await signUp(normalizedEmail, formData.password, resolveEmailRedirectTo());
 
         setIsSubmitting(false);
 

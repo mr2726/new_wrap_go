@@ -3,7 +3,16 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiArrowUp, FiCreditCard, FiDownload, FiPlus, FiTrash2 } from "react-icons/fi";
 import { HiOutlineBuildingLibrary, HiOutlineWallet } from "react-icons/hi2";
 import { RiBankCardLine } from "react-icons/ri";
-import { supabase } from "../../data/supabase";
+import {
+  getUser,
+  getFleet,
+  getTransfers,
+  getBankData,
+  deleteBankData,
+  insertBankData,
+  updateFleet,
+  insertTransfer,
+} from "../../data/service";
 import pageData from "../../data/data.json";
 
 import TopMenu from "../../Components/TopMenu";
@@ -92,13 +101,9 @@ function Billing({ setFleetPage }) {
         
         // Simulate fetching fleet data
         const fetchFleetData = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
-            const { data, error } = await supabase
-                .from("fleets")
-                .select("*")
-                .eq("userid", user.id)
-                .single();
+            const { data, error } = await getFleet(user.id);
             if (error) {
                 console.error("Error fetching fleet data:", error);
             } else {
@@ -107,12 +112,9 @@ function Billing({ setFleetPage }) {
         }
 
         const fetchTransactions = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
-            const {data: transactions, error} = await supabase
-                .from("transfers")
-                .select("*")
-                .eq("owner_id", user.id);
+            const {data: transactions, error} = await getTransfers(user.id);
             if (error) {
                 console.error("Error fetching transactions:", error);
             }
@@ -122,12 +124,9 @@ function Billing({ setFleetPage }) {
         }
 
         const fetchBankData = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
-            const { data, error } = await supabase
-                .from("bankdata")
-                .select("*")
-                .eq("owner_id", user.id);
+            const { data, error } = await getBankData(user.id);
             if (error) {
                 console.error("Error fetching bank data:", error);
             }
@@ -170,14 +169,10 @@ function Billing({ setFleetPage }) {
     };
 
     const handleRemoveCard = async (card) => {
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await getUser();
         if (!user) return;
 
-        const { error } = await supabase
-            .from("bankdata")
-            .delete()
-            .eq("id", card.id)
-            .eq("owner_id", user.id);
+        const { error } = await deleteBankData(card.id, user.id);
 
         if (error) {
             console.error("Error removing card:", error);
@@ -231,7 +226,7 @@ function Billing({ setFleetPage }) {
         setIsAddingCard(true);
 
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
 
             const cardType = detectCardType(sanitizedNumber);
@@ -251,11 +246,7 @@ function Billing({ setFleetPage }) {
                 owner_id: user.id,
             };
 
-            const { data, error } = await supabase
-                .from("bankdata")
-                .insert(insertPayload)
-                .select("*")
-                .single();
+            const { data, error } = await insertBankData(insertPayload);
 
             if (error) {
                 console.error("Error adding card:", error);
@@ -278,7 +269,7 @@ function Billing({ setFleetPage }) {
 
     const handleWithdraw = async () => {
         setWithdrawError("");
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await getUser();
         if (!user) return;
 
         if (!selectedMethod) {
@@ -299,10 +290,7 @@ function Billing({ setFleetPage }) {
         try {
             const newBalance = currentBalance - amountToWithdraw;
 
-            const { error: balanceError } = await supabase
-                .from("fleets")
-                .update({ balance: newBalance })
-                .eq("userid", user.id);
+            const { error: balanceError } = await updateFleet(user.id, { balance: newBalance });
 
             if (balanceError) {
                 console.error("Error updating balance:", balanceError);
@@ -321,19 +309,12 @@ function Billing({ setFleetPage }) {
                 status: "in process",
             };
 
-            const { data: insertedTransfer, error: transferError } = await supabase
-                .from("transfers")
-                .insert(transferPayload)
-                .select("*")
-                .single();
+            const { data: insertedTransfer, error: transferError } = await insertTransfer(transferPayload);
 
             if (transferError) {
                 console.error("Error creating transfer:", transferError);
                 // Rollback: restore the original balance
-                await supabase
-                    .from("fleets")
-                    .update({ balance: currentBalance })
-                    .eq("userid", user.id);
+                await updateFleet(user.id, { balance: currentBalance });
                 setWithdrawError(billingText.alerts.transferNotSaved);
                 return;
             }

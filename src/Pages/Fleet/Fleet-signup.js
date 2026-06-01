@@ -2,7 +2,7 @@ import "../../App.css";
 import "./fleetResize.css";
 import Logo from "../../Components/Logo";
 import { useState, useEffect } from "react";
-import { supabase } from "../../data/supabase";
+import { getUser, checkFleetByEmail, signUp, checkFleetByUserId, insertFleet } from "../../data/service";
 import pageData from "../../data/data.json";
 
 function FleetSignup({ setPage, setFleetPage }) {
@@ -23,7 +23,7 @@ function FleetSignup({ setPage, setFleetPage }) {
 
     useEffect(() => {
         const checkExistingSession = async () => {
-            const { data: authData } = await supabase.auth.getUser();
+            const { data: authData } = await getUser();
             if (authData?.user?.email) {
                 setFromOtp(true);
                 setUserData(prev => ({ ...prev, contactEmail: authData.user.email }));
@@ -57,7 +57,7 @@ function FleetSignup({ setPage, setFleetPage }) {
 
             if (fromOtp) {
                 // User came via magic link — already authenticated
-                const { data: authData, error: authError } = await supabase.auth.getUser();
+                const { data: authData, error: authError } = await getUser();
                 if (authError || !authData?.user?.id) {
                     setError(signupText.messages.sessionExpired);
                     setIsSubmitting(false);
@@ -79,11 +79,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                 }
 
                 // Check if email already in fleets
-                const { data: existingFleet, error: checkError } = await supabase
-                    .from("fleets")
-                    .select("email")
-                    .eq("email", userData.contactEmail.toLowerCase())
-                    .maybeSingle();
+                const { data: existingFleet, error: checkError } = await checkFleetByEmail(userData.contactEmail.toLowerCase());
 
                 if (checkError && checkError.code !== "PGRST116") throw checkError;
 
@@ -93,10 +89,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                     return;
                 }
 
-                const { data, error: signupError } = await supabase.auth.signUp({
-                    email: userData.contactEmail,
-                    password: userData.password,
-                });
+                const { data, error: signupError } = await signUp(userData.contactEmail, userData.password);
 
                 if (signupError) {
                     setError(signupError.message || signupText.messages.signupFailed);
@@ -115,27 +108,21 @@ function FleetSignup({ setPage, setFleetPage }) {
             }
 
             // Check if fleet record already exists for this user
-            const { data: existingRecord } = await supabase
-                .from("fleets")
-                .select("userid")
-                .eq("userid", userId)
-                .maybeSingle();
+            const { data: existingRecord } = await checkFleetByUserId(userId);
 
             if (existingRecord) {
                 if (setFleetPage) setFleetPage("dashboard");
                 return;
             }
 
-            const { error: insertError } = await supabase.from("fleets").insert([
-                {
+            const { error: insertError } = await insertFleet({
                     userid: userId,
                     email: (userEmail || "").toLowerCase(),
                     phone: userData.contactPhone,
                     fleetname: userData.fleetName,
                     contactpersone: userData.contactPerson,
                     fleetsize: parseInt(userData.fleetSize) || 0,
-                }
-            ]);
+                });
 
             if (insertError) {
                 setError(`${signupText.messages.saveFleetFailedPrefix} ${insertError.message}`);

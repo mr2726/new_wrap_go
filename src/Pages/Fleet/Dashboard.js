@@ -6,7 +6,14 @@ import AddForm from './components/AddForm';
 import AddDriverForm from './components/AddDriverForm';
 import SignContract from './components/SignContract';
 import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '../../data/supabase';
+import {
+  getUser,
+  getDriversByCarIds,
+  getAllCampaignsByIds,
+  getFleetBalance,
+  getVehiclesByFleet,
+  getEarnings,
+} from '../../data/service';
 import pageData from '../../data/data.json';
 
 function Dashboard({ setFleetPage }) {
@@ -23,10 +30,7 @@ function Dashboard({ setFleetPage }) {
 
     const fetchDrivers = useCallback(async (inviteCodes) => {
         if (!inviteCodes || inviteCodes.length === 0) return;
-        const { data, error } = await supabase
-            .from('drivers')
-            .select('*')
-            .in("carid", inviteCodes);
+        const { data, error } = await getDriversByCarIds(inviteCodes);
 
         if (error) {
             console.error("Error fetching drivers:", error);
@@ -37,10 +41,7 @@ function Dashboard({ setFleetPage }) {
 
     const fetchContracts = useCallback(async (contractCode) => {
         if (!contractCode || contractCode.length === 0) return;
-        const {data, error} = await supabase
-            .from("campaigns")
-            .select("*")
-            .in("id", contractCode)
+        const {data, error} = await getAllCampaignsByIds(contractCode)
         if (error) {
             console.error("Error fetching contracts:", error);
         } else {
@@ -49,13 +50,10 @@ function Dashboard({ setFleetPage }) {
     }, []);
 
     const fetchFleets = useCallback(async () => {
-        const { data: authData } = await supabase.auth.getUser();
+        const { data: authData } = await getUser();
         const user = authData?.user;
         if (!user) return;
-        const { data, error } = await supabase
-            .from('fleets')
-            .select('contracts, balance')
-            .eq("userid", user.id);
+        const { data, error } = await getFleetBalance(user.id);
 
         if (error) {
             console.error("Error fetching fleets:", error);
@@ -68,13 +66,10 @@ function Dashboard({ setFleetPage }) {
     }, [fetchContracts]);
 
     const fetchVehicles = useCallback(async () => {
-        const { data: authData } = await supabase.auth.getUser();
+        const { data: authData } = await getUser();
         const user = authData?.user;
         if (!user) return;
-        const { data, error } = await supabase
-            .from('vehicles')
-            .select('*')
-            .eq("fleetownerid", user.id);
+        const { data, error } = await getVehiclesByFleet(user.id);
 
         if (error) {
             console.error("Error fetching vehicles:", error);
@@ -86,14 +81,10 @@ function Dashboard({ setFleetPage }) {
     }, [fetchDrivers]);
 
     const fetchTransactions = useCallback(async () => {
-        const { data: authData } = await supabase.auth.getUser();
+        const { data: authData } = await getUser();
         const user = authData?.user;
         if (!user) return;
-        const { data, error } = await supabase
-            .from('transfers')
-            .select('*')
-            .eq("owner_id", user.id)
-            .eq("type", "Earning")
+        const { data, error } = await getEarnings(user.id)
 
         if (error) {
             console.error("Error fetching transactions:", error);

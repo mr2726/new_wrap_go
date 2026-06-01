@@ -1,6 +1,6 @@
 import "../App.css";
 import Logo from "./Logo";
-import { supabase } from "../data/supabase";
+import { signOut } from "../data/service";
 import pageData from "../data/data.json";
 
 function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
@@ -13,7 +13,7 @@ function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
     ];
 
     const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await signOut();
 
         if (error) {
             console.error(error.message);

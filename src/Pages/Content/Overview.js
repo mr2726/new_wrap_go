@@ -1,5 +1,10 @@
 import "../../App.css";
-import { supabase } from "../../data/supabase";
+import {
+  getUser,
+  getCampaignsByOwner,
+  getDriverDistancesByContractIds,
+  updateCampaign,
+} from "../../data/service";
 import OverviewInfo from "../../Components/overviewInfo";
 import CampaignTable from "../../Components/CampaignTable";
 import Loader from "../../Components/Loader";
@@ -76,15 +81,12 @@ function Overview ({data, setPage}) {
     //  fetch data
     useEffect(() => {
         const fetchData = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) return;
 
 
             // campaigns
-            const { data: campaigns, error: campaignsError } = await supabase
-                .from("campaigns")
-                .select("*")
-                .eq("ownerid", user.id);
+            const { data: campaigns, error: campaignsError } = await getCampaignsByOwner(user.id);
 
             if (campaignsError) {
                 console.error(campaignsError.message);
@@ -102,10 +104,7 @@ function Overview ({data, setPage}) {
                 return;
             }
 
-            const { data: drivers, error: driversError } = await supabase
-                .from("drivers")
-                .select("contractid, totaldistance")
-                .in("contractid", campaignIds);
+            const { data: drivers, error: driversError } = await getDriverDistancesByContractIds(campaignIds);
 
             if (driversError) {
                 console.error(driversError.message);
@@ -127,12 +126,7 @@ function Overview ({data, setPage}) {
 
             const countUpdates = campaignsWithDriverCount
                 .filter((campaign) => (campaign.driverCount || 0) !== (campaigns.find((item) => item.id === campaign.id)?.driverCount || 0))
-                .map((campaign) =>
-                    supabase
-                        .from("campaigns")
-                        .update({ driverCount: campaign.driverCount })
-                        .eq("id", campaign.id)
-                );
+                .map((campaign) => updateCampaign(campaign.id, { driverCount: campaign.driverCount }));
 
             if (countUpdates.length > 0) {
                 const updateResults = await Promise.all(countUpdates);

@@ -1,6 +1,6 @@
 import "../../App.css";
 import { MdMarkEmailRead } from "react-icons/md";
-import { supabase } from "../../data/supabase";
+import { resetPasswordForEmail } from "../../data/service";
 
 
 function ResetPasswordEmail ({data, setPage, email}) {
@@ -16,12 +16,7 @@ function ResetPasswordEmail ({data, setPage, email}) {
     };
 
     const resendEmail = async () => {
-        const { error } = await supabase.auth.resetPasswordForEmail(
-            email,
-            {
-                redirectTo: resolveRedirectTo()
-            }
-        );
+        const { error } = await resetPasswordForEmail(email, resolveRedirectTo());
 
         if (error) {
             console.error(error.message);

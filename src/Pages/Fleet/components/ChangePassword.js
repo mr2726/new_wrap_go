@@ -1,6 +1,6 @@
 import "../../../App.css";
 import { useEffect, useState } from "react";
-import { supabase } from "../../../data/supabase";
+import { getUser, signIn, updateUserPassword } from "../../../data/service";
 import pageData from "../../../data/data.json";
 
 function ChangePassword({ onClose }) {
@@ -50,17 +50,15 @@ function ChangePassword({ onClose }) {
             setSaving(true);
 
             // Re-authenticate user before changing password.
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: authData } = await getUser();
+            const user = authData?.user;
             if (!user?.email) {
                 setIsError(true);
                 setMessage(passwordText.messages.sessionMissing);
                 return;
             }
 
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email: user.email,
-                password: currentPassword,
-            });
+            const { error: signInError } = await signIn(user.email, currentPassword);
 
             if (signInError) {
                 setIsError(true);
@@ -68,9 +66,7 @@ function ChangePassword({ onClose }) {
                 return;
             }
 
-            const { error: updateError } = await supabase.auth.updateUser({
-                password: newPassword,
-            });
+            const { error: updateError } = await updateUserPassword(newPassword);
 
             if (updateError) {
                 setIsError(true);

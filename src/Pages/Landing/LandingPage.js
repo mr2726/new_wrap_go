@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import {supabase} from "../../data/supabase"
+import { getSession } from "../../data/service";
 import './landing.css';
 
 /**
@@ -12,7 +12,7 @@ const LandingPage = () => {
     const noRedirect = new URLSearchParams(window.location.search).has('landing');
     if (noRedirect) return;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    getSession().then(({ data: { session } }) => {
       if (session?.user) {
         window.location.replace('/app');
       }

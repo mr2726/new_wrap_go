@@ -1,6 +1,6 @@
 import "../App.css";
 import Logo from "../Components/Logo";
-import { supabase } from "../data/supabase";
+import { getUser, checkProfileByUserId, insertProfile } from "../data/service";
 import { useEffect, useState } from "react";
 
 function CompanyInfo ({data, setPage, email}) {
@@ -15,7 +15,7 @@ function CompanyInfo ({data, setPage, email}) {
         }
 
         const loadUserEmail = async () => {
-            const { data: authData } = await supabase.auth.getUser();
+            const { data: authData } = await getUser();
             if (authData?.user?.email) {
                 setResolvedEmail(authData.user.email);
             }
@@ -29,7 +29,7 @@ function CompanyInfo ({data, setPage, email}) {
         setError("");
         setIsSubmitting(true);
 
-        const { data: authData, error: authError } = await supabase.auth.getUser();
+        const { data: authData, error: authError } = await getUser();
         const user = authData?.user;
 
         if (authError || !user?.id) {
@@ -53,11 +53,7 @@ function CompanyInfo ({data, setPage, email}) {
             }
         });
 
-        const { data: existingProfile, error: checkError } = await supabase
-            .from("profiles")
-            .select("userid")
-            .eq("userid", user.id)
-            .maybeSingle();
+        const { data: existingProfile, error: checkError } = await checkProfileByUserId(user.id);
 
         if (checkError) {
             setError(checkError.message || "Failed to verify company profile.");
@@ -71,10 +67,7 @@ function CompanyInfo ({data, setPage, email}) {
             return;
         }
 
-        const { error: insertError } = await supabase
-            .from("profiles")
-            .insert([
-                {
+        const { error: insertError } = await insertProfile({
                     userid: user.id,
                     name: filledValues.fullname,
                     email: user.email,
@@ -86,8 +79,7 @@ function CompanyInfo ({data, setPage, email}) {
                     street: filledValues.street,
                     tax: filledValues.tax,
                     web: filledValues.web,
-                }
-            ]);
+                });
 
         setIsSubmitting(false);
 

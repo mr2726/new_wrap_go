@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import "../App.css";
-import { supabase } from "../data/supabase";
+import {
+  getSession,
+  signIn,
+  getProfileField,
+  mfaListFactors,
+  mfaChallenge,
+  mfaVerify,
+  checkFleetByUserId,
+  getDriverByUserId,
+  getDriverByEmail,
+} from "../data/service";
 import Logo from "../Components/Logo";
 
 function Singin({data, setPage}) {
@@ -21,7 +31,7 @@ function Singin({data, setPage}) {
 
     // Автоматический вход, если есть сессия
     useEffect(() => {
-        supabase.auth.getSession().then(async ({ data: { session } }) => {
+        getSession().then(async ({ data: { session } }) => {
             if (session?.user) {
                 setPage && setPage("content");
             }
@@ -44,10 +54,7 @@ function Singin({data, setPage}) {
         setError("");
         setIsSubmitting(true);
 
-        const { data: authData, error } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password
-        });
+        const { data: authData, error } = await signIn(formData.email, formData.password);
 
         if (error) {
             setError(error.message);
@@ -74,11 +81,7 @@ function Singin({data, setPage}) {
             return message.includes("column") || message.includes("does not exist");
         };
 
-        const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("auntufication")
-            .eq("userid", user.id)
-            .maybeSingle();
+        const { data: profile, error: profileError } = await getProfileField(user.id, "auntufication");
 
         if (profileError) {
             setError(profileError.message || "Failed to load profile settings.");
@@ -88,7 +91,7 @@ function Singin({data, setPage}) {
 
         if (profile) {
             if (profile?.auntufication) {
-                const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+                const { data: factorsData, error: factorsError } = await mfaListFactors();
 
                 if (factorsError) {
                     setError(factorsError.message || "Failed to load authenticator factors.");
@@ -103,9 +106,7 @@ function Singin({data, setPage}) {
                     return;
                 }
 
-                const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
-                    factorId: verifiedFactor.id,
-                });
+                const { data: challengeData, error: challengeError } = await mfaChallenge(verifiedFactor.id);
 
                 if (challengeError || !challengeData?.id) {
                     setError(challengeError?.message || "Failed to create 2FA challenge.");
@@ -126,11 +127,7 @@ function Singin({data, setPage}) {
             return;
         }
 
-        const { data: fleet, error: fleetError } = await supabase
-            .from("fleets")
-            .select("userid")
-            .eq("userid", user.id)
-            .maybeSingle();
+        const { data: fleet, error: fleetError } = await checkFleetByUserId(user.id);
 
         if (fleetError) {
             setError(fleetError.message || "Failed to load fleet account.");
@@ -145,11 +142,7 @@ function Singin({data, setPage}) {
             return;
         }
 
-        const { data: driverByUserId, error: driverByUserIdError } = await supabase
-            .from("drivers")
-            .select("id")
-            .eq("userid", user.id)
-            .maybeSingle();
+        const { data: driverByUserId, error: driverByUserIdError } = await getDriverByUserId(user.id);
 
         if (!driverByUserIdError && driverByUserId) {
             setError("");
@@ -164,11 +157,7 @@ function Singin({data, setPage}) {
             return;
         }
 
-        const { data: driverByEmail, error: driverByEmailError } = await supabase
-            .from("drivers")
-            .select("id")
-            .eq("email", (user.email || "").toLowerCase())
-            .maybeSingle();
+        const { data: driverByEmail, error: driverByEmailError } = await getDriverByEmail((user.email || "").toLowerCase());
 
         if (!driverByEmailError && driverByEmail) {
             setError("");
@@ -197,11 +186,7 @@ function Singin({data, setPage}) {
         }
 
         setIsSubmitting(true);
-        const { error: verifyError } = await supabase.auth.mfa.verify({
-            factorId,
-            challengeId,
-            code: totpCode,
-        });
+        const { error: verifyError } = await mfaVerify(factorId, challengeId, totpCode);
 
         if (verifyError) {
             setError(verifyError.message || data.twoFactor.errors.invalidCode);

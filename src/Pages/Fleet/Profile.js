@@ -4,7 +4,13 @@ import TopMenu from "../../Components/TopMenu";
 import { FaRegUser, FaPhoneAlt } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
 import { RiBankFill } from "react-icons/ri";
-import { supabase } from "../../data/supabase";
+import {
+  getUser,
+  mfaListFactors,
+  getFleet,
+  updateFleet,
+  mfaUnenroll,
+} from "../../data/service";
 import Loader from "../../Components/Loader";
 import ChangePassword from "./components/ChangePassword";
 import TwoFactorAuth from "./components/2FA";
@@ -83,7 +89,7 @@ function Profile({ setFleetPage }) {
     }, []);
 
     const refresh2FAState = useCallback(async () => {
-        const { data: factorsData, error } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
+        const { data: factorsData, error } = await withAuthLockRetry(() => mfaListFactors());
         if (error) {
             console.error("Error loading 2FA factors:", error);
             return;
@@ -97,13 +103,9 @@ function Profile({ setFleetPage }) {
         const fetchProfile = async () => {
             try {
                 setLoading(true);
-                const { data: { user } } = await supabase.auth.getUser();
+                const { data: { user } } = await getUser();
                 if (user) {
-                    const { data, error } = await supabase
-                        .from("fleets")
-                        .select("*")
-                        .eq("userid", user.id)
-                        .single();
+                    const { data, error } = await getFleet(user.id);
                     if (error) {
                         console.error("Error fetching profile:", error);
                         setMessage(`${profileText.messages.loadErrorPrefix} ${error.message}`);
@@ -152,21 +154,18 @@ function Profile({ setFleetPage }) {
             }
             setEmailError("");
             
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await getUser();
             if (!user) {
                 setMessage(profileText.messages.userNotAuthenticated);
                 return;
             }
 
-            const { error } = await supabase
-                .from("fleets")
-                .update({
+            const { error } = await updateFleet(user.id, {
                     contactpersone: formData.contactpersone,
                     fleetname: formData.fleetname,
                     email: normalizedEmail,
                     phone: formData.phone
-                })
-                .eq("userid", user.id);
+                });
 
             if (error) {
                 console.error("Error saving profile:", error);
@@ -193,7 +192,7 @@ function Profile({ setFleetPage }) {
             setIs2FALoading(true);
             setMessage("");
 
-            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
+            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => mfaListFactors());
             if (factorsError) {
                 setMessage(`${profileText.messages.disable2faErrorPrefix} ${factorsError.message}`);
                 return;
@@ -201,7 +200,7 @@ function Profile({ setFleetPage }) {
 
             const totpFactors = factorsData?.totp || [];
             for (const factor of totpFactors) {
-                const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+                const { error } = await mfaUnenroll(factor.id);
                 if (error) {
                     setMessage(`${profileText.messages.disable2faErrorPrefix} ${error.message}`);
                     return;

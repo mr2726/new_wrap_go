@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { FaMoon, FaSun  } from "react-icons/fa";
-import { supabase } from "../data/supabase";
+import {
+  getActiveZone,
+  getUser,
+  getCampaignNamesByOwner,
+  getDriversByContractIds,
+  subscribeToDriversAndCampaigns,
+  removeRealtimeChannel,
+} from "../data/service";
 import pageData from "../data/data.json";
 
 const MAPBOX_ACCESS_TOKEN = (process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || "").trim();
@@ -204,9 +211,7 @@ export default function Map() {
     let isActive = true;
 
     const fetchActiveZones = async () => {
-      const { data, error } = await supabase
-        .from("active_zone")
-        .select("activezone");
+      const { data, error } = await getActiveZone();
 
       if (!isActive) return;
 
@@ -238,7 +243,7 @@ export default function Map() {
       if (isFetching) return;
       isFetching = true;
 
-      const { data: authData, error: authError } = await supabase.auth.getUser();
+      const { data: authData, error: authError } = await getUser();
       if (authError || !authData?.user) {
         if (authError) {
           console.error("Failed to get current user:", authError);
@@ -249,10 +254,7 @@ export default function Map() {
 
       const userId = authData.user.id;
 
-      const { data: campaignRows, error: campaignError } = await supabase
-        .from("campaigns")
-        .select("id, name")
-        .eq("ownerid", userId);
+      const { data: campaignRows, error: campaignError } = await getCampaignNamesByOwner(userId);
 
       if (!isActive) return;
 
@@ -274,11 +276,7 @@ export default function Map() {
         return acc;
       }, {});
 
-      const { data: driverRows, error: driverError } = await supabase
-        .from("drivers")
-        .select("id, name, contractid, lat, lan")
-        .in("contractid", campaignIds)
-        .order("created_at", { ascending: false });
+      const { data: driverRows, error: driverError } = await getDriversByContractIds(campaignIds);
 
       if (!isActive) return;
 
@@ -328,28 +326,12 @@ export default function Map() {
 
     pollingId = window.setInterval(fetchDriverData, DRIVER_REFRESH_MS);
 
-    const realtimeChannel = supabase
-      .channel("drivers-live-updates")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "drivers" },
-        () => {
-          fetchDriverData();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "campaigns" },
-        () => {
-          fetchDriverData();
-        }
-      )
-      .subscribe();
+    const realtimeChannel = subscribeToDriversAndCampaigns(() => fetchDriverData());
 
     return () => {
       isActive = false;
       window.clearInterval(pollingId);
-      supabase.removeChannel(realtimeChannel);
+      removeRealtimeChannel(realtimeChannel);
     };
   }, []);
 

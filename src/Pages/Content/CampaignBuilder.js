@@ -5,7 +5,15 @@ import PlanSelector from "../../Components/PlanSelector";
 import AdPlacement from "../../Components/AdPlacement";
 import Modal from "../../Components/Moda";
 import Loader from "../../Components/Loader";
-import { supabase } from "../../data/supabase";
+import {
+  getLastInvoiceByPrefix,
+  uploadDocument,
+  getDocumentUrl,
+  getSession,
+  insertCampaign,
+  insertAnalitics,
+  insertInvoice,
+} from "../../data/service";
 
 
 function CampaignBuilder({data}) {
@@ -65,12 +73,7 @@ function CampaignBuilder({data}) {
         const currentYear = new Date().getFullYear();
         const prefix = `INV-${currentYear}-`;
 
-        const { data: invoiceRows, error } = await supabase
-            .from("invoices")
-            .select("invoiceid")
-            .ilike("invoiceid", `${prefix}%`)
-            .order("invoiceid", { ascending: false })
-            .limit(1);
+        const { data: invoiceRows, error } = await getLastInvoiceByPrefix(prefix);
 
         if (error) {
             console.error("Invoice id read error:", error);
@@ -114,11 +117,7 @@ function CampaignBuilder({data}) {
                     .substring(2)}.${fileExt}`;
                 const filePath = `campaign-docs/${fileName}`;
 
-                const { error: uploadError } = await supabase.storage
-                    .from('documents') // bucket name
-                    .upload(filePath, file, {
-                    contentType: file.type,
-                });
+                const { error: uploadError } = await uploadDocument(filePath, file);
 
                 if (uploadError) {
                     console.error("Upload error:", uploadError);
@@ -126,15 +125,13 @@ function CampaignBuilder({data}) {
                 }
 
                 // ===== 2. Получаем публичную ссылку =====
-                const { data: publicUrlData } = supabase.storage
-                    .from('documents')
-                    .getPublicUrl(filePath);
+                const { data: publicUrlData } = getDocumentUrl(filePath);
 
                 fileUrl = publicUrlData.publicUrl;
             }
 
             // ===== 3. Подготовка данных =====
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await getSession();
 
             const userId = session?.user?.id;
             const payload = {
@@ -153,10 +150,7 @@ function CampaignBuilder({data}) {
             };
 
             // ===== 4. Запись в таблицу =====
-            const { data, error } = await supabase
-                .from('campaigns')
-                .insert([payload])
-                .select();
+            const { data, error } = await insertCampaign(payload);
 
             if (error) {
                 console.error("Insert error:", error);
@@ -183,16 +177,14 @@ function CampaignBuilder({data}) {
                     name, distance: 0, impressions: 0,
                 }));
 
-                const { error: analyticsError } = await supabase
-                    .from("analitics")
-                    .insert([{
+                const { error: analyticsError } = await insertAnalitics({
                         campaign_id: newCampaignId,
                         owner_id: userId,
                         today: defaultToday,
                         week: defaultWeek,
                         month: defaultMonth,
                         year: defaultYear,
-                    }]);
+                    });
 
                 if (analyticsError) {
                     console.error("Analytics insert error:", analyticsError);
@@ -209,9 +201,7 @@ function CampaignBuilder({data}) {
                     status: "pending",
                 };
 
-                const { error: invoiceError } = await supabase
-                    .from("invoices")
-                    .insert([invoicePayload]);
+                const { error: invoiceError } = await insertInvoice(invoicePayload);
 
                 if (invoiceError) {
                     console.error("Invoice insert error:", invoiceError);

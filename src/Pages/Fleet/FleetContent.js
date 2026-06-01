@@ -4,7 +4,15 @@ import Contracts from "./Contracts";
 import Billing from "./Billing";
 import Profile from "./Profile";
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "../../data/supabase";
+import {
+  getUser,
+  checkFleetByUserId,
+  mfaGetAssuranceLevel,
+  mfaListFactors,
+  mfaChallenge,
+  mfaVerify,
+  signOut,
+} from "../../data/service";
 import Loader from "../../Components/Loader";
 import pageData from "../../data/data.json";
 
@@ -43,7 +51,7 @@ function FleetContent({ setPage }) {
             setIsChecking2FA(true);
             setTwoFactorError("");
 
-            const { data: authData, error: authError } = await withAuthLockRetry(() => supabase.auth.getUser());
+            const { data: authData, error: authError } = await withAuthLockRetry(() => getUser());
             if (!isMounted) return;
 
             if (authError || !authData?.user) {
@@ -51,11 +59,7 @@ function FleetContent({ setPage }) {
                 return;
             }
 
-            const { data: fleet, error: fleetError } = await supabase
-                .from("fleets")
-                .select("userid")
-                .eq("userid", authData.user.id)
-                .maybeSingle();
+            const { data: fleet, error: fleetError } = await checkFleetByUserId(authData.user.id);
 
             if (!isMounted) return;
 
@@ -64,7 +68,7 @@ function FleetContent({ setPage }) {
                 return;
             }
 
-            const { data: assuranceData } = await withAuthLockRetry(() => supabase.auth.mfa.getAuthenticatorAssuranceLevel());
+            const { data: assuranceData } = await withAuthLockRetry(() => mfaGetAssuranceLevel());
             if (!isMounted) return;
 
             // If this session already has aal2, no extra prompt is needed.
@@ -73,7 +77,7 @@ function FleetContent({ setPage }) {
                 return;
             }
 
-            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => supabase.auth.mfa.listFactors());
+            const { data: factorsData, error: factorsError } = await withAuthLockRetry(() => mfaListFactors());
             if (!isMounted) return;
 
             if (factorsError) {
@@ -94,9 +98,7 @@ function FleetContent({ setPage }) {
             setRequires2FA(true);
             setFactorId(verifiedFactor.id);
 
-            const { data: challengeData, error: challengeError } = await withAuthLockRetry(() => supabase.auth.mfa.challenge({
-                factorId: verifiedFactor.id,
-            }));
+            const { data: challengeData, error: challengeError } = await withAuthLockRetry(() => mfaChallenge(verifiedFactor.id));
 
             if (!isMounted) return;
 
@@ -133,11 +135,7 @@ function FleetContent({ setPage }) {
         }
 
         setIsVerifying2FA(true);
-        const { error } = await withAuthLockRetry(() => supabase.auth.mfa.verify({
-            factorId,
-            challengeId,
-            code: totpCode,
-        }));
+        const { error } = await withAuthLockRetry(() => mfaVerify(factorId, challengeId, totpCode));
 
         if (error) {
             setTwoFactorError(error.message || gateText.errors.invalidCodeVerify);
@@ -151,7 +149,7 @@ function FleetContent({ setPage }) {
     };
 
     const handleSignOutFrom2FA = async () => {
-        await supabase.auth.signOut();
+        await signOut();
         setPage("signin");
     };
 
@@ -164,9 +162,7 @@ function FleetContent({ setPage }) {
         setIsVerifying2FA(true);
         setTwoFactorError("");
 
-        const { data: challengeData, error } = await withAuthLockRetry(() => supabase.auth.mfa.challenge({
-            factorId,
-        }));
+        const { data: challengeData, error } = await withAuthLockRetry(() => mfaChallenge(factorId));
 
         if (error || !challengeData?.id) {
             setTwoFactorError(error?.message || gateText.errors.createChallenge);

@@ -1,7 +1,7 @@
 import "../App.css";
 import { useEffect, useState } from "react";
 import { MdLockReset } from "react-icons/md";
-import { supabase } from "../data/supabase";
+import { getUser } from "../data/service";
 
 function ConfirmEmail ({data, setPage, email}){
     const [resolvedEmail, setResolvedEmail] = useState(email || "");
@@ -13,7 +13,7 @@ function ConfirmEmail ({data, setPage, email}){
         }
 
         const loadUserEmail = async () => {
-            const { data: authData } = await supabase.auth.getUser();
+            const { data: authData } = await getUser();
             if (authData?.user?.email) {
                 setResolvedEmail(authData.user.email);
             }

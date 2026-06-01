@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import data from "./data/data.json";
-import { supabase } from './data/supabase';
+import {
+  getSession,
+  onAuthStateChange,
+  checkFleetByUserId,
+  getProfileField,
+  getDriverByUserId,
+  getDriverByEmail,
+} from './data/service';
 import Loader from './Components/Loader';
 import Signup from './Pages/Singup';
 import Singin from './Pages/Singin';
@@ -28,39 +35,23 @@ const isMissingColumnError = (error) => {
 const getAccountDestination = async (user) => {
   // Fleet-owner magic link fallback: user_metadata.role set in Landing OTP call
   if (user.user_metadata?.role === "fleet-owner") {
-    const { data: existingFleet } = await supabase
-      .from("fleets")
-      .select("userid")
-      .eq("userid", user.id)
-      .maybeSingle();
+    const { data: existingFleet } = await checkFleetByUserId(user.id);
     return existingFleet ? "fleet-content" : "fleet-signup";
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("auntufication")
-    .eq("userid", user.id)
-    .maybeSingle();
+  const { data: profile, error: profileError } = await getProfileField(user.id, "auntufication");
 
   if (!profileError && profile) {
     return "content";
   }
 
-  const { data: fleet, error: fleetError } = await supabase
-    .from("fleets")
-    .select("userid")
-    .eq("userid", user.id)
-    .maybeSingle();
+  const { data: fleet, error: fleetError } = await checkFleetByUserId(user.id);
 
   if (!fleetError && fleet) {
     return "fleet-content";
   }
 
-  const { data: driverByUserId, error: driverByUserIdError } = await supabase
-    .from("drivers")
-    .select("id")
-    .eq("userid", user.id)
-    .maybeSingle();
+  const { data: driverByUserId, error: driverByUserIdError } = await getDriverByUserId(user.id);
 
   if (!driverByUserIdError && driverByUserId) {
     return "drivers-download";
@@ -70,11 +61,7 @@ const getAccountDestination = async (user) => {
     return "signin";
   }
 
-  const { data: driverByEmail, error: driverByEmailError } = await supabase
-    .from("drivers")
-    .select("id")
-    .eq("email", (user.email || "").toLowerCase())
-    .maybeSingle();
+  const { data: driverByEmail, error: driverByEmailError } = await getDriverByEmail((user.email || "").toLowerCase());
 
   if (!driverByEmailError && driverByEmail) {
     return "drivers-download";
@@ -147,7 +134,7 @@ function DashboardApp() {
 
   useEffect(() => {
     const syncEmailFromSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await getSession();
       if (session?.user?.email) {
         setEmail(session.user.email);
       }
@@ -171,7 +158,7 @@ function DashboardApp() {
       setLoading(false);
     } else {
       // Проверяем существующую сессию при загрузке
-      supabase.auth.getSession().then(async ({ data: { session } }) => {
+      getSession().then(async ({ data: { session } }) => {
         if (session?.user) {
           setEmail(session.user.email ?? "");
           const nextPage = await resolveAuthPage(session);
@@ -183,7 +170,7 @@ function DashboardApp() {
       });
     }
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
+    const { data: listener } = onAuthStateChange(
       (event, session) => {
         // setUser(session?.user ?? null);
 

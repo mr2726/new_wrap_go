@@ -1,6 +1,16 @@
 import "../../../App.css";
 import { useEffect, useState } from "react";
-import { supabase } from "../../../data/supabase";
+import {
+  getUser,
+  getProfileField,
+  updateProfile,
+  mfaListFactors,
+  mfaUnenroll,
+  mfaEnroll,
+  mfaChallenge,
+  mfaVerify,
+  updateUserPassword,
+} from "../../../data/service";
 import pageData from "../../../data/data.json";
 
 function Security() {
@@ -42,7 +52,7 @@ function Security() {
         let isMounted = true;
 
         const load2FAState = async () => {
-            const { data: authData, error: authError } = await supabase.auth.getUser();
+            const { data: authData, error: authError } = await getUser();
             if (!isMounted) return;
 
             if (authError || !authData?.user) {
@@ -53,11 +63,7 @@ function Security() {
                 return;
             }
 
-            const { data: profile, error } = await supabase
-                .from("profiles")
-                .select("auntufication")
-                .eq("userid", authData.user.id)
-                .maybeSingle();
+            const { data: profile, error } = await getProfileField(authData.user.id, "auntufication");
 
             if (!isMounted) return;
 
@@ -79,15 +85,12 @@ function Security() {
     }, [twoFaData.errors.loadFailed]);
 
     const persist2FAFlag = async (enabled) => {
-        const { data: authData, error: authError } = await supabase.auth.getUser();
+        const { data: authData, error: authError } = await getUser();
         if (authError || !authData?.user) {
             throw new Error(authError?.message || twoFaData.errors.userNotAuthenticated);
         }
 
-        const { error } = await supabase
-            .from("profiles")
-            .update({ auntufication: enabled })
-            .eq("userid", authData.user.id);
+        const { error } = await updateProfile(authData.user.id, { auntufication: enabled });
 
         if (error) {
             throw new Error(error.message || twoFaData.errors.updateFailed);
@@ -95,14 +98,14 @@ function Security() {
     };
 
     const handleDisable2FA = async () => {
-        const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+        const { data: factorsData, error: factorsError } = await mfaListFactors();
         if (factorsError) {
             throw new Error(factorsError.message || twoFaData.errors.loadFactorsFailed);
         }
 
         const verifiedTotpFactors = (factorsData?.totp || []).filter((factor) => factor.status === "verified");
         for (const factor of verifiedTotpFactors) {
-            const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+            const { error } = await mfaUnenroll(factor.id);
             if (error) {
                 throw new Error(error.message || twoFaData.errors.disableFactorFailed);
             }
@@ -114,7 +117,7 @@ function Security() {
     };
 
     const handleEnable2FA = async () => {
-        const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+        const { data: factorsData, error: factorsError } = await mfaListFactors();
         if (factorsError) {
             throw new Error(factorsError.message || twoFaData.errors.loadFactorsFailed);
         }
@@ -127,10 +130,7 @@ function Security() {
             return;
         }
 
-        const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
-            factorType: "totp",
-            friendlyName: twoFaData.friendlyName,
-        });
+        const { data: enrollData, error: enrollError } = await mfaEnroll("totp", twoFaData.friendlyName);
 
         if (enrollError || !enrollData?.id) {
             throw new Error(enrollError?.message || twoFaData.errors.setupCreateFailed);
@@ -182,9 +182,7 @@ function Security() {
 
         setIs2FASubmitting(true);
 
-        const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
-            factorId: setupFactorId,
-        });
+        const { data: challengeData, error: challengeError } = await mfaChallenge(setupFactorId);
 
         if (challengeError || !challengeData?.id) {
             setSecurityStatus({ type: "error", text: challengeError?.message || twoFaData.errors.challengeFailed });
@@ -192,11 +190,7 @@ function Security() {
             return;
         }
 
-        const { error: verifyError } = await supabase.auth.mfa.verify({
-            factorId: setupFactorId,
-            challengeId: challengeData.id,
-            code: setupCode,
-        });
+        const { error: verifyError } = await mfaVerify(setupFactorId, challengeData.id, setupCode);
 
         if (verifyError) {
             setSecurityStatus({ type: "error", text: verifyError.message || twoFaData.errors.verifyFailed });
@@ -276,7 +270,7 @@ function Security() {
 
         setIsSubmitting(true);
 
-        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        const { error } = await updateUserPassword(newPassword);
 
         if (error) {
             setStatus({ type: "error", text: error.message || passwordData.errors.updateFailed });
