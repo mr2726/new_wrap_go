@@ -1,143 +1,185 @@
-# WrapGO CRM pannel
+# WrapGo Customer App
 
-### v1.1.5
-> - Updated the signin and signup logic
-> - Added logic to create the analitics
-> - Added Settings page - [ NO COMPLITED (Complited on v1.2.0) ] 
+Клиентская часть платформы WrapGo для управления рекламными кампаниями на автомобилях.
 
-### v1.1.6
-> - Update the Signin Error Message
+Проект объединяет:
+- лендинг с точками входа для рекламодателей, водителей и владельцев автопарков;
+- CRM-кабинет рекламодателя;
+- Fleet-кабинет владельца автопарка;
+- карту активных зон и водителей на Mapbox;
+- интеграцию с Supabase (Auth, Database, Storage, Realtime, MFA).
 
-### v1.1.7
-> - Remove Pendings from Analitics History
-> - Overview Table shows Pending and Live camaigns
-> - Budget Overview Change to Campaigns Progress
-> - Campaigns Progress Shoving AVG of all Campaigns
-> - Campaigns Progress changes his data via selected campaigns
-> - Campaigns Progress progress bar is showing how many days compited
-> - Campaigns Progress add the View All button / Logic for showing all data 
-> - Campaignes Table Pay button forward to the billing 
-> - Overview Info blocks forwarding after click
-> - Change Budget Overview
+## 1. Технологический стек
 
-### v1.2.0
-> - Settings Front-end is done
-> - Settings Connected to the Supabase
-> - Loader Added
+- Frontend: React 19, React Router, React Icons, Recharts, Mapbox GL
+- Backend-as-a-Service: Supabase
+- Стили: CSS + Tailwind/PostCSS (доступны в проекте)
+- Сборка: Create React App (react-scripts)
+- Деплой: Vercel
 
-### v1.2.1 
-> - Fix for Versel
+## 2. Архитектура и маршрутизация
 
-### v1.2.2
-> - Fix the options for Industry and Country in Settings
-> - Upload image system is done
-> - Settings sidebar Icons is done
+В приложении два главных маршрута:
 
-### v1.3.0
-> - Billing page is done (Without Bank API)
+- /: публичный лендинг
+- /app/*: внутренняя часть приложения (аутентификация и кабинеты)
 
-### v1.3.1
-> - fixed Ui bag with the Campaign bilder pages 
-> - Update billing UI
-> - Change the payment system in the billing page 
+Поток в App:
+- Если на / пришел auth hash/query от Supabase, пользователь перенаправляется на /app.
+- Неизвестные маршруты также переводятся в DashboardApp.
 
-### v1.3.2
-> - Added Tax Input in The Settings Page
+Поток в DashboardApp:
+- Проверка сессии и подтверждения почты.
+- Определение типа аккаунта через таблицы profiles, fleets, drivers.
+- Выбор стартовой страницы: signin, company-info, content, fleet-content, drivers-download и т.д.
 
-### v1.3.3
-> - Notifications is done
-> - Security is almost done
+## 3. Роли пользователей
 
-### v1.4.0
-> - MapBox UI
+- Advertiser (рекламодатель): работает в CRM-контуре Content.
+- Fleet owner (владелец автопарка): работает в Fleet-контуре.
+- Driver (водитель): отдельный поток с подсказкой по установке приложения.
 
-### v1.4.1
-> - Fix Vercel Error with UseEffect
-> - .env contains MapBox Links and Keys
+## 4. Основные модули
 
-### v1.4.2
-> - MapBox data getting from DB 
-> - Driver GPS getting from DB
+### 4.1 Лендинг
 
-### v1.5.0
-> - 2FA
+- Отрисовывается через iframe на /landing/index.html.
+- Содержит маркетинговые секции, contact форму и форму запроса Fleet-регистрации.
+- Кнопки Login/Get Started ведут в /app.
 
-### v1.6.0
-> - Contact Page
+### 4.2 CRM рекламодателя (Content)
 
-### v1.7.0
-> - Landing Page (Need to change)
+Разделы:
+- Overview: сводка по кампаниям, активным водителям, прогрессу и дистанции.
+- Campaign Builder: создание кампаний, расчет бюджета, загрузка документа, создание invoice и аналитики.
+- Live Map: active zone + маркеры водителей с обновлением из БД.
+- Analytics: таблицы и графики.
+- Contacts, Billing, Settings.
 
-### v 2.0.0
-> - Fleets added
+### 4.3 Fleet кабинет
 
-### v2.0.1
-> - Transfer from Login to LandingPage 
-> - Overview Table shows activs and needed driver on campaign
-> - Product name is Capitalize
-> - Added Custom Input to chose the custom monthe
-> - Changed the doors titles
-> - Email Validation
-> - Discount if >3 and <6 and if >6
+Разделы:
+- Signup: регистрация автопарка, включая OTP/обычный поток.
+- Dashboard: автомобили, водители, контракты, доходы.
+- Contracts: доступные/мои/завершенные контракты.
+- Billing: банковские реквизиты, вывод средств, история транзакций.
+- Profile.
 
-### v2.0.2
-> - Max vehicles count on each campaign is 15
-> - Campaign open show all vehicles that needed and in process
+Дополнительно:
+- 2FA Gate для fleet-аккаунтов через Supabase MFA.
 
-## TODO
-- [x] Complite Settings FrontEnd
-- [x] Connect Settigns to Supabase
-- [x] Change industry and Coutry in Setting page to Select / Option
-- [x] Add icons to Settings Sidebar
-- [x] Upload IMG system
-- [x] Change Budget Overview
-- [x] Campaignes Table Pay button forward to the billing 
-- [x] Overview Info Forwarding 
-- [x] Budget Overview Change to Campaigns Progress
-- [x] Campaigns Progress Shoving AVG of all Campaigns
-- [x] Campaigns Progress changes his data via selected campaigns
-- [x] Campaigns Progress progress bar is showing how many days compited
-- [x] Campaigns Progress add the View All button / Logic for showing all data 
-- [x] Overview Table shows Pending and Live camaigns
-- [x] Remove Pendings from Analitics History ( It need show only completed )
-- [x] Create Billing Fron-end
-- [ ] Connect Billing to the API ( NEED API FROM BANKS )
-- [x] Connect Billing to the Supabase
-- [x] Create Loader
-- [ ] Create Demo Login button
-- [x] Add Notifications to the Settings
-- [x] Add Security to the Settings
-- [x] Lending Pagse
-- [x] MapBox add styles
-- [x] MapBox Active zone
-- [x] MapBox Active zone come from db
-- [x] MapBox Show the driver on the Map
-- [x] MapBox Show Driver Info
-- [x] MapBox API's in .env
-- [x] Driver GPS cordinates getting from DB 
-- [x] GPS Data getting every 15s or once it changes in db
-- [x] 2FA in Settings
-- [x] Contact Page
-- [x] max vehicles count 15 
-- [x] Popup with the Vehicles details of active and none active vehicles on campaigns
+### 4.4 Карта (Mapbox)
 
-## TODO tasks to fix
-- [x] Transfer from Login to LandingPage
-- [x] Adventures Overview Page need to change vehicle to active vehicles / vehicles needs 
-- [x] Company name input need to be Upercase (Only first letter)
-- [x] After click on Custom Need to add input where the customer can add his monthes
-- [x] Chenge Side Doors  (Front Doors) Both Sides ( All Doors)
+Функциональность:
+- Active zone приходит из active_zone и рисуется как Polygon.
+- Водители берутся из driver_location_updates (latitude/longitude), с fallback логикой.
+- Фото авто для карточки водителя подгружаются из vehicles.left_img/right_img по vehicles.signeddriveremail.
+- Поддерживается Realtime-подписка на изменения водителей/кампаний/локаций.
+- Камера карты центрируется по active zone.
 
-- [x] Email Validation in Fleet ovners
+## 5. Интеграция с Supabase
 
-- [x] Change the buttons structure and text in button to Sign Vehicle
-- [x] in process is shows in overview table
-- [x] input validation in campaings builder Custom duration input
+В проекте используется единый слой сервисов в src/data/service.js:
 
-- [x] PrivacyPolicy and Terms of Service going back to Landing Page 
+- Auth: signIn, signUp, signOut, reset password, session, onAuthStateChange
+- MFA: enroll/challenge/verify/list factors
+- Profiles/Fleets/Drivers/Vehicles/Campaigns/Invoices/Transfers/BankData/Analytics
+- Storage: загрузка документов
+- Realtime: подписки на postgres_changes
 
-- [x] Details button Added to the campaign with live status
-- [x] Fix dates calculation in Progress bar
-- [x] Change the marker color
-- [x] Chnged the image
-- [x] Added Action block to Overview table 
+Используемые сущности БД (основные):
+- profiles
+- campaigns
+- drivers
+- fleets
+- vehicles
+- fleet_signed_contracts
+- driver_location_updates
+- invoices
+- transfers
+- bankdata
+- analitics
+- active_zone
+
+## 6. Переменные окружения
+
+Создайте файл .env в корне проекта:
+
+```env
+REACT_APP_SUPABASE_URL=
+REACT_APP_SUPABASE_ANON_KEY=
+REACT_APP_MAPBOX_ACCESS_TOKEN=
+REACT_APP_MAPBOX_STYLE_URL_DARK=
+REACT_APP_MAPBOX_STYLE_URL_LITE=
+```
+
+Примечание:
+- Без Supabase URL/KEY авторизация и запросы к БД работать не будут.
+- Без Mapbox токена/стилей раздел Live Map не отобразится корректно.
+
+## 7. Локальный запуск
+
+1. Установить зависимости:
+
+```bash
+npm install
+```
+
+2. Запустить проект:
+
+```bash
+npm start
+```
+
+3. Production-сборка:
+
+```bash
+npm run build
+```
+
+4. Тесты:
+
+```bash
+npm test
+```
+
+## 8. Деплой
+
+Vercel конфигурация:
+- buildCommand: npm run build
+- outputDirectory: build
+- rewrites:
+	- /landing/(.*) -> /landing/$1
+	- /(.*) -> /index.html
+
+Это нужно для корректной работы SPA-роутинга и лендинга.
+
+## 9. Структура проекта (кратко)
+
+- src/App.js: верхнеуровневая маршрутизация
+- src/DashboardApp.js: логика страницы /app и auth-flow
+- src/Pages/Landing: контейнер лендинга
+- src/Pages/Content: CRM рекламодателя
+- src/Pages/Fleet: кабинет владельца автопарка
+- src/Components/MapBox.js: live-карта
+- src/data/service.js: API-слой Supabase
+- src/data/supabase.js: клиент Supabase
+- public/landing: статический лендинг
+- supabase/functions: директория под Edge Functions
+
+## 10. Ограничения и важные заметки
+
+- Папки supabase/functions/* и supabase/migrations в текущем состоянии пустые (заготовки под серверную часть и миграции).
+- Для production рекомендуется вынести все чувствительные ключи из клиентского кода лендинга в backend/edge слой.
+- Некоторые финансовые сценарии имеют мок-или частично интегрированную логику и требуют финализации под реальный процессинг.
+
+## 11. Команды npm
+
+```json
+{
+	"start": "react-scripts start",
+	"build": "react-scripts build",
+	"test": "react-scripts test",
+	"eject": "react-scripts eject"
+}
+```
