@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { getDriverCarIdsByContractId, getVehiclesByInviteCodes } from "../data/service";
+import {
+    getActiveFleetSignedContractsByContractIds,
+    getDriverCarIdsByContractId,
+    getVehiclesByInviteCodes,
+} from "../data/service";
 import "../App.css";
 
 const parseDurationMs = (duration) => {
@@ -31,11 +35,25 @@ function CampaignsVehicleDetailsPopup({ campaign, onClose }) {
         const fetchData = async () => {
             setLoading(true);
 
-            // Step 1: get drivers assigned to this campaign
+            const { data: signedContracts, error: signedContractsError } =
+                await getActiveFleetSignedContractsByContractIds([campaign.id]);
+
+            if (signedContractsError || !signedContracts?.length) {
+                setFilledSlots([]);
+                setLoading(false);
+                return;
+            }
+
+            // Step 1: get drivers assigned to this campaign (optional for vehicle details)
             const { data: drivers, error: driversError } = await getDriverCarIdsByContractId(campaign.id);
 
             if (driversError || !drivers?.length) {
-                setFilledSlots([]);
+                setFilledSlots(
+                    (signedContracts || []).map((item) => ({
+                        driverEmail: (item?.driver_email || "").trim().toLowerCase(),
+                        vehicle: null,
+                    }))
+                );
                 setLoading(false);
                 return;
             }
@@ -51,8 +69,15 @@ function CampaignsVehicleDetailsPopup({ campaign, onClose }) {
                 vehicleMap[v.invite_code] = v;
             });
 
-            // Step 4: each driver slot gets their vehicle (or null if not found)
-            setFilledSlots(drivers.map((d) => vehicleMap[d.carid] || null));
+            const resolvedVehicles = drivers.map((d) => vehicleMap[d.carid] || null);
+
+            // Step 4: each active signed slot is filled, vehicle details are best-effort
+            setFilledSlots(
+                (signedContracts || []).map((item, index) => ({
+                    driverEmail: (item?.driver_email || "").trim().toLowerCase(),
+                    vehicle: resolvedVehicles[index] || null,
+                }))
+            );
             setLoading(false);
         };
 
@@ -129,17 +154,20 @@ function CampaignsVehicleDetailsPopup({ campaign, onClose }) {
                             <span>Budget</span>
                             <span>Status</span>
                         </div>
-                        {allSlots.map((vehicle, index) => {
-                            const hasVehicle = !!vehicle;
+                        {allSlots.map((slot, index) => {
+                            const hasActiveDriver = !!slot?.driverEmail;
+                            const hasVehicle = !!slot?.vehicle;
                             const vehicleLabel = hasVehicle
-                                ? [vehicle.year, vehicle.mark, vehicle.model].filter(Boolean).join(" ")
-                                : null;
-                            const status = hasVehicle ? "live" : "in process";
+                                ? [slot.vehicle.year, slot.vehicle.mark, slot.vehicle.model].filter(Boolean).join(" ")
+                                : hasActiveDriver
+                                    ? `Driver: ${slot.driverEmail}`
+                                    : null;
+                            const status = hasActiveDriver ? "live" : "in process";
 
                             return (
                                 <div
                                     key={index}
-                                    className={`vdp-table__row${hasVehicle ? "" : " vdp-table__row--empty"}`}
+                                    className={`vdp-table__row${hasActiveDriver ? "" : " vdp-table__row--empty"}`}
                                 >
                                     <span className="vdp-table__vehicle">
                                         {vehicleLabel || (

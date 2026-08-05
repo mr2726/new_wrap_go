@@ -104,12 +104,95 @@ export const getDriverCarIdsByContractId = (contractId) =>
 export const updateDriverContract = (driverId, contractId) =>
   supabase.from("drivers").update({ contractid: contractId }).eq("id", driverId);
 
+export const insertFleetSignedContract = (data) =>
+  supabase.from("fleet_signed_contracts").insert([data]);
+
 export const getDriversByContractIds = (contractIds) =>
   supabase
     .from("drivers")
-    .select("id, name, contractid, lat, lan")
+    .select("*")
     .in("contractid", contractIds)
     .order("created_at", { ascending: false });
+
+export const getFleetSignedContractsByContractIds = (contractIds) =>
+  supabase
+    .from("fleet_signed_contracts")
+    .select("contract_id, driver_email, signed_at, created_at, status")
+    .in("contract_id", contractIds)
+    .order("signed_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
+
+export const getActiveFleetSignedContractsByContractIds = (contractIds) =>
+  supabase
+    .from("fleet_signed_contracts")
+    .select("contract_id, driver_email, signed_at, created_at, status")
+    .in("contract_id", contractIds)
+    .eq("status", "active")
+    .order("signed_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false });
+
+export const getLatestDriverLocationsByEmails = async (driverEmails) => {
+  const trimmedEmails = (driverEmails || [])
+    .map((email) => (email || "").trim().toLowerCase())
+    .filter(Boolean);
+
+  if (!trimmedEmails.length) {
+    return { data: [], error: null };
+  }
+
+  // Some environments use recorded_at, others only keep bare coordinates.
+  let response = await supabase
+    .from("driver_location_updates")
+    .select("driver_email, latitude, longitude")
+    .in("driver_email", trimmedEmails)
+    .order("recorded_at", { ascending: false });
+
+  if (!response.error) {
+    return response;
+  }
+
+  response = await supabase
+    .from("driver_location_updates")
+    .select("driver_email, latitude, longitude")
+    .in("driver_email", trimmedEmails)
+    .order("created_at", { ascending: false });
+
+  if (!response.error) {
+    return response;
+  }
+
+  return supabase
+    .from("driver_location_updates")
+    .select("driver_email, latitude, longitude")
+    .in("driver_email", trimmedEmails);
+};
+
+export const getLatestDriverLocations = async () => {
+  let response = await supabase
+    .from("driver_location_updates")
+    .select("driver_email, latitude, longitude")
+    .order("recorded_at", { ascending: false })
+    .limit(200);
+
+  if (!response.error) {
+    return response;
+  }
+
+  response = await supabase
+    .from("driver_location_updates")
+    .select("driver_email, latitude, longitude")
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  if (!response.error) {
+    return response;
+  }
+
+  return supabase
+    .from("driver_location_updates")
+    .select("driver_email, latitude, longitude")
+    .limit(200);
+};
 
 export const getDriverDistancesByContractIds = (contractIds) =>
   supabase
@@ -188,6 +271,21 @@ export const getVehiclesByFleet = (fleetOwnerId) =>
 export const getVehiclesByInviteCodes = (inviteCodes) =>
   supabase.from("vehicles").select("invite_code, year, mark, model").in("invite_code", inviteCodes);
 
+export const getVehicleImagesBySignedDriverEmails = (emails) => {
+  const normalizedEmails = (emails || [])
+    .map((email) => (email || "").trim().toLowerCase())
+    .filter(Boolean);
+
+  if (!normalizedEmails.length) {
+    return Promise.resolve({ data: [], error: null });
+  }
+
+  return supabase
+    .from("vehicles")
+    .select("signeddriveremail, left_img, right_img")
+    .in("signeddriveremail", normalizedEmails);
+};
+
 export const updateVehicle = (vehicleId, data) =>
   supabase.from("vehicles").update(data).eq("id", vehicleId);
 
@@ -254,6 +352,11 @@ export const subscribeToDriversAndCampaigns = (callback) =>
     .on(
       "postgres_changes",
       { event: "*", schema: "public", table: "campaigns" },
+      callback
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "driver_location_updates" },
       callback
     )
     .subscribe();

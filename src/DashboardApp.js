@@ -124,6 +124,7 @@ const resolvePageFromPath = () => {
 function DashboardApp() {
   const [page, setPage] = useState("landing");
   const [email, setEmail] = useState("");
+  const [fleetSignupPrefill, setFleetSignupPrefill] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -131,6 +132,12 @@ function DashboardApp() {
       localStorage.clear();
     }
   }, [page]);
+
+  useEffect(() => {
+    if (page !== "fleet-signup" && fleetSignupPrefill.password) {
+      setFleetSignupPrefill((prev) => ({ ...prev, password: "" }));
+    }
+  }, [page, fleetSignupPrefill.password]);
 
   useEffect(() => {
     const syncEmailFromSession = async () => {
@@ -194,7 +201,7 @@ function DashboardApp() {
   const renderPage = () => {
     switch(page){
       case "signup":
-        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} />
+        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} />
       case "signin":
         return <Singin data={data.signin} setPage={setPage} />
       case "terms":
@@ -202,7 +209,14 @@ function DashboardApp() {
       case "privacy":
         return <PrivacyPolicy data={data.privacy} setPage={setPage}/>
       case "fleet-signup":
-        return <FleetSignup setPage={setPage} setFleetPage={() => setPage("fleet-content")} />
+        return (
+          <FleetSignup
+            setPage={setPage}
+            setFleetPage={() => setPage("fleet-content")}
+            prefillEmail={fleetSignupPrefill.email || email}
+            prefillPassword={fleetSignupPrefill.password}
+          />
+        )
       case "fleet-content":
         return <FleetContent setPage={setPage} />
       case "otplink":
@@ -222,7 +236,7 @@ function DashboardApp() {
       case "content":
         return <Content data={data.content} />
       default:
-        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} />
+        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} />
     }
   }
   return (

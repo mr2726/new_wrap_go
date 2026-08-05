@@ -4,7 +4,7 @@ import { MdCheckCircleOutline  } from "react-icons/md";
 import { getSession, signUp } from "../data/service";
 import Logo from "../Components/Logo";
 
-function Signup({data, setPage, setEmail}) {
+function Signup({data, setPage, setEmail, setFleetSignupPrefill}) {
     const [formData, setFormData] = useState({});
     const [error, setError] = useState("");
     const [passNotValid, setPassNotValid] = useState(false);
@@ -60,6 +60,41 @@ function Signup({data, setPage, setEmail}) {
         setError("");
         setPassNotValid(false);
 
+        if (tab === "fleet_owner") {
+            const normalizedEmail = (formData.email || "").trim().toLowerCase();
+
+            if (!normalizedEmail) {
+                setError("Email is required.");
+                return;
+            }
+
+            if (!validationPassword(formData.password)) {
+                setError(data.signup_form.inputErrors.notvalidPassword);
+                setPassNotValid(true);
+                return;
+            }
+
+            if (formData.password !== formData.confirmpassword) {
+                setError(data.signup_form.inputErrors.passwordisnotsame);
+                setPassNotValid(true);
+                return;
+            }
+
+            if (setFleetSignupPrefill) {
+                setFleetSignupPrefill({
+                    email: normalizedEmail,
+                    password: formData.password,
+                });
+            }
+
+            if (setEmail) {
+                setEmail(normalizedEmail);
+            }
+
+            setPage("fleet-signup");
+            return;
+        }
+
         if (!validationPassword(formData.password)) {
             setError(data.signup_form.inputErrors.notvalidPassword);
             setPassNotValid(true);
@@ -102,7 +137,10 @@ function Signup({data, setPage, setEmail}) {
             </div>
         )
     }
-
+    const [tab, setTab] = useState("customer");
+    const handleTabChange = (selectedTab) => {
+        setTab(selectedTab);
+    }
     return (
         <div className="signup">
             <div className="signup_content_container">
@@ -123,6 +161,10 @@ function Signup({data, setPage, setEmail}) {
             <div className="signup_form">
                 <h2 className="signup_form__title">{data.signup_form.title}</h2>
                 <p className="signup_form__description">{data.signup_form.description}</p>
+                <div className="signup_Switcher">
+                    <button className={tab === "customer" ? "active_tab" : ""} onClick={() => handleTabChange("customer")}>Customer</button>
+                    <button className={tab === "fleet_owner" ? "active_tab" : ""} onClick={() => handleTabChange("fleet_owner")}>Fleet owner</button>
+                </div>
                 <form className="signup_form__form" onSubmit={handleSubmite}>
                     {
                         data.signup_form.signup_form_inputs.map((input, index) => (

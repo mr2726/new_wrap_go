@@ -4,9 +4,13 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { FaMoon, FaSun  } from "react-icons/fa";
 import {
   getActiveZone,
+  getFleetSignedContractsByContractIds,
   getUser,
   getCampaignNamesByOwner,
   getDriversByContractIds,
+  getLatestDriverLocations,
+  getLatestDriverLocationsByEmails,
+  getVehicleImagesBySignedDriverEmails,
   subscribeToDriversAndCampaigns,
   removeRealtimeChannel,
 } from "../data/service";
@@ -119,13 +123,33 @@ function addOrUpdateZones(mapInstance, zonesData) {
   }
 }
 
+function fitMapToActiveZones(mapInstance, zonesData) {
+  const allCoords = (zonesData?.features || []).flatMap((feature) => {
+    if (feature?.geometry?.type !== "Polygon") return [];
+    const ring = feature?.geometry?.coordinates?.[0] || [];
+    return ring.filter(isValidCoordPair);
+  });
+
+  if (!allCoords.length) return;
+
+  const bounds = allCoords.reduce(
+    (acc, coord) => acc.extend(coord),
+    new mapboxgl.LngLatBounds(allCoords[0], allCoords[0])
+  );
+
+  mapInstance.fitBounds(bounds, {
+    padding: 50,
+    duration: 0,
+    maxZoom: 16,
+  });
+}
+
 export default function Map() {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const driverMarkersRef = useRef([]);
   const activeZonesRef = useRef(EMPTY_ZONES);
   const driverCoordsRef = useRef(DEFAULT_DRIVER_COORDS);
-  const hasCenteredOnDriverRef = useRef(false);
   const [mode, setMode] = useState(INITIAL_MODE);
   const [isDriverDrawerOpen, setIsDriverDrawerOpen] = useState(false);
   const [driverInfo, setDriverInfo] = useState(DEFAULT_DRIVER_INFO);
@@ -180,6 +204,7 @@ export default function Map() {
     const handleStyleLoad = () => {
       if (!map.current) return;
       addOrUpdateZones(map.current, activeZonesRef.current);
+      fitMapToActiveZones(map.current, activeZonesRef.current);
       handleResize();
     };
 
@@ -224,6 +249,7 @@ export default function Map() {
 
       if (map.current && map.current.isStyleLoaded()) {
         addOrUpdateZones(map.current, activeZonesRef.current);
+        fitMapToActiveZones(map.current, activeZonesRef.current);
       }
     };
 
@@ -242,84 +268,215 @@ export default function Map() {
     const fetchDriverData = async () => {
       if (isFetching) return;
       isFetching = true;
-
-      const { data: authData, error: authError } = await getUser();
-      if (authError || !authData?.user) {
-        if (authError) {
-          console.error("Failed to get current user:", authError);
+      try {
+        const { data: authData, error: authError } = await getUser();
+        if (authError || !authData?.user) {
+          if (authError) {
+            console.error("Failed to get current user:", authError);
+          }
+          return;
         }
-        isFetching = false;
-        return;
-      }
 
-      const userId = authData.user.id;
+        const userId = authData.user.id;
+        const { data: campaignRows, error: campaignError } = await getCampaignNamesByOwner(userId);
 
-      const { data: campaignRows, error: campaignError } = await getCampaignNamesByOwner(userId);
+        if (!isActive) return;
 
-      if (!isActive) return;
-
-      if (campaignError) {
-        console.error("Failed to load campaigns:", campaignError);
-        isFetching = false;
-        return;
-      }
-
-      const campaignIds = (campaignRows || []).map((campaign) => campaign.id);
-      if (!campaignIds.length) {
-        setDriversData([]);
-        isFetching = false;
-        return;
-      }
-
-      const campaignNameById = (campaignRows || []).reduce((acc, campaign) => {
-        acc[campaign.id] = campaign.name;
-        return acc;
-      }, {});
-
-      const { data: driverRows, error: driverError } = await getDriversByContractIds(campaignIds);
-
-      if (!isActive) return;
-
-      if (driverError || !driverRows?.length) {
-        if (driverError) {
-          console.error("Failed to load driver data:", driverError);
+        if (campaignError) {
+          console.error("Failed to load campaigns:", campaignError);
         }
-        setDriversData([]);
-        isFetching = false;
-        return;
-      }
 
-      const normalizedDrivers = driverRows
-        .map((driver) => {
-          const lng = Number(driver?.lat);
-          const lat = Number(driver?.lan);
-          const hasCoords = Number.isFinite(lng) && Number.isFinite(lat);
-          if (!hasCoords) return null;
+        const campaignIds = (campaignRows || []).map((campaign) => campaign.id);
+        const campaignNameById = (campaignRows || []).reduce((acc, campaign) => {
+          acc[campaign.id] = campaign.name;
+          return acc;
+        }, {});
 
-          return {
-            id: driver.id,
-            fullName: driver?.name || DEFAULT_DRIVER_INFO.fullName,
-            activeContractName:
-              campaignNameById[driver.contractid] || DEFAULT_DRIVER_INFO.activeContractName,
-            coords: [lng, lat],
-            carPhotoLeft: DEFAULT_DRIVER_INFO.carPhotoLeft,
-            carPhotoRight: DEFAULT_DRIVER_INFO.carPhotoRight,
+        let driverRows = [];
+        if (campaignIds.length) {
+          const { data, error } = await getDriversByContractIds(campaignIds);
+
+          if (!isActive) return;
+
+          if (error) {
+            console.error("Failed to load driver data:", error);
+          } else {
+            driverRows = data || [];
+          }
+        } else {
+          console.warn("No campaigns found for current user.");
+        }
+
+        let signedContractRows = [];
+        if (campaignIds.length) {
+          const { data, error } = await getFleetSignedContractsByContractIds(campaignIds);
+
+          if (!isActive) return;
+
+          if (error) {
+            console.error("Failed to load signed contracts:", error);
+          } else {
+            signedContractRows = data || [];
+          }
+        }
+
+        const signedEmailsByContract = signedContractRows.reduce((acc, row) => {
+          const contractId = String(row?.contract_id || "");
+          const email = (row?.driver_email || "").trim().toLowerCase();
+          if (!contractId || !email) return acc;
+
+          if (!acc[contractId]) {
+            acc[contractId] = [];
+          }
+
+          if (!acc[contractId].includes(email)) {
+            acc[contractId].push(email);
+          }
+
+          return acc;
+        }, {});
+
+        const driverEmails = [
+          ...new Set(
+            [
+              ...driverRows.map((driver) => (driver?.email || "").trim().toLowerCase()),
+              ...signedContractRows.map((row) => (row?.driver_email || "").trim().toLowerCase()),
+            ].filter(Boolean)
+          ),
+        ];
+
+        let locationRows = [];
+        if (driverEmails.length) {
+          const { data, error } = await getLatestDriverLocationsByEmails(driverEmails);
+
+          if (!isActive) return;
+
+          if (error) {
+            console.error("Failed to load driver locations:", error);
+          } else {
+            locationRows = data || [];
+          }
+        } else {
+          const { data, error } = await getLatestDriverLocations();
+
+          if (!isActive) return;
+
+          if (error) {
+            console.error("Failed to load fallback driver locations:", error);
+          } else {
+            locationRows = data || [];
+          }
+        }
+
+        // console.log("driver_location_updates:", locationRows);
+
+        const locationEmails = [
+          ...new Set(
+            (locationRows || [])
+              .map((row) => (row?.driver_email || "").trim().toLowerCase())
+              .filter(Boolean)
+          ),
+        ];
+
+        const imageLookupEmails = [
+          ...new Set([...driverEmails, ...locationEmails]),
+        ];
+
+        const { data: vehicleImageRows, error: vehicleImageError } =
+          await getVehicleImagesBySignedDriverEmails(imageLookupEmails);
+
+        if (!isActive) return;
+
+        if (vehicleImageError) {
+          console.error("Failed to load vehicle images:", vehicleImageError);
+        }
+
+        const vehicleMediaByEmail = (vehicleImageRows || []).reduce((acc, row) => {
+          const email = (row?.signeddriveremail || "").trim().toLowerCase();
+          if (!email || acc[email]) return acc;
+
+          acc[email] = {
+            left: row?.left_img || DEFAULT_DRIVER_INFO.carPhotoLeft,
+            right: row?.right_img || DEFAULT_DRIVER_INFO.carPhotoRight,
           };
-        })
-        .filter(Boolean);
 
-      setDriversData(normalizedDrivers);
+          return acc;
+        }, {});
 
-      if (normalizedDrivers.length) {
-        driverCoordsRef.current = normalizedDrivers[0].coords;
-        setDriverInfo((prev) => ({ ...prev, ...normalizedDrivers[0] }));
-        if (map.current && !hasCenteredOnDriverRef.current) {
-          hasCenteredOnDriverRef.current = true;
-          map.current.easeTo({ center: driverCoordsRef.current, duration: 800 });
+        const latestLocationByEmail = locationRows.reduce((acc, row) => {
+          const driverEmail = (row?.driver_email || "").trim().toLowerCase();
+          if (!driverEmail || acc[driverEmail]) return acc;
+
+          const lng = Number(row?.longitude);
+          const lat = Number(row?.latitude);
+          if (!Number.isFinite(lng) || !Number.isFinite(lat)) return acc;
+
+          acc[driverEmail] = [lng, lat];
+          return acc;
+        }, {});
+
+        const normalizedFromDrivers = driverRows
+          .map((driver) => {
+            const contractKey = String(driver?.contractid || "");
+            const contractEmails = signedEmailsByContract[contractKey] || [];
+
+            const driverEmail =
+              (driver?.email || "").trim().toLowerCase() ||
+              contractEmails[0] ||
+              "";
+
+            const driverMedia = vehicleMediaByEmail[driverEmail] || {};
+
+            const latestCoords = driverEmail ? latestLocationByEmail[driverEmail] : null;
+
+            const fallbackLng = Number(driver?.lan);
+            const fallbackLat = Number(driver?.lat);
+            const hasFallbackCoords = Number.isFinite(fallbackLng) && Number.isFinite(fallbackLat);
+            const fallbackCoords = hasFallbackCoords ? [fallbackLng, fallbackLat] : null;
+
+            const coords = latestCoords || fallbackCoords;
+            if (!coords) return null;
+
+            return {
+              id: driver.id,
+              fullName: driver?.name || DEFAULT_DRIVER_INFO.fullName,
+              activeContractName:
+                campaignNameById[driver.contractid] || DEFAULT_DRIVER_INFO.activeContractName,
+              coords,
+              carPhotoLeft: driverMedia.left || DEFAULT_DRIVER_INFO.carPhotoLeft,
+              carPhotoRight: driverMedia.right || DEFAULT_DRIVER_INFO.carPhotoRight,
+            };
+          })
+          .filter(Boolean);
+
+        const normalizedFromLocations = Object.entries(latestLocationByEmail).map(
+          ([email, coords], index) => {
+            const driverMedia = vehicleMediaByEmail[email] || {};
+
+            return {
+              id: `location-${email || index}`,
+              fullName: email || DEFAULT_DRIVER_INFO.fullName,
+              activeContractName: DEFAULT_DRIVER_INFO.activeContractName,
+              coords,
+              carPhotoLeft: driverMedia.left || DEFAULT_DRIVER_INFO.carPhotoLeft,
+              carPhotoRight: driverMedia.right || DEFAULT_DRIVER_INFO.carPhotoRight,
+            };
+          }
+        );
+
+        const normalizedDrivers =
+          normalizedFromDrivers.length > 0 ? normalizedFromDrivers : normalizedFromLocations;
+
+        setDriversData(normalizedDrivers);
+
+        if (normalizedDrivers.length) {
+          driverCoordsRef.current = normalizedDrivers[0].coords;
+          setDriverInfo((prev) => ({ ...prev, ...normalizedDrivers[0] }));
+          // console.log("Driver data updated:", normalizedDrivers);
         }
+      } finally {
+        isFetching = false;
       }
-
-      isFetching = false;
     };
 
     fetchDriverData();

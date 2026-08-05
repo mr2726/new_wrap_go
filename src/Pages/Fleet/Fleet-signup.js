@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { getUser, checkFleetByEmail, signUp, checkFleetByUserId, insertFleet } from "../../data/service";
 import pageData from "../../data/data.json";
 
-function FleetSignup({ setPage, setFleetPage }) {
+function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword = "" }) {
     const signupText = pageData.fleet.signup;
     const [userData, setUserData] = useState({
         fleetName: "",
@@ -20,6 +20,7 @@ function FleetSignup({ setPage, setFleetPage }) {
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [fromOtp, setFromOtp] = useState(false);
+    const [fromPrefill, setFromPrefill] = useState(false);
 
     useEffect(() => {
         const checkExistingSession = async () => {
@@ -31,6 +32,21 @@ function FleetSignup({ setPage, setFleetPage }) {
         };
         checkExistingSession();
     }, []);
+
+    useEffect(() => {
+        const normalizedPrefillEmail = (prefillEmail || "").trim().toLowerCase();
+        if (!normalizedPrefillEmail || fromOtp) {
+            return;
+        }
+
+        setFromPrefill(true);
+        setUserData(prev => ({
+            ...prev,
+            contactEmail: normalizedPrefillEmail,
+            password: prefillPassword || prev.password,
+            confirmPassword: prefillPassword || prev.confirmPassword,
+        }));
+    }, [prefillEmail, prefillPassword, fromOtp]);
 
     const isPasswordValid = (password) => {
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
@@ -66,20 +82,30 @@ function FleetSignup({ setPage, setFleetPage }) {
                 userId = authData.user.id;
                 userEmail = authData.user.email;
             } else {
+                const normalizedEmail = (userData.contactEmail || "").trim().toLowerCase();
+                const passwordToUse = fromPrefill ? prefillPassword : userData.password;
+
+                if (!normalizedEmail) {
+                    setError(signupText.fields.contactEmail.label);
+                    setIsSubmitting(false);
+                    return;
+                }
+
                 // Manual signup — validate passwords first
-                if (userData.password !== userData.confirmPassword) {
+                if (!fromPrefill && userData.password !== userData.confirmPassword) {
                     setError(signupText.messages.passwordMismatch);
                     setIsSubmitting(false);
                     return;
                 }
-                if (!isPasswordValid(userData.password)) {
+
+                if (!passwordToUse || !isPasswordValid(passwordToUse)) {
                     setError(signupText.messages.passwordRules);
                     setIsSubmitting(false);
                     return;
                 }
 
                 // Check if email already in fleets
-                const { data: existingFleet, error: checkError } = await checkFleetByEmail(userData.contactEmail.toLowerCase());
+                const { data: existingFleet, error: checkError } = await checkFleetByEmail(normalizedEmail);
 
                 if (checkError && checkError.code !== "PGRST116") throw checkError;
 
@@ -89,7 +115,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                     return;
                 }
 
-                const { data, error: signupError } = await signUp(userData.contactEmail, userData.password);
+                const { data, error: signupError } = await signUp(normalizedEmail, passwordToUse);
 
                 if (signupError) {
                     setError(signupError.message || signupText.messages.signupFailed);
@@ -98,7 +124,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                 }
 
                 userId = data?.user?.id;
-                userEmail = userData.contactEmail.toLowerCase();
+                userEmail = normalizedEmail;
             }
 
             if (!userId) {
@@ -189,7 +215,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                                 placeholder={signupText.fields.contactEmail.placeholder}
                                 value={userData.contactEmail}
                                 onChange={handleChange}
-                                disabled={fromOtp}
+                                disabled={fromOtp || fromPrefill}
                                 required 
                             />
                         </div>
@@ -224,7 +250,7 @@ function FleetSignup({ setPage, setFleetPage }) {
                             />
                         </div>
 
-                        {!fromOtp && (
+                        {!(fromOtp || fromPrefill) && (
                             <>
                                 <div className="fleet-signup__field">
                                     <label className="signup_form__form--label" htmlFor="password">{signupText.fields.password.label}</label>

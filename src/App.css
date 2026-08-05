@@ -5965,3 +5965,29 @@ select option{
   display: flex;
   align-items: center;
 }
+
+/* Additional Updates */
+.signup_Switcher{
+  display: flex;
+  justify-content: center;
+  gap: 1.2em;
+  margin-top: 1.5em;
+  background : rgba(6, 12, 22, 0.9);
+}
+
+.signup_Switcher button {
+  background: transparent;
+  border: none;
+  color: var(--sign-secondary-color);
+  font-family: 'LufgaMedium', sans-serif;
+  font-size: 1.1em;
+  padding: 0.6em 1.2em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.active_tab{
+  background: var(--primary-color) !important;
+  color: #000 !important;
+  border-radius: 2em !important;
+}

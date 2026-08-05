@@ -1,7 +1,7 @@
 import "../../../App.css";
 import { useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
-import { updateDriverContract } from "../../../data/service";
+import { getUser, insertFleetSignedContract, updateDriverContract } from "../../../data/service";
 import pageData from "../../../data/data.json";
 
 function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
@@ -57,8 +57,44 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
     if (!canAssign) return;
     setAssignStatus({ type: "", text: "" });
 
+    const selectedDriver = (drivers || []).find(
+      (driver) => String(driver.id) === String(selectedDriverId)
+    );
+    const driverEmail = (selectedDriver?.email || "").trim().toLowerCase();
+    if (!driverEmail) {
+      setAssignStatus({ type: "error", text: signText.alerts.assignFailed });
+      return;
+    }
+
     setIsSubmitting(true);
     const { error } = await updateDriverContract(selectedDriverId, selectedContractId);
+
+    if (!error) {
+      const { data: authData, error: authError } = await getUser();
+      const fleetId = authData?.user?.id;
+
+      if (authError || !fleetId) {
+        console.error("Error resolving fleet user:", authError);
+        setIsSubmitting(false);
+        setAssignStatus({ type: "error", text: signText.alerts.assignFailed });
+        return;
+      }
+
+      const { error: signedContractError } = await insertFleetSignedContract({
+        contract_id: Number(selectedContractId),
+        fleet_id: fleetId,
+        driver_email: driverEmail,
+        signed_at: new Date().toISOString(),
+        status: "in progress",
+      });
+
+      if (signedContractError) {
+        console.error("Error saving fleet signed contract:", signedContractError);
+        setIsSubmitting(false);
+        setAssignStatus({ type: "error", text: signText.alerts.assignFailed });
+        return;
+      }
+    }
 
     setIsSubmitting(false);
 

@@ -1,5 +1,6 @@
 import "../../App.css";
 import {
+    getActiveFleetSignedContractsByContractIds,
   getUser,
   getCampaignsByOwner,
   getDriverDistancesByContractIds,
@@ -112,8 +113,17 @@ function Overview ({data, setPage}) {
                 return;
             }
 
-            const driverCountByCampaign = (drivers || []).reduce((acc, driver) => {
-                const campaignId = driver.contractid;
+            const { data: activeSignedRows, error: activeSignedError } =
+                await getActiveFleetSignedContractsByContractIds(campaignIds);
+
+            if (activeSignedError) {
+                console.error(activeSignedError.message);
+                setLoading(false);
+                return;
+            }
+
+            const driverCountByCampaign = (activeSignedRows || []).reduce((acc, row) => {
+                const campaignId = row.contract_id;
                 if (!campaignId) return acc;
                 acc[campaignId] = (acc[campaignId] || 0) + 1;
                 return acc;
