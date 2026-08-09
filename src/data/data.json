@@ -82,89 +82,113 @@
     },
     "terms" : {
         "title" : "Terms of Service",
-        "description" : "Last updated: October 24, 2023. These terms govern your access to and use of WrapGo's vehicle advertising ecosystem.",
+        "description" : "Last Updated: July 20, 2026\n\nWelcome to WrapGo. These Terms of Service ('Terms') govern your access to and use of the vehicle advertising ecosystem, mobile application, and website provided by WrapGo ('Company', 'we', 'us', or 'our').\n\nElectronic Consent: By creating an account or accessing the Platform, you explicitly consent to receive electronic notices, invoices, agreements, and communications from WrapGo. If you do not agree with any of these Terms, you are prohibited from using the Platform.",
         "tag" : "Legal Center",
         "backBTN" : "← Go back",
         "content" : [
             {
-                "id" : "acceptance",
-                "link" : "1. Acceptance",
-                "title" : ["01", "Acceptance of Terms"],
-                "body" : "By accessing or using the WrapGo platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or\n\nWrapGo provides a bridge between advertisers and drivers. Our service allows for the tracking of vehicle advertisements and facilitates payments between parties."
+                "id" : "definitions",
+                "link" : "1. Definitions",
+                "title" : ["01", "Definitions"],
+                "body" : "'Platform' means the WrapGo mobile application, website, backend systems, and related services.\n\n'Driver' means an independent user who registers a vehicle on the Platform to participate in advertising campaigns.\n\n'Advertiser' means a third-party entity or individual purchasing ad space on Drivers' vehicles.\n\n'Campaign' means a specific advertising initiative with defined geographic zones, durations, and payout terms.\n\n'Active Zone' means the specific geographic area where a Driver must operate to accumulate valid Campaign mileage.\n\n'Vehicle Wrap' means the physical advertising materials applied to a Driver’s vehicle.\n\n'Earnings' means the funds accumulated by a Driver for successfully meeting Campaign requirements."
             },
             {
-                "id" : "conduct",
-                "link" : "2. User Conduct",
-                "title" : ["02", "User Conduct"],
-                "body" : "As a condition of use, you promise not to use the Services for any purpose that is prohibited by these Terms of Service. You are responsible for all of your activity in connection with the Services.\n\nYou shall not use the platform for any illegal or unauthorized purpose.\n\nDrivers must maintain valid insurance and registration as required by local laws.\n\nAdvertisers must provide truthful and non-misleading marketing materials.\n\nInterference with the tracking technology is strictly prohibited."
+                "id" : "platform-role",
+                "link" : "2. Platform Role & Independent Contractor Status",
+                "title" : ["02", "Platform Role & Independent Contractor Status"],
+                "body" : "WrapGo provides a technological infrastructure that acts solely as an intermediary bridge connecting Drivers and Advertisers.\n\nIndependent Contractor: Drivers acknowledge that they operate as independent contractors. Nothing in these Terms shall be interpreted as creating an employment relationship, agency, partnership, or joint venture between WrapGo and any Driver. Drivers are solely responsible for their own taxes, insurance, permits, vehicle maintenance, and compliance with all applicable local, state, and national laws. WrapGo is not an employer and does not direct or control the Driver's daily driving activities."
             },
             {
-                "id" : "usage",
-                "link" : "3. Platform Usage",
-                "title" : ["03", "Platform Usage"],
-                "body" : "WrapGo grants you a limited, non-exclusive, non-transferable, and revocable license to use our platform strictly in accordance with these terms. We reserve the right to modify or terminate the platform at any time without notice.\n\nOur platform utilizes GPS tracking via our mobile application to verify campaign impressions. By using the service as a driver, you consent to this data collection during active campaign hours."
+                "id" : "user-conduct",
+                "link" : "3. User Conduct, Anti-Fraud Policy & Confidentiality",
+                "title" : ["03", "User Conduct, Anti-Fraud Policy & Confidentiality"],
+                "body" : "Users must be at least 18 years of age and possess the legal capacity to enter into binding agreements.\n\nGeneral Conduct: You shall not use the Platform for any illegal, unauthorized, or dangerous purpose.\n\nConfidentiality: Users shall not disclose or misuse any proprietary Campaign details, Advertiser strategies, upcoming marketing assets, or non-public Platform metrics shared with them during their participation on the Platform.\n\nGPS & Telemetry Fraud: To maintain the integrity of Campaign data, users may strictly not:\n\nSpoof GPS or use mock locations.\n\nUse device emulators or automated bots.\n\nTamper with, bypass, or manipulate Platform telemetry and tracking technologies.\n\nSubmit false vehicle, insurance, or registration information.\n\nViolation of this anti-fraud policy will result in immediate, permanent removal from the Platform and forfeiture of any unpaid Earnings."
             },
             {
-                "id" : "property",
-                "link" : "4. Intellectual Property",
-                "title" : ["04", "Intellectual Property"],
-                "body" : "All content included on the platform, such as text, graphics, logos, images, and software, is the property of WrapGo or its content suppliers and protected by international copyright laws.\n\nYou may not reproduce, distribute, or create derivative works from any part of our service without express written permission."
+                "id" : "payments-earnings",
+                "link" : "4. Payments & Earnings",
+                "title" : ["04", "Payments & Earnings"],
+                "body" : "Driver Earnings are calculated according to the applicable Campaign terms, verified mileage, and time spent in Active Zones.\n\nPayments are processed on a weekly basis.\n\nWrapGo may deduct taxes or legally required fees where applicable by law.\n\nRight to Withhold: WrapGo reserves the right to delay, withhold, or cancel payments in cases involving: fraud investigation, GPS spoofing, fake mileage generation, breach of contract, chargebacks from Advertisers, or valid legal/regulatory requirements."
             },
             {
-                "id" : "liability",
-                "link" : "5. Liability",
-                "title" : ["05", "Limitation of Liability"],
-                "body" : "In no event shall WrapGo, its directors, employees, or partners, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, or other intangible losses.\n\nWrapGo is not responsible for physical damage to vehicles, accidents occurring during campaigns, or disputes between advertisers and drivers beyond the scope of our facilitated platform agreements."
+                "id" : "platform-usage",
+                "link" : "5. Platform Usage, Modifications, & Suspension",
+                "title" : ["05", "Platform Usage, Modifications, & Suspension"],
+                "body" : "WrapGo grants you a limited, non-exclusive, non-transferable, and revocable license to use our Platform strictly in accordance with these Terms.\n\nSuspension & Termination: WrapGo reserves the right to suspend or permanently terminate any account without prior notice if the user manipulates GPS, submits false information, engages in fraudulent activity, violates applicable laws, or breaches any of these Terms."
             },
             {
-                "id" : "governing",
-                "link" : "6. Governing Law",
-                "title" : ["06", "Governing Law"],
-                "body" : "These terms shall be governed and construed in accordance with the laws of the jurisdiction in which WrapGo is headquartered, without regard to its conflict of law provisions.\n\nOur failure to enforce any right or provision of these Terms will not be considered a waiver of those rights."
+                "id" : "dispute-resolution",
+                "link" : "6. Dispute Resolution between Users",
+                "title" : ["06", "Dispute Resolution between Users"],
+                "body" : "In the event of a dispute between a Driver and an Advertiser regarding Campaign fulfillment, Wrap condition, or mileage calculations, both parties agree to submit the grievance to WrapGo Support for internal mediation before pursuing external legal remedies. WrapGo retains final discretion over the distribution of campaign funds temporarily held by WrapGo based on verified Platform telemetry logs."
+            },
+            {
+                "id" : "limitation-of-liability",
+                "link" : "7. Limitation of Liability",
+                "title" : ["07", "Limitation of Liability"],
+                "body" : "To the maximum extent permitted by applicable law, WrapGo, its directors, employees, or tech partners shall not be liable for any indirect, incidental, special, consequential, or punitive damages. This includes loss of corporate profits, driving data, or other intangible losses.\n\nWrapGo is explicitly not responsible for physical damage to vehicles, traffic violations, or automotive accidents occurring during active Campaigns. Users agree to indemnify and hold WrapGo harmless from any claims or legal expenses arising out of their misuse of the Platform."
+            },
+            {
+                "id" : "general-provisions",
+                "link" : "8. General Provisions",
+                "title" : ["08", "General Provisions"],
+                "body" : "IModification of Terms: We reserve the right to modify these Terms at any time. We will notify users of material changes by updating the 'Last Updated' date and providing an in-app alert or email notification at least 15 days prior to the effective date of the changes.\n\nForce Majeure: Neither party shall be liable for delays or failures in performance caused by natural disasters, war, strikes, internet outages, governmental restrictions, or other force majeure events beyond reasonable control.\n\nSeverability: If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary, and the remaining provisions shall continue in full force and effect.\n\nWaiver: WrapGo’s failure to enforce any right or provision of these Terms will not be considered a waiver of those rights.\n\nAssignment: WrapGo may assign or transfer these Terms, in whole or in part, in connection with a merger, acquisition, corporate reorganization, or sale of assets.\n\nEntire Agreement: These Terms constitute the entire agreement between you and WrapGo regarding the use of the Platform, superseding any prior agreements."
+            },
+            {
+                "id" : "governing-law-jurisdiction",
+                "link" : "9. Governing Law & Jurisdiction",
+                "title" : ["09", "Governing Law & Jurisdiction"],
+                "body" : "These Terms shall be governed by and construed in accordance with the laws of the Republic of Armenia. Any legal action or proceeding shall be brought exclusively in the courts located in Yerevan, Armenia."
             }
         ]
     },
     "privacy" : {
         "title" : "Privacy & Policy",
-        "description" : "Last updated: October 24, 2023. These terms govern your access to and use of WrapGo's vehicle advertising ecosystem.",
+        "description" : "Last Updated: July 20, 2026\n\nAt  Wrapgo LLC we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information.",
         "tag" : "Legal Center",
         "backBTN" : "← Go back",
         "content" : [
             {
-                "id" : "acceptance",
-                "link" : "1. Acceptance",
-                "title" : ["01", "Acceptance of Terms"],
-                "body" : "By accessing or using the WrapGo platform, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or\n\nWrapGo provides a bridge between advertisers and drivers. Our service allows for the tracking of vehicle advertisements and facilitates payments between parties."
+                "id" : "legal_basis",
+                "link" : "1. Legal Basis for Processing",
+                "title" : ["01", "Legal Basis for Processing"],
+                "body" : "For users operating in jurisdictions requiring specific legal foundations (such as the GDPR), we process personal data based on:\n\nConsent: When you explicitly agree to tracking or notifications.\n\nContract: To fulfill our Terms of Service (e.g., tracking mileage to calculate payouts).\n\nLegitimate Interests: To prevent fraud, ensure security, and improve our Platform.\n\nLegal Obligations: To comply with tax, corporate, and law enforcement requirements."
             },
             {
-                "id" : "conduct",
-                "link" : "2. User Conduct",
-                "title" : ["02", "User Conduct"],
-                "body" : "As a condition of use, you promise not to use the Services for any purpose that is prohibited by these Terms of Service. You are responsible for all of your activity in connection with the Services.\n\nYou shall not use the platform for any illegal or unauthorized purpose.\n\nDrivers must maintain valid insurance and registration as required by local laws.\n\nAdvertisers must provide truthful and non-misleading marketing materials.\n\nInterference with the tracking technology is strictly prohibited."
+                "id" : "information_collected",
+                "link" : "2. Information We Collect",
+                "title" : ["02", "Information We Collect"],
+                "body" : "Background Location Data: Our app requires continuous GPS tracking to verify Campaign impressions. This includes collecting location data in the background when the app is closed, provided you are on an active Campaign shift.\n\nAccount Information: Name, email, phone number, vehicle details, and registration documentation.\n\nDevice Information: We automatically collect your device model, operating system (OS) version, app version, IP address, and unique device identifiers to ensure compatibility and security.\n\nDiagnostics & Crash Reports: To meet App Store/Google Play requirements and improve stability, we collect automated crash reports, system diagnostics, and performance data."
             },
             {
                 "id" : "usage",
-                "link" : "3. Platform Usage",
-                "title" : ["03", "Platform Usage"],
-                "body" : "WrapGo grants you a limited, non-exclusive, non-transferable, and revocable license to use our platform strictly in accordance with these terms. We reserve the right to modify or terminate the platform at any time without notice.\n\nOur platform utilizes GPS tracking via our mobile application to verify campaign impressions. By using the service as a driver, you consent to this data collection during active campaign hours."
+                "link" : "3. How We Use Your Information",
+                "title" : ["03", "How We Use Your Information"],
+                "body" : "We use your data to:\n\nOperate the Platform and calculate Driver Earnings.\nGenerate anonymized performance analytics for Advertisers.\nDetect and prevent GPS spoofing and fraud.\nSend Push Notifications regarding Campaign alerts, earnings, and account status (subject to your device permission settings).."
             },
             {
                 "id" : "property",
-                "link" : "4. Intellectual Property",
-                "title" : ["04", "Intellectual Property"],
-                "body" : "All content included on the platform, such as text, graphics, logos, images, and software, is the property of WrapGo or its content suppliers and protected by international copyright laws.\n\nYou may not reproduce, distribute, or create derivative works from any part of our service without express written permission."
+                "link" : "4. Cookies & Tracking Technologies",
+                "title" : ["04", "Cookies & Tracking Technologies"],
+                "body" : "Our website utilizes cookies and similar tracking technologies to enhance user experience:\n\nEssential Cookies: Necessary for account login, security, and basic site functionality.\nSession Cookies: Temporary files used to navigate the platform smoothly.\nAnalytics Cookies: We use third-party analytics providers to monitor traffic patterns and improve Platform performance."
             },
             {
-                "id" : "liability",
-                "link" : "5. Liability",
-                "title" : ["05", "Limitation of Liability"],
-                "body" : "In no event shall WrapGo, its directors, employees, or partners, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, or other intangible losses.\n\nWrapGo is not responsible for physical damage to vehicles, accidents occurring during campaigns, or disputes between advertisers and drivers beyond the scope of our facilitated platform agreements."
+                "id" : "data_sharing",
+                "link" : "5. Data Sharing, Mapping, & International Transfers",
+                "title" : ["05", "Data Sharing, Mapping, & International Transfers"],
+                "body" : "To Advertisers: We share aggregated metrics and heatmaps. Precise individual residential start points are masked to protect Driver safety.\n\nMapping Providers: We utilize third-party mapping providers such as Mapbox, HERE Technologies, Google Maps, or similar services to render routing and calculate mileage.\n\nInternational Data Transfers: WrapGo utilizes robust cloud infrastructure (e.g., AWS, Google Cloud, Supabase, Firebase). Consequently, your data may be securely transferred, stored, and processed on servers located outside of Armenia by our trusted enterprise providers."
             },
             {
                 "id" : "governing",
-                "link" : "6. Governing Law",
-                "title" : ["06", "Governing Law"],
-                "body" : "These terms shall be governed and construed in accordance with the laws of the jurisdiction in which WrapGo is headquartered, without regard to its conflict of law provisions.\n\nOur failure to enforce any right or provision of these Terms will not be considered a waiver of those rights."
+                "link" : "6. Data Retention",
+                "title" : ["06", "Data Retention"],
+                "body" : "We retain personal data only for as long as necessary to fulfill the purposes outlined in this policy:\n\nLocation History: Retained for up to 24 months for fraud auditing and advertiser dispute resolution.\nPlatform Analytics: Retained for up to 36 months.\nFinancial & Invoice Data: Retained for up to 7 years to comply with international tax and accounting laws."
+            },
+            {
+                "id" : "your_rights",
+                "link" : "7. Your Rights & Account Deletion",
+                "title" : ["07", "Your Rights & Account Deletion"],
+                "body" : "You have the right to access, correct, or delete your personal data.\n\nData Deletion: You may request the permanent deletion of your account via the 'Delete Account' option in the app settings, or by emailing us. Upon confirmation, non-financial operational data will be purged within 30 days.\nTracking Control: Drivers can halt data collection instantly by ending their active shift or revoking location permissions in OS settings."
             }
         ]
     },
