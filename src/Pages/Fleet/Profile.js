@@ -10,6 +10,8 @@ import {
   getFleet,
   updateFleet,
   mfaUnenroll,
+  signIn,
+  updateUserEmailImmediate,
 } from "../../data/service";
 import Loader from "../../Components/Loader";
 import ChangePassword from "./components/ChangePassword";
@@ -33,6 +35,11 @@ function Profile({ setFleetPage }) {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
+
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState("");
+    const [confirming, setConfirming] = useState(false);
 
     const [changePasswordVisible, setChangePasswordVisible] = useState(false);
     const [twoFactorVisible, setTwoFactorVisible] = useState(false);
@@ -140,6 +147,50 @@ function Profile({ setFleetPage }) {
         }));
     };
 
+    const handleSaveClick = () => {
+        const normalizedEmail = (formData.email || "").trim().toLowerCase();
+        const validationError = getEmailValidationError(normalizedEmail);
+        if (validationError) {
+            setEmailError(validationError);
+            setMessage(validationError);
+            return;
+        }
+        setEmailError("");
+        setMessage("");
+        setConfirmPasswordValue("");
+        setConfirmPasswordError("");
+        setConfirmPasswordVisible(true);
+    };
+
+    const handleConfirmPasswordSave = async () => {
+        if (!confirmPasswordValue) {
+            setConfirmPasswordError(profileText.confirmPassword.errors.required);
+            return;
+        }
+
+        try {
+            setConfirming(true);
+            setConfirmPasswordError("");
+
+            const { data: { user } } = await getUser();
+            if (!user) {
+                setConfirmPasswordError(profileText.messages.userNotAuthenticated);
+                return;
+            }
+
+            const { error: signInError } = await signIn(user.email, confirmPasswordValue);
+            if (signInError) {
+                setConfirmPasswordError(profileText.confirmPassword.errors.wrong);
+                return;
+            }
+
+            setConfirmPasswordVisible(false);
+            await handleSave();
+        } finally {
+            setConfirming(false);
+        }
+    };
+
     const handleSave = async () => {
         try {
             setSaving(true);
@@ -158,6 +209,15 @@ function Profile({ setFleetPage }) {
             if (!user) {
                 setMessage(profileText.messages.userNotAuthenticated);
                 return;
+            }
+
+            // Keep Supabase Auth in sync when the fleet email changes.
+            if (normalizedEmail !== (user.email || "").trim().toLowerCase()) {
+                const { error: authError } = await updateUserEmailImmediate(normalizedEmail);
+                if (authError) {
+                    setMessage(`${profileText.messages.saveErrorPrefix} ${authError.message}`);
+                    return;
+                }
             }
 
             const { error } = await updateFleet(user.id, {
@@ -292,7 +352,7 @@ function Profile({ setFleetPage }) {
                     </div>
                     <button 
                         className="save_btn cta" 
-                        onClick={handleSave}
+                        onClick={handleSaveClick}
                         disabled={saving || Boolean(emailError)}
                     >
                         {saving ? profileText.buttons.saving : profileText.buttons.save}
@@ -324,6 +384,46 @@ function Profile({ setFleetPage }) {
                         setTwoFactorVisible(false);
                     }}
                 />
+            )}
+            {confirmPasswordVisible && (
+                <div className="add-driver-form" onClick={() => setConfirmPasswordVisible(false)} style={{ zIndex: 1000 }}>
+                    <div
+                        className="add-driver-form___block"
+                        onClick={(event) => event.stopPropagation()}
+                        style={{ maxWidth: 420, width: "92%" }}
+                    >
+                        <div className="popup__title">
+                            <h2>{profileText.confirmPassword.title}</h2>
+                            <p onClick={() => setConfirmPasswordVisible(false)} style={{ cursor: "pointer" }}>{profileText.confirmPassword.close}</p>
+                        </div>
+
+                        <p className="get_otp__content--description">{profileText.confirmPassword.description}</p>
+
+                        <label className="signup_form__form--label">{profileText.confirmPassword.label}</label>
+                        <input
+                            className="signup_form__form--input"
+                            type="password"
+                            placeholder={profileText.confirmPassword.placeholder}
+                            value={confirmPasswordValue}
+                            onChange={(event) => setConfirmPasswordValue(event.target.value)}
+                            autoFocus
+                        />
+
+                        {confirmPasswordError && (
+                            <p style={{ color: "#dc2626", margin: "8px 0 0" }}>{confirmPasswordError}</p>
+                        )}
+
+                        <button
+                            className="signup_form__form--button"
+                            type="button"
+                            disabled={confirming}
+                            onClick={handleConfirmPasswordSave}
+                            style={{ marginTop: 16 }}
+                        >
+                            {confirming ? profileText.confirmPassword.confirming : profileText.confirmPassword.confirm}
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );

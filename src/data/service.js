@@ -23,6 +23,31 @@ export const resetPasswordForEmail = (email, redirectTo) =>
 export const onAuthStateChange = (callback) =>
   supabase.auth.onAuthStateChange(callback);
 
+// Sends a 6-digit OTP code to an existing email via Supabase Auth (no new user created).
+export const sendEmailOtp = (email) =>
+  supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+
+export const verifyEmailOtp = (email, token) =>
+  supabase.auth.verifyOtp({ email, token, type: "email" });
+
+// Updates the email on the auth.users record (subject to Supabase's own email-change confirmation settings).
+export const updateUserEmail = (newEmail) =>
+  supabase.auth.updateUser({ email: newEmail });
+
+// Applies the email change immediately via the update-email edge function (service role),
+// bypassing Supabase's double email-change confirmation. Use after verifying the old-email OTP.
+export const updateUserEmailImmediate = async (newEmail) => {
+  const { data, error } = await supabase.functions.invoke("update-email", {
+    body: { newEmail },
+  });
+
+  if (error) {
+    return { data, error: { message: data?.error || error.message } };
+  }
+
+  return { data, error: null };
+};
+
 // ==================== MFA ====================
 
 export const mfaListFactors = () => supabase.auth.mfa.listFactors();

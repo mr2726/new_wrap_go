@@ -531,6 +531,20 @@
                 "disable2faErrorPrefix" : "Error disabling 2FA:",
                 "disable2faSuccess" : "2FA disabled successfully!",
                 "unexpectedPrefix" : "Unexpected error:"
+            },
+            "confirmPassword" : {
+                "title" : "Confirm Password",
+                "description" : "Enter your password to confirm these changes.",
+                "label" : "Password",
+                "placeholder" : "Enter your password",
+                "cancel" : "Cancel",
+                "confirm" : "Confirm & Save",
+                "confirming" : "Confirming...",
+                "close" : "Close",
+                "errors" : {
+                    "required" : "Please enter your password.",
+                    "wrong" : "Incorrect password."
+                }
             }
         },
         "changePassword" : {
@@ -653,15 +667,17 @@
         "signContract" : {
             "title" : "Assign Contract",
             "close" : "X",
-            "selectDriver" : "Select Driver",
+            "selectDriver" : "Select Vehicle",
             "selectContract" : "Select Contract",
             "submit" : "Assign Contract",
             "submitting" : "Assigning...",
             "driverFallback" : "Driver",
+            "vehicleFallback" : "Vehicle",
             "contractFallback" : "Contract",
             "alerts" : {
                 "assignFailed" : "Failed to assign contract. Please try again.",
-                "assigned" : "Contract assigned successfully!"
+                "assigned" : "Contract assigned successfully!",
+                "noDriverAssigned" : "This vehicle has no confirmed driver yet."
             }
         },
         "tableRow" : {
@@ -1020,15 +1036,41 @@
                 "selectPrefix" : "Select",
                 "enterPrefix" : "Enter your",
                 "saveChanges" : "Save Changes",
+                "saving" : "Saving...",
                 "status" : {
                     "success" : "Changes saved successfully.",
                     "error" : "Failed to save changes."
                 }
             },
+            "contactChangeOtp" : {
+                "title" : "Confirm it's you",
+                "descriptionStart" : "We sent a 6-digit code to your current email",
+                "descriptionEnd" : ". Enter it below to confirm this change.",
+                "label" : "Verification Code",
+                "placeholder" : "123456",
+                "verify" : "Verify & Save",
+                "verifying" : "Verifying...",
+                "cancel" : "Cancel",
+                "resend" : "Resend code",
+                "resending" : "Sending...",
+                "close" : "\u2715",
+                "status" : {
+                    "sent" : "A new code has been sent.",
+                    "invalidCode" : "Enter the 6-digit code.",
+                    "success" : "Email/phone updated successfully."
+                },
+                "errors" : {
+                    "sendFailed" : "Failed to send verification code.",
+                    "verifyFailed" : "Invalid or expired code.",
+                    "sessionMissing" : "Your session has expired. Please sign in again.",
+                    "updateFailed" : "Failed to save changes."
+                }
+            },
             "profileFields" : {
                 "fullName" : "Full Name",
                 "email" : "Email",
-                "phone" : "Phone Number"
+                "phone" : "Phone Number",
+                "phonePlaceholder" : "+374 XX XXXXXX"
             },
             "companyFields" : {
                 "companyName" : "Company Name",

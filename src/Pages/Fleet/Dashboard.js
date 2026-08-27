@@ -137,6 +137,7 @@ function Dashboard({ setFleetPage }) {
                     <SignContract
                         onClose={() => setSignContractPopup(false)}
                         drivers={drivers}
+                        vehicles={vehicles}
                         contracts={contracts}
                         onAssigned={fetchVehicles}
                     />

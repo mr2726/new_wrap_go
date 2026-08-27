@@ -1501,6 +1501,18 @@ body{
   to { transform: rotate(360deg); }
 }
 
+.button-spinner{
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: loader__spin 0.75s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 /* MODAL */
 .modal{
   position: fixed;
@@ -5651,6 +5663,13 @@ select option{
   align-items: center;
 }
 
+.modal-content__body{
+  display: flex;
+  flex-direction: column;
+  gap: 1.6em;
+  margin-top: 1.6em;
+}
+
 
 .generate_invite_code{
   margin: 0;
@@ -5990,4 +6009,10 @@ select option{
   background: var(--primary-color) !important;
   color: #000 !important;
   border-radius: 2em !important;
+}
+
+.ziroPos{
+  position: fixed;
+  left: 0;
+  top: 0;
 }

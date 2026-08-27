@@ -4,23 +4,34 @@ import CustomSelect from "./CustomSelect";
 import { getUser, insertFleetSignedContract, updateDriverContract } from "../../../data/service";
 import pageData from "../../../data/data.json";
 
-function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
+function SignContract({ onClose, drivers = [], vehicles = [], contracts = [], onAssigned }) {
   const signText = pageData.fleet.signContract;
-  const [selectedDriverId, setSelectedDriverId] = useState("");
+  const [selectedVehicleId, setSelectedVehicleId] = useState("");
   const [selectedContractId, setSelectedContractId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assignStatus, setAssignStatus] = useState({ type: "", text: "" });
 
-  const driverOptions = useMemo(
+  const vehicleOptions = useMemo(
     () =>
-      (drivers || [])
-        .filter((driver) => driver.contractid == null)
-        .map((driver) => ({
-          value: String(driver.id),
-          label: driver.name || `${signText.driverFallback} ${driver.id}`,
-          logo: "",
-        })),
-    [drivers, signText.driverFallback]
+      (vehicles || [])
+        .map((vehicle) => {
+          const driver = (drivers || []).find(
+            (d) => String(d.carid) === String(vehicle.invite_code)
+          );
+          // Only exclude vehicles whose driver is already tied to a contract.
+          if (driver && driver.contractid != null) return null;
+
+          const label = [vehicle.mark, vehicle.model, vehicle.year].filter(Boolean).join(" ")
+            || `${signText.vehicleFallback} ${vehicle.id}`;
+
+          return {
+            value: String(vehicle.id),
+            label: vehicle.plate ? `${label} - ${vehicle.plate}` : label,
+            logo: "",
+          };
+        })
+        .filter(Boolean),
+    [vehicles, drivers, signText.vehicleFallback]
   );
 
   const contractOptions = useMemo(
@@ -51,23 +62,26 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
     [contracts, signText.contractFallback]
   );
 
-  const canAssign = Boolean(selectedDriverId && selectedContractId && !isSubmitting);
+  const canAssign = Boolean(selectedVehicleId && selectedContractId && !isSubmitting);
 
   const handleAssignContract = async () => {
     if (!canAssign) return;
     setAssignStatus({ type: "", text: "" });
 
+    const selectedVehicle = (vehicles || []).find(
+      (vehicle) => String(vehicle.id) === String(selectedVehicleId)
+    );
     const selectedDriver = (drivers || []).find(
-      (driver) => String(driver.id) === String(selectedDriverId)
+      (driver) => String(driver.carid) === String(selectedVehicle?.invite_code)
     );
     const driverEmail = (selectedDriver?.email || "").trim().toLowerCase();
-    if (!driverEmail) {
-      setAssignStatus({ type: "error", text: signText.alerts.assignFailed });
+    if (!selectedDriver || !driverEmail) {
+      setAssignStatus({ type: "error", text: signText.alerts.noDriverAssigned });
       return;
     }
 
     setIsSubmitting(true);
-    const { error } = await updateDriverContract(selectedDriverId, selectedContractId);
+    const { error } = await updateDriverContract(selectedDriver.id, selectedContractId);
 
     if (!error) {
       const { data: authData, error: authError } = await getUser();
@@ -122,9 +136,10 @@ function SignContract({ onClose, drivers = [], contracts = [], onAssigned }) {
         <div className="modal-content__body">
             <CustomSelect
               label={signText.selectDriver}
-              options={driverOptions}
-              value={selectedDriverId}
-              onChange={setSelectedDriverId}
+              options={vehicleOptions}
+              value={selectedVehicleId}
+              onChange={setSelectedVehicleId}
+              isVehicle
             />
 
             <CustomSelect
