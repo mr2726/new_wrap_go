@@ -30,7 +30,7 @@ function CampaignBuilder({data}) {
     const [launchError, setLaunchError] = useState("");
 
     const multiplier = route === "1m" ? 1 : route === "3m" ? 3 : route === "6m" ? 6 : route;
-    const priceStandart = adPlacement === "side" ? 119000 : 169000;
+    const priceStandart = adPlacement === "side" ? 109000 : 169000;
     const priceBusiness = 175000;
     const baseTotal = ((economValue * priceStandart) + (standartValue * priceBusiness)) * multiplier;
     // Discount logic: 2% for 3 months, 5% for 6 months, 5% for 6+ months, 3% for 3-6 months
