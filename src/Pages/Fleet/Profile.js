@@ -18,6 +18,18 @@ import ChangePassword from "./components/ChangePassword";
 import TwoFactorAuth from "./components/2FA";
 import pageData from "../../data/data.json";
 
+const formatArmenianPhone = (value) => {
+    const digits = value.replace(/\D/g, "");
+    const nationalNumber = digits.startsWith("374") ? digits.slice(3, 11) : digits.slice(0, 8);
+
+    if (!nationalNumber) {
+        return "";
+    }
+
+    return nationalNumber.length <= 2
+        ? `+374 ${nationalNumber}`
+        : `+374 ${nationalNumber.slice(0, 2)} ${nationalNumber.slice(2)}`;
+};
 
 function Profile({ setFleetPage }) {
     const profileText = pageData.fleet.profile;
@@ -143,7 +155,7 @@ function Profile({ setFleetPage }) {
 
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: name === "phone" ? formatArmenianPhone(value) : value
         }));
     };
 
@@ -343,11 +355,14 @@ function Profile({ setFleetPage }) {
                             <p>{profileText.fields.phone}</p>
                         </div>
                         <input 
-                            type="text" 
+                            type="tel"
                             name="phone"
                             value={formData.phone} 
                             className="editable_input" 
                             onChange={handleInputChange}
+                            inputMode="numeric"
+                            placeholder="+374 xx xxxxxx"
+                            maxLength={14}
                         />
                     </div>
                     <button 
