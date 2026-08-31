@@ -1,7 +1,7 @@
 import "../../App.css";
 import { useEffect, useState } from "react";
 import { getUser, getCampaignsByOwner, getAnalitics } from "../../data/service";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 import Loader from "../../Components/Loader";
 /* Pages */
 import Active from "./Analitics/Active";
@@ -10,6 +10,7 @@ import AnaliticsChart from "../../Components/AnaliticsChart";
 import AnatiticTable from "../../Components/AnaliticsTable";
 
 function Analitics({ tableData }) {
+    const { data: pageData } = useLanguage();
     const analyticsPageData = pageData.content.analitics.page;
     const [currentPage, setCurrentPage] = useState("active");
     const [currentDate, setCurrentDate] = useState("today");

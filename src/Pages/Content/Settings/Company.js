@@ -1,9 +1,10 @@
 import "../../../App.css";
 import ChangeImage from "../../../Components/ChangeImage";
 import SettingsForm from "../../../Components/SettingsForm";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function Company({_companyData}) {
+    const { data: pageData } = useLanguage();
     const companyText = pageData.content.settings.companyPage;
 
     return (

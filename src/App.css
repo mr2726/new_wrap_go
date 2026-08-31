@@ -618,11 +618,18 @@ body{
   height: 100vh;
   background-color: var(--block-bg);
   margin-right: 3em;
-  overflow: hidden;
   padding: 2em;
   position: fixed;
   top: 0;
-  left: 0
+  left: 0;
+  z-index: 50;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .sidebar__links--space{
@@ -6015,4 +6022,156 @@ select option{
   position: fixed;
   left: 0;
   top: 0;
+}
+
+/* ==========================================================================
+   Language Selector Component Styles
+   ========================================================================== */
+.lang-selector {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-family: 'LufgaMedium', sans-serif;
+  z-index: 100;
+}
+
+.lang-selector__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.4em 0.75em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #e6edf3;
+  font-size: 0.85em;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.lang-selector__trigger:hover,
+.lang-selector__trigger--open {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(57, 255, 20, 0.4);
+  color: #ffffff;
+}
+
+.lang-selector__icon {
+  font-size: 1.1em;
+  color: var(--primary-color, #39ff14);
+}
+
+.lang-selector__label {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.lang-selector__arrow {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s ease;
+}
+
+.lang-selector__arrow--rotated {
+  transform: rotate(180deg);
+}
+
+.lang-selector__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 130px;
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  margin: 0;
+  list-style: none;
+  z-index: 1000;
+  animation: fadeInLang 0.15s ease forwards;
+}
+
+@keyframes fadeInLang {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lang-selector__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.5em 0.7em;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #c9d1d9;
+  font-family: inherit;
+  font-size: 0.85em;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.lang-selector__item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.lang-selector__item--active {
+  background: rgba(57, 255, 20, 0.12);
+  color: var(--primary-color, #39ff14);
+  font-weight: 600;
+}
+
+.lang-selector__item-code {
+  font-size: 0.8em;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.lang-selector__item-name {
+  flex: 1;
+}
+
+.lang-selector__item-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-color, #39ff14);
+}
+
+/* Floating top-right version for Auth & Landing pages */
+.lang-selector--floating {
+  position: absolute;
+  top: 1.5em;
+  right: 2em;
+  z-index: 50;
+}
+
+/* Sidebar variant */
+.lang-selector--sidebar {
+  width: 100%;
+  margin-top: 1em;
+}
+
+.lang-selector--sidebar .lang-selector__trigger {
+  width: 100%;
+  justify-content: space-between;
+  padding: 0.6em 0.9em;
+}
+
+.lang-selector--sidebar .lang-selector__dropdown {
+  left: 0;
+  right: auto;
+  width: 100%;
 }

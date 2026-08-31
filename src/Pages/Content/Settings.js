@@ -1,7 +1,7 @@
 import "../../App.css";
 import { useState, useEffect } from "react";
 import { getUser, getProfile } from "../../data/service";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 import Profile from "./Settings/Profile";
 import Company from "./Settings/Company";
 import Notifications from "./Settings/Notification";
@@ -13,6 +13,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { MdOutlineShield } from "react-icons/md";
 
 function Settings() {
+    const { data: pageData } = useLanguage();
     const settingsPageData = pageData.content.settings.page;
     const settingsFields = pageData.content.settings;
     const [content, setContent] = useState("profile");

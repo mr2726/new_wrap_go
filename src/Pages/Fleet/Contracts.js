@@ -12,10 +12,11 @@ import {
   getAllCampaigns,
   getProfilesByIds,
 } from "../../data/service";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 
 
 function Contracts({setFleetPage}) {
+    const { data: pageData } = useLanguage();
     const contractsText = pageData.fleet.contracts;
     const [contractDetails, setContractDetails] = useState(true);
     const [isClosing, setIsClosing] = useState(false);

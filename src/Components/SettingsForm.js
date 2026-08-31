@@ -1,7 +1,7 @@
 import "../App.css";
 import { useState, useEffect } from "react";
 import { getUser, updateProfile, sendEmailOtp, verifyEmailOtp, updateUserEmailImmediate } from "../data/service";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 import EmailOTP from "./EmailOTP";
 
 // dbKeys that require re-verification of the account owner via an OTP sent to the current email.
@@ -19,6 +19,7 @@ const formatPhoneMask = (value) => {
 };
 
 function SettingsForm({title, description, data}) {
+    const { data: pageData } = useLanguage();
     const formText = pageData.content.settings.formCommon;
     const otpText = pageData.content.settings.contactChangeOtp;
     const [formValues, setFormValues] = useState({});

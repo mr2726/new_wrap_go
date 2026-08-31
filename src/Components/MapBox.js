@@ -14,7 +14,7 @@ import {
   subscribeToDriversAndCampaigns,
   removeRealtimeChannel,
 } from "../data/service";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 const MAPBOX_ACCESS_TOKEN = (process.env.REACT_APP_MAPBOX_ACCESS_TOKEN || "").trim();
 const DARK_MAP_STYLE = (process.env.REACT_APP_MAPBOX_STYLE_URL_DARK || "").trim();
@@ -27,8 +27,6 @@ const SQUARE_FILL_LAYER_ID = "active-zones-squares-fill";
 const SQUARE_LINE_LAYER_ID = "active-zones-squares-line";
 const DRIVER_REFRESH_MS = 15000;
 const DEFAULT_DRIVER_COORDS = [44.51475588393247, 40.18299309990458];
-const DEFAULT_DRIVER_INFO = pageData.ui.mapBox.defaultDriver;
-const MAP_DRAWER_TEXT = pageData.ui.mapBox.drawer;
 const INITIAL_MODE = "dark";
 
 const EMPTY_ZONES = {
@@ -145,6 +143,22 @@ function fitMapToActiveZones(mapInstance, zonesData) {
 }
 
 export default function Map() {
+  const { data: pageData } = useLanguage();
+  const DEFAULT_DRIVER_INFO = pageData?.ui?.mapBox?.defaultDriver || {
+    fullName: "Alex Morgan",
+    activeContractName: "Downtown Delivery Route",
+    carPhotoLeft: "https://placehold.co/520x320/121722/39FF14?text=Car+Left+Side",
+    carPhotoRight: "https://placehold.co/520x320/121722/39FF14?text=Car+Right+Side"
+  };
+  const MAP_DRAWER_TEXT = pageData?.ui?.mapBox?.drawer || {
+    title: "Driver info",
+    close: "Close",
+    fullName: "Full Name",
+    activeCampaign: "Active campaign name",
+    carLeftAlt: "Car left side",
+    carRightAlt: "Car right side"
+  };
+
   const mapContainer = useRef(null);
   const map = useRef(null);
   const driverMarkersRef = useRef([]);

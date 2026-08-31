@@ -13,11 +13,12 @@ import {
   updateFleet,
   insertTransfer,
 } from "../../data/service";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 
 import TopMenu from "../../Components/TopMenu";
 
 function Billing({ setFleetPage }) {
+    const { data: pageData } = useLanguage();
     const billingText = pageData.fleet.billing;
     const [withdrawAmount, setWithdrawAmount] = useState("10000");
     const [selectedMethodId, setSelectedMethodId] = useState("");

@@ -9,9 +9,10 @@ import {
   getStorageFileUrl,
   updateProfile,
 } from "../data/service";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 function ChangeImage({title, type, imageField}) {
+    const { data: pageData } = useLanguage();
     const textData = pageData.ui.changeImage;
     const fileInputRef = useRef(null);
     const [imageUrl, setImageUrl] = useState("");

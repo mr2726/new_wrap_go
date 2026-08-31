@@ -14,9 +14,10 @@ import {
   signOut,
 } from "../../data/service";
 import Loader from "../../Components/Loader";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 
 function FleetContent({ setPage }) {
+    const { data: pageData } = useLanguage();
     const gateText = pageData.fleet.fleetContent2fa;
     const [fleetPage, setFleetPage] = useState("dashboard");
     const [isChecking2FA, setIsChecking2FA] = useState(true);

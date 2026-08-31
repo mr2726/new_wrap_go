@@ -3,9 +3,10 @@ import "./fleetResize.css";
 import Logo from "../../Components/Logo";
 import { useState, useEffect } from "react";
 import { getUser, checkFleetByEmail, signUp, checkFleetByUserId, insertFleet } from "../../data/service";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 
 function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword = "" }) {
+    const { data: pageData } = useLanguage();
     const signupText = pageData.fleet.signup;
     const [userData, setUserData] = useState({
         fleetName: "",

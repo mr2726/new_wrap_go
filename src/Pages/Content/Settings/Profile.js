@@ -1,11 +1,10 @@
-// import { useEffect, useState } from "react";
 import "../../../App.css";
 import ChangeImage from "../../../Components/ChangeImage";
 import SettingsForm from "../../../Components/SettingsForm";
-import pageData from "../../../data/data.json";
-// import { supabase } from "../../../data/supabase";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function Profile({_profileData}) {
+    const { data: pageData } = useLanguage();
     const profileText = pageData.content.settings.profilePage;
 
     return (

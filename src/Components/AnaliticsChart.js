@@ -1,6 +1,6 @@
 import "../App.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 const CustomDot = (props) => {
     const { cx, cy } = props;
@@ -16,6 +16,7 @@ const CustomDot = (props) => {
 };
 
 function AnaliticsChart({currentDate, analyticsData}) {
+    const { data: pageData } = useLanguage();
     const chartData = pageData.ui.analyticsChart;
 
     const data = analyticsData?.[currentDate] ?? [];

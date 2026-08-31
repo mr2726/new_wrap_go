@@ -1,8 +1,9 @@
 import React from "react";
 import "../App.css";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 const Comp = ({ title, currentDate, setCurrentDate }) => {
+    const { data: pageData } = useLanguage();
     const dateRanges = pageData.ui.dateRanges;
 
     return (

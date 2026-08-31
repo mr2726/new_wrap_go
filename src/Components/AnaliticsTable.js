@@ -1,7 +1,8 @@
 import "../App.css";
-import appData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 function AnatiticTable ({data, pageData, state, page, setChoosedCampaign}) {
+    const { data: appData } = useLanguage();
     const fallbackText = appData.ui.common;
     const formatNumber = (num) => num.toLocaleString('en-US');
     if (!Array.isArray(data)) {

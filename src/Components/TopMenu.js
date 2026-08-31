@@ -1,9 +1,11 @@
 import "../App.css";
 import Logo from "./Logo";
 import { signOut } from "../data/service";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
+import LanguageSelector from "./LanguageSelector";
 
 function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
+    const { data: pageData } = useLanguage();
     const menuText = pageData.fleet.topMenu;
     const menuItems = [
         { key: "dashboard", label: menuText.items.dashboard },
@@ -37,7 +39,10 @@ function TopMenu ({sendto, setFleetPage, currentPage = "dashboard"}) {
                     </li>
                 ))}
             </ul>
-            <button type="button" className="logout" onClick={handleLogout}>{menuText.logout}</button>
+            <div style={{ display: "flex", alignItems: "center", gap: "1em" }}>
+                <LanguageSelector />
+                <button type="button" className="logout" onClick={handleLogout}>{menuText.logout}</button>
+            </div>
         </div>
     );
 }

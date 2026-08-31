@@ -1,9 +1,10 @@
 import "../../../App.css";
 import { useCallback, useEffect, useState } from "react";
 import { mfaListFactors, mfaEnroll, mfaChallenge, mfaVerify } from "../../../data/service";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function TwoFactorAuth({ onClose, onEnabled }) {
+    const { data: pageData } = useLanguage();
     const twoFaText = pageData.fleet.twoFactorSetup;
     const [setupFactorId, setSetupFactorId] = useState("");
     const [setupQrCode, setSetupQrCode] = useState("");

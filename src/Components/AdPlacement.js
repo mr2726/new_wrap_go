@@ -1,10 +1,8 @@
 import "../App.css";
-// import { useState } from "react";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function AdPlacement({setSelected, selected}) {
-  // const [selected, setSelected] = useState("side");
-
+  const { data: pageData } = useLanguage();
   const options = pageData.ui.adPlacement.options;
 
   return (

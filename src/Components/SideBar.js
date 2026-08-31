@@ -1,6 +1,7 @@
 import "../App.css";
 import { signOut } from "../data/service";
 import Logo from "./Logo";
+import LanguageSelector from "./LanguageSelector";
 import { MdOutlineDashboard, MdAdd, MdOutlineMap,MdBarChart,MdCompareArrows, MdCreditCard, MdOutlineSettings, MdLogout } from "react-icons/md";
 import { FaInfoCircle } from "react-icons/fa";
 
@@ -42,7 +43,10 @@ function SideBar ({data, page, setPage}) {
     };
     return (
         <div className="sidebar">
-            <Logo setPage={setPage} transfer="overview" />
+            <div className="sidebar__header">
+                <Logo setPage={setPage} transfer="overview" />
+                <LanguageSelector />
+            </div>
             <div className="sidebar__links--space">
                 <ul className="sidebar__links">
                     {

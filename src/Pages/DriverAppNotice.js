@@ -1,8 +1,9 @@
 import "../App.css";
 import Logo from "../Components/Logo";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 function DriverAppNotice({ setPage }) {
+  const { data: pageData } = useLanguage();
   const driverPageData = pageData.driverAppNotice;
 
   return (

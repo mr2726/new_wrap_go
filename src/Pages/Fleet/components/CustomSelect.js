@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { HiChevronDown } from "react-icons/hi";
 import "../../../App.css";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function CustomSelect({ label, options, value, onChange, isVehicle }) {
+    const { data: pageData } = useLanguage();
     const selectText = pageData.fleet.customSelect;
     const [isOpen, setIsOpen] = useState(false);
 

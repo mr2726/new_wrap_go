@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Chart from "./Chart";
 import "../App.js";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 function OverviewChart({data7, data30}) {
+    const { data: pageData } = useLanguage();
     const chartText = pageData.ui.overviewChart;
     const [range, setRange] = useState("7");
 

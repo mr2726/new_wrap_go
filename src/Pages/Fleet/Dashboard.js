@@ -14,9 +14,10 @@ import {
   getVehiclesByFleet,
   getEarnings,
 } from '../../data/service';
-import pageData from '../../data/data.json';
+import { useLanguage } from '../../context/LanguageContext';
 
 function Dashboard({ setFleetPage }) {
+    const { data: pageData } = useLanguage();
     const dashboardText = pageData.fleet.dashboard;
     const [addVehicleModal, setAddVehicleModal] = useState(false);
     const [addDriverModal, setAddDriverModal] = useState(false);

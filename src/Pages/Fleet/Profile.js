@@ -16,7 +16,7 @@ import {
 import Loader from "../../Components/Loader";
 import ChangePassword from "./components/ChangePassword";
 import TwoFactorAuth from "./components/2FA";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 
 const formatArmenianPhone = (value) => {
     const digits = value.replace(/\D/g, "");
@@ -32,6 +32,7 @@ const formatArmenianPhone = (value) => {
 };
 
 function Profile({ setFleetPage }) {
+    const { data: pageData } = useLanguage();
     const profileText = pageData.fleet.profile;
     const fallbackEmailRequired = "Email is required";
     const fallbackEmailInvalid = "Please enter a valid email address";

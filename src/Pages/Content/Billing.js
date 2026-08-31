@@ -22,9 +22,10 @@ import { RiBankFill } from "react-icons/ri";
 import { FaCheckCircle } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
 import { FaRegCheckCircle } from "react-icons/fa";
-import pageData from "../../data/data.json";
+import { useLanguage } from "../../context/LanguageContext";
 
 function Billing({setPage}) {
+    const { data: pageData } = useLanguage();
     const billingText = pageData.content.billing;
     const [loading, setLoading] = useState(true);
     const [currentBillingMethod, setCurrentBillingMethod] = useState("idram");

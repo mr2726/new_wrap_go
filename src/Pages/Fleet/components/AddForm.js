@@ -1,9 +1,10 @@
 import "../../../App.css";
-import pageData from "../../../data/data.json";
 import { useState } from "react";
+import { useLanguage } from "../../../context/LanguageContext";
 import { getUser, insertVehicle } from "../../../data/service";
 
 function AddForm({ onClose }) {
+    const { data: pageData } = useLanguage();
     const formData = pageData.fleet.addVehicleForm;
     const [createVehicleData, setCreateVehicleData] = useState({
         "mark" : "",

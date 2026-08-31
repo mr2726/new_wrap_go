@@ -1,9 +1,10 @@
 import "../../../App.css";
 import { useState } from "react";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 import { updateVehicle } from "../../../data/service";
 
 function AddDriverForm({ onClose, vehicles }) {
+    const { data: pageData } = useLanguage();
     const formText = pageData.fleet.addDriverForm;
     const hasVehicles = Array.isArray(vehicles) && vehicles.length > 0;
     const generateInviteCode = () => {

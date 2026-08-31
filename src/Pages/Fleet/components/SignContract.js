@@ -2,9 +2,10 @@ import "../../../App.css";
 import { useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
 import { getUser, insertFleetSignedContract, updateDriverContract } from "../../../data/service";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function SignContract({ onClose, drivers = [], vehicles = [], contracts = [], onAssigned }) {
+  const { data: pageData } = useLanguage();
   const signText = pageData.fleet.signContract;
   const [selectedVehicleId, setSelectedVehicleId] = useState("");
   const [selectedContractId, setSelectedContractId] = useState("");

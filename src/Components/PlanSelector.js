@@ -1,10 +1,8 @@
 import "../App.css";
-// import { useState } from "react";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function PlanSelector({setRoute, route, setCustomSelected}) {
-  // const [selected, setSelected] = useState("3m");
-
+  const { data: pageData } = useLanguage();
   const planText = pageData.ui.planSelector;
   const options = planText.options;
 

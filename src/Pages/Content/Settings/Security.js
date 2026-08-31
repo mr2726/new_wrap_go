@@ -11,9 +11,10 @@ import {
   mfaVerify,
   updateUserPassword,
 } from "../../../data/service";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function Security() {
+    const { data: pageData } = useLanguage();
     const securityData = pageData.content.settings.security;
     const twoFaData = securityData.twoFa;
     const passwordData = securityData.password;

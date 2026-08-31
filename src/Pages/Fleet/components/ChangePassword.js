@@ -1,9 +1,10 @@
 import "../../../App.css";
 import { useEffect, useState } from "react";
 import { getUser, signIn, updateUserPassword } from "../../../data/service";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function ChangePassword({ onClose }) {
+    const { data: pageData } = useLanguage();
     const passwordText = pageData.fleet.changePassword;
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");

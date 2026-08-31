@@ -1,7 +1,8 @@
 import "../../../App.css";
-import pageData from "../../../data/data.json";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function TableTr({ vehicleData, contractData, driverData }) {
+    const { data: pageData } = useLanguage();
     const tableText = pageData.fleet.tableRow;
   const vehicle = vehicleData || {};
   const contract = contractData || {};

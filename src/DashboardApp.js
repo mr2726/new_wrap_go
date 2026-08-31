@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import data from "./data/data.json";
+import { useLanguage } from './context/LanguageContext';
+import LanguageSelector from './Components/LanguageSelector';
 import {
   getSession,
   onAuthStateChange,
@@ -122,6 +123,7 @@ const resolvePageFromPath = () => {
  * Используется внутри /app маршрута
  */
 function DashboardApp() {
+  const { data } = useLanguage();
   const [page, setPage] = useState("landing");
   const [email, setEmail] = useState("");
   const [fleetSignupPrefill, setFleetSignupPrefill] = useState({ email: "", password: "" });
@@ -129,7 +131,11 @@ function DashboardApp() {
 
   useEffect(() => {
     if (page === "signin" || page === "signup") {
+      const savedLang = localStorage.getItem("wrapgo_lang");
       localStorage.clear();
+      if (savedLang) {
+        localStorage.setItem("wrapgo_lang", savedLang);
+      }
     }
   }, [page]);
 
@@ -239,8 +245,24 @@ function DashboardApp() {
         return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} />
     }
   }
+  const showFloatingLangSelector = [
+    "signin",
+    "signup",
+    "terms",
+    "privacy",
+    "otplink",
+    "reset",
+    "reset-status",
+    "check-email",
+    "confirm-email",
+    "company-info",
+    "drivers-download",
+    "fleet-signup",
+  ].includes(page);
+
   return (
     <div className="App">
+      {showFloatingLangSelector && <LanguageSelector variant="floating" />}
       {loading ? <Loader /> : renderPage()}
     </div>
   );

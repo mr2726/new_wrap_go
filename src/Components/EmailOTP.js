@@ -1,8 +1,9 @@
 import "../App.css";
 import { useEffect, useState } from "react";
-import pageData from "../data/data.json";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmailOTP({ email, onVerify, onCancel, onResend }) {
+    const { data: pageData } = useLanguage();
     const otpText = pageData.content.settings.contactChangeOtp;
     const [otp, setOtp] = useState("");
     const [submitting, setSubmitting] = useState(false);
