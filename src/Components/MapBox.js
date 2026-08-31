@@ -504,7 +504,12 @@ export default function Map() {
       window.clearInterval(pollingId);
       removeRealtimeChannel(realtimeChannel);
     };
-  }, []);
+  }, [
+    DEFAULT_DRIVER_INFO.activeContractName,
+    DEFAULT_DRIVER_INFO.carPhotoLeft,
+    DEFAULT_DRIVER_INFO.carPhotoRight,
+    DEFAULT_DRIVER_INFO.fullName,
+  ]);
 
   useEffect(() => {
     if (map.current) {
