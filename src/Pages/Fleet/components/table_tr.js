@@ -1,5 +1,6 @@
 import "../../../App.css";
 import { useLanguage } from "../../../context/LanguageContext";
+import { getEffectiveCampaignStartDate } from "../../../data/campaignDates";
 
 function TableTr({ vehicleData, contractData, driverData }) {
     const { data: pageData } = useLanguage();
@@ -8,16 +9,11 @@ function TableTr({ vehicleData, contractData, driverData }) {
   const contract = contractData || {};
   const driver = driverData || {};
 
-    const formatStartDate = (dateValue) => {
-        if (!dateValue) return "-";
+    const formatStartDate = (campaign) => {
+        const startDate = getEffectiveCampaignStartDate(campaign);
+        if (!startDate) return "-";
 
-        const parsedDate = new Date(dateValue);
-        if (Number.isNaN(parsedDate.getTime())) return "-";
-
-        const plusSevenDays = new Date(parsedDate);
-        plusSevenDays.setDate(plusSevenDays.getDate() + 7);
-
-        return plusSevenDays.toLocaleDateString("en-US", {
+        return startDate.toLocaleDateString("en-US", {
             month: "short",
             day: "2-digit",
             year: "numeric",
@@ -76,7 +72,7 @@ function TableTr({ vehicleData, contractData, driverData }) {
             </div>
         </td>
         
-        <td><p className='table_title'>{formatStartDate(contract.created_at)}</p></td>
+        <td><p className='table_title'>{formatStartDate(contract)}</p></td>
         <td><p className='table_title'>{driver.kmtoday || 0}</p></td>
         <td><p className='table_title'>{driver.zonehourse || 0}</p></td>
     </tr>

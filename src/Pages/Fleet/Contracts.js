@@ -11,8 +11,10 @@ import {
   updateFleet,
   getAllCampaigns,
   getProfilesByIds,
+    updateCampaign,
 } from "../../data/service";
 import { useLanguage } from "../../context/LanguageContext";
+import { getEffectiveCampaignStartDate } from "../../data/campaignDates";
 
 
 function Contracts({setFleetPage}) {
@@ -55,6 +57,15 @@ function Contracts({setFleetPage}) {
             const { error: fleetError } = await updateFleet(user?.id, { contracts: currentContracts });
 
             if (fleetError) throw fleetError;
+
+            const effectiveStart = getEffectiveCampaignStartDate(selectedContract);
+            if (effectiveStart) {
+                const { error: startDateError } = await updateCampaign(selectedContract.id, {
+                    effective_start_at: effectiveStart.toISOString(),
+                });
+
+                if (startDateError) throw startDateError;
+            }
 
             // Close modal and reload data
             closeDetails();
@@ -173,7 +184,7 @@ function Contracts({setFleetPage}) {
                                                 <CiCalendar color="#94A3B8" fontSize={20}/>
                                                 <div>
                                                     <p>{contractsText.details.startDate}</p>
-                                                    <p>{new Date(new Date(item.created_at).setDate(new Date(item.created_at).getDate() + 7)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                                    <p>{getEffectiveCampaignStartDate(item)?.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) || "-"}</p>
                                                 </div>
                                             </div>
                                             <div className="contract__details--block">
@@ -242,7 +253,7 @@ function Contracts({setFleetPage}) {
                                             <CiCalendar color="#94A3B8" fontSize={20}/>
                                             <div>
                                                 <p>{contractsText.details.startDate}</p>
-                                                <p>{new Date(new Date(selectedContract.created_at).setDate(new Date(selectedContract.created_at).getDate() + 7)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                                <p>{getEffectiveCampaignStartDate(selectedContract)?.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) || "-"}</p>
                                             </div>
                                         </div>
                                         <div className="contract__details--block">

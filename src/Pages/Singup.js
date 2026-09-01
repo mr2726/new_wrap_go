@@ -4,11 +4,13 @@ import { MdCheckCircleOutline  } from "react-icons/md";
 import { getSession, signUp } from "../data/service";
 import Logo from "../Components/Logo";
 
-function Signup({data, setPage, setEmail, setFleetSignupPrefill}) {
-    const [formData, setFormData] = useState({});
+function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, setSignupDraft}) {
+    const [formData, setFormData] = useState(signupDraft?.formData || {});
     const [error, setError] = useState("");
     const [passNotValid, setPassNotValid] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [tab, setTab] = useState(signupDraft?.tab || "customer");
+    const [termsAccepted, setTermsAccepted] = useState(signupDraft?.termsAccepted || false);
 
 
     useEffect(() => {
@@ -27,7 +29,7 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill}) {
             data.signup_form.signup_form_inputs.map(input => [input.name, ""])
         );
 
-        setFormData(initialState);
+        setFormData(prev => ({ ...initialState, ...prev }));
     }, [data]);
 
     const resolveEmailRedirectTo = () => {
@@ -48,10 +50,13 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill}) {
     // Input changes handler
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
+        const nextFormData = {
+            ...formData,
             [name]: value
-        }));
+        };
+
+        setFormData(nextFormData);
+        setSignupDraft?.(draft => ({ ...draft, formData: nextFormData }));
     };
 
     // submit Handler
@@ -137,9 +142,9 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill}) {
             </div>
         )
     }
-    const [tab, setTab] = useState("customer");
     const handleTabChange = (selectedTab) => {
         setTab(selectedTab);
+        setSignupDraft?.(draft => ({ ...draft, tab: selectedTab }));
     }
     return (
         <div className="signup">
@@ -189,6 +194,11 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill}) {
                             type="checkbox"
                             id="terms"
                             className="signup_form__checkbox"
+                            checked={termsAccepted}
+                            onChange={(event) => {
+                                setTermsAccepted(event.target.checked);
+                                setSignupDraft?.(draft => ({ ...draft, termsAccepted: event.target.checked }));
+                            }}
                             required
                         />
 

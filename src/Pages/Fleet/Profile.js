@@ -17,19 +17,7 @@ import Loader from "../../Components/Loader";
 import ChangePassword from "./components/ChangePassword";
 import TwoFactorAuth from "./components/2FA";
 import { useLanguage } from "../../context/LanguageContext";
-
-const formatArmenianPhone = (value) => {
-    const digits = value.replace(/\D/g, "");
-    const nationalNumber = digits.startsWith("374") ? digits.slice(3, 11) : digits.slice(0, 8);
-
-    if (!nationalNumber) {
-        return "";
-    }
-
-    return nationalNumber.length <= 2
-        ? `+374 ${nationalNumber}`
-        : `+374 ${nationalNumber.slice(0, 2)} ${nationalNumber.slice(2)}`;
-};
+import { COUNTRY_CODES, DEFAULT_COUNTRY_CODE, formatPhoneNumber, normalizeLocalPhoneDigits, splitPhoneNumber } from "../../data/phone";
 
 function Profile({ setFleetPage }) {
     const { data: pageData } = useLanguage();
@@ -48,6 +36,8 @@ function Profile({ setFleetPage }) {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState("");
+    const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+    const [phoneNumber, setPhoneNumber] = useState("");
 
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
@@ -130,12 +120,15 @@ function Profile({ setFleetPage }) {
                         console.error("Error fetching profile:", error);
                         setMessage(`${profileText.messages.loadErrorPrefix} ${error.message}`);
                     } else {
+                        const savedPhone = splitPhoneNumber(data.phone);
                         setFormData({
                             contactpersone: data.contactpersone || "",
                             fleetname: data.fleetname || "",
                             email: data.email || "",
-                            phone: data.phone || ""
+                            phone: formatPhoneNumber(savedPhone.countryCode, savedPhone.localNumber)
                         });
+                        setCountryCode(savedPhone.countryCode);
+                        setPhoneNumber(savedPhone.localNumber);
                         setEmailError(getEmailValidationError(data.email || ""));
                     }
                 }
@@ -154,9 +147,16 @@ function Profile({ setFleetPage }) {
             setEmailError(getEmailValidationError(value));
         }
 
+        if (name === "phone") {
+            const localNumber = normalizeLocalPhoneDigits(countryCode, value);
+            setPhoneNumber(localNumber);
+            setFormData(prev => ({ ...prev, phone: formatPhoneNumber(countryCode, localNumber) }));
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: name === "phone" ? formatArmenianPhone(value) : value
+            [name]: value
         }));
     };
 
@@ -335,11 +335,11 @@ function Profile({ setFleetPage }) {
                             <p>{profileText.fields.email}</p>
                         </div>
                         <div style={{display: "flex", flexDirection: "column", width: "60%"}}>
-                            <input 
+                            <input
                                 type="email" 
                                 name="email"
                                 value={formData.email} 
-                                className="editable_input" 
+                                className="editable_input"
                                 onChange={handleInputChange}
                                 aria-invalid={Boolean(emailError)}
                                 required
@@ -355,16 +355,30 @@ function Profile({ setFleetPage }) {
                             <FaPhoneAlt size={15} color="#94A3B8"/>
                             <p>{profileText.fields.phone}</p>
                         </div>
-                        <input 
-                            type="tel"
-                            name="phone"
-                            value={formData.phone} 
-                            className="editable_input" 
-                            onChange={handleInputChange}
-                            inputMode="numeric"
-                            placeholder="+374 xx xxxxxx"
-                            maxLength={14}
-                        />
+                        <div className="phone-control profile-phone-control">
+                            <select
+                                className="country-code"
+                                aria-label={profileText.fields.phone}
+                                value={countryCode}
+                                onChange={(event) => {
+                                    const nextCountryCode = event.target.value;
+                                    setCountryCode(nextCountryCode);
+                                    setFormData(prev => ({ ...prev, phone: formatPhoneNumber(nextCountryCode, phoneNumber) }));
+                                }}
+                            >
+                                {COUNTRY_CODES.map((code) => <option key={code} value={code}>{code}</option>)}
+                            </select>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={phoneNumber}
+                                className="editable_input"
+                                onChange={handleInputChange}
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                placeholder="XX XXXXXX"
+                            />
+                        </div>
                     </div>
                     <button 
                         className="save_btn cta" 

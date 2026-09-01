@@ -23,6 +23,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { useLanguage } from "../../context/LanguageContext";
+import { getCampaignEndDate, getEffectiveCampaignStartDate } from "../../data/campaignDates";
 
 function Billing({setPage}) {
     const { data: pageData } = useLanguage();
@@ -98,6 +99,8 @@ function Billing({setPage}) {
                     campaignStatus: campaignMap[row.campaign_id]?.status || "-",
                     campaignCreatedAt: campaignMap[row.campaign_id]?.created_at || null,
                     campaignDuration: campaignMap[row.campaign_id]?.duration || null,
+                    campaignOriginalStartAt: campaignMap[row.campaign_id]?.original_start_at || null,
+                    campaignEffectiveStartAt: campaignMap[row.campaign_id]?.effective_start_at || null,
                 }));
 
                 setInvoices(normalizedInvoices);
@@ -161,27 +164,19 @@ function Billing({setPage}) {
         });
     };
 
-    const getDurationMonths = (durationValue) => {
-        if (!durationValue) return 1;
-        const normalized = String(durationValue).toLowerCase().trim();
-        const numeric = Number.parseInt(normalized.replace(/[^0-9]/g, ""), 10);
-        if (!Number.isNaN(numeric) && numeric > 0) return numeric;
-        if (normalized === "custom") return 1;
-        return 1;
-    };
-
     const getInvoiceDescription = (invoice) => {
         const campaignCreatedAt = invoice?.campaignCreatedAt;
         if (!campaignCreatedAt) return "-";
 
-        const createdDate = new Date(campaignCreatedAt);
-        if (Number.isNaN(createdDate.getTime())) return "-";
-
-        const startDate = new Date(createdDate);
-        startDate.setDate(startDate.getDate() + 7);
-
-        const endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + getDurationMonths(invoice?.campaignDuration));
+        const campaign = {
+            created_at: campaignCreatedAt,
+            duration: invoice?.campaignDuration,
+            original_start_at: invoice?.campaignOriginalStartAt,
+            effective_start_at: invoice?.campaignEffectiveStartAt,
+        };
+        const startDate = getEffectiveCampaignStartDate(campaign);
+        const endDate = getCampaignEndDate(campaign);
+        if (!startDate || !endDate) return "-";
 
         const fromDate = startDate.toLocaleDateString("en-US", {
             month: "short",

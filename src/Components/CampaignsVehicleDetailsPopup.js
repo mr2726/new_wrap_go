@@ -5,24 +5,17 @@ import {
     getVehiclesByInviteCodes,
 } from "../data/service";
 import "../App.css";
-
-const parseDurationMs = (duration) => {
-    const match = (duration || "").match(/^(\d+)([mdhw])$/i);
-    if (!match) return 0;
-    const val = parseInt(match[1], 10);
-    const unit = match[2].toLowerCase();
-    const msMap = { m: 30 * 24 * 60 * 60 * 1000, d: 24 * 60 * 60 * 1000, h: 60 * 60 * 1000, w: 7 * 24 * 60 * 60 * 1000 };
-    return val * (msMap[unit] || 0);
-};
+import { getCampaignEndDate, getEffectiveCampaignStartDate } from "../data/campaignDates";
 
 const formatDate = (date) =>
     new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
 const getCampaignDates = (campaign) => {
     if (!campaign?.created_at) return { start: "—", end: "—" };
-    const startMs = new Date(campaign.created_at).getTime() + 7 * 24 * 60 * 60 * 1000;
-    const endMs = startMs + parseDurationMs(campaign.duration);
-    return { start: formatDate(startMs), end: formatDate(endMs) };
+    return {
+        start: formatDate(getEffectiveCampaignStartDate(campaign)),
+        end: formatDate(getCampaignEndDate(campaign)),
+    };
 };
 
 function CampaignsVehicleDetailsPopup({ campaign, onClose }) {

@@ -269,6 +269,9 @@
                 "label" : "Phone Number",
                 "placeholder" : "Enter phone number with country code"
             },
+            "countryCode" : {
+                "label" : "Country code"
+            },
             "companyName" : {
                 "label" : "Company Name",
                 "placeholder" : "Enter your company name"
@@ -635,6 +638,9 @@
                     "label" : "Contact Phone Number",
                     "placeholder" : "Enter the contact phone number"
                 },
+                "countryCode" : {
+                    "label" : "Country code"
+                },
                 "fleetSize" : {
                     "label" : "Fleet Size",
                     "placeholder" : "Enter the number of vehicles in your fleet"
@@ -650,15 +656,20 @@
             },
             "buttons" : {
                 "submitting" : "Submitting...",
-                "submit" : "Submit"
+                "submit" : "Submit",
+                "loginInstead" : "Log in instead"
             },
             "messages" : {
                 "sessionExpired" : "Session expired. Please request a new registration link.",
                 "passwordMismatch" : "Passwords do not match.",
                 "passwordRules" : "Password must contain uppercase, lowercase, number, symbol and be at least 8 characters.",
                 "emailExists" : "This email is already registered as a fleet.",
+                "emailCheckFailed" : "Unable to check this email. Please try again.",
+                "emailChecking" : "Checking email...",
                 "signupFailed" : "Signup failed. Please try again.",
                 "accountFailed" : "Failed to get user account. Please try again.",
+                "phoneDigitsOnly" : "Phone number can contain digits only.",
+                "phoneRequired" : "Enter a contact phone number.",
                 "saveFleetFailedPrefix" : "Failed to save fleet info:",
                 "success" : "Registration successful!",
                 "unexpected" : "An error occurred during signup."

@@ -127,7 +127,32 @@ function DashboardApp() {
   const [page, setPage] = useState("landing");
   const [email, setEmail] = useState("");
   const [fleetSignupPrefill, setFleetSignupPrefill] = useState({ email: "", password: "" });
+  const [signupDraft, setSignupDraft] = useState({ formData: {}, tab: "customer", termsAccepted: false });
+  const [legalReturnPage, setLegalReturnPage] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const setAppPage = (nextPage) => {
+    if (nextPage === "terms" || nextPage === "privacy") {
+      window.history.replaceState({ dashboardPage: page }, "", window.location.href);
+      window.history.pushState(
+        { dashboardPage: nextPage, returnPage: page },
+        "",
+        window.location.href
+      );
+      setLegalReturnPage(page);
+    }
+
+    setPage(nextPage);
+  };
+
+  const handleLegalBack = () => {
+    if (window.history.state?.dashboardPage === page && legalReturnPage) {
+      window.history.back();
+      return;
+    }
+
+    setPage(legalReturnPage || "signin");
+  };
 
   useEffect(() => {
     if (page === "signin" || page === "signup") {
@@ -144,6 +169,22 @@ function DashboardApp() {
       setFleetSignupPrefill((prev) => ({ ...prev, password: "" }));
     }
   }, [page, fleetSignupPrefill.password]);
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const historyPage = event.state?.dashboardPage;
+
+      if (historyPage) {
+        setPage(historyPage);
+        setLegalReturnPage(event.state?.returnPage || null);
+      } else if (legalReturnPage) {
+        setPage(legalReturnPage);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [legalReturnPage]);
 
   useEffect(() => {
     const syncEmailFromSession = async () => {
@@ -207,13 +248,13 @@ function DashboardApp() {
   const renderPage = () => {
     switch(page){
       case "signup":
-        return <Signup data={data.signup} setPage={setPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} />
+        return <Signup data={data.signup} setPage={setAppPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} signupDraft={signupDraft} setSignupDraft={setSignupDraft} />
       case "signin":
-        return <Singin data={data.signin} setPage={setPage} />
+        return <Singin data={data.signin} setPage={setAppPage} />
       case "terms":
-        return <Terms data={data.terms} setPage={setPage}/>
+        return <Terms data={data.terms} onBack={handleLegalBack}/>
       case "privacy":
-        return <PrivacyPolicy data={data.privacy} setPage={setPage}/>
+        return <PrivacyPolicy data={data.privacy} onBack={handleLegalBack}/>
       case "fleet-signup":
         return (
           <FleetSignup

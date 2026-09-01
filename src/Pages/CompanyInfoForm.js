@@ -2,11 +2,14 @@ import "../App.css";
 import Logo from "../Components/Logo";
 import { getUser, checkProfileByUserId, insertProfile } from "../data/service";
 import { useEffect, useState } from "react";
+import { COUNTRY_CODES, DEFAULT_COUNTRY_CODE, formatPhoneNumber, normalizeLocalPhoneDigits } from "../data/phone";
 
 function CompanyInfo ({data, setPage, email}) {
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [resolvedEmail, setResolvedEmail] = useState(email || "");
+    const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+    const [phoneNumber, setPhoneNumber] = useState("");
 
     useEffect(() => {
         if (email) {
@@ -52,6 +55,7 @@ function CompanyInfo ({data, setPage, email}) {
                 filledValues[key] = value.trim();
             }
         });
+        filledValues.phone = formatPhoneNumber(countryCode, phoneNumber);
 
         const { data: existingProfile, error: checkError } = await checkProfileByUserId(user.id);
 
@@ -125,14 +129,28 @@ function CompanyInfo ({data, setPage, email}) {
                         disabled
                     />
                     <label htmlFor="phone" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.phone.label}</label>
-                    <input 
-                        className="signup_form__form--input"
-                        id="phone"
-                        name="phone"
-                        placeholder={data.fields.phone.placeholder}
-                        type="tel"
-                        required
-                    />
+                    <div className="phone-control">
+                        <select
+                            className="country-code"
+                            aria-label={data.fields.countryCode.label}
+                            value={countryCode}
+                            onChange={(event) => setCountryCode(event.target.value)}
+                        >
+                            {COUNTRY_CODES.map((code) => <option key={code} value={code}>{code}</option>)}
+                        </select>
+                        <input
+                            className="signup_form__form--input"
+                            id="phone"
+                            name="phone"
+                            placeholder={data.fields.phone.placeholder}
+                            type="tel"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={phoneNumber}
+                            onChange={(event) => setPhoneNumber(normalizeLocalPhoneDigits(countryCode, event.target.value))}
+                            required
+                        />
+                    </div>
                     <h2 className="subtitle">{data.sections.company}</h2>
                     <label htmlFor="name" style={{marginLeft: 0}} className="signup_form__terms--label">{data.fields.companyName.label}</label>
                     <input 

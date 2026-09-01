@@ -1,9 +1,10 @@
 import "../../App.css";
 import "./fleetResize.css";
 import Logo from "../../Components/Logo";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getUser, checkFleetByEmail, signUp, checkFleetByUserId, insertFleet } from "../../data/service";
 import { useLanguage } from "../../context/LanguageContext";
+import { COUNTRY_CODES, formatPhoneNumber, normalizeLocalPhoneDigits } from "../../data/phone";
 
 function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword = "" }) {
     const { data: pageData } = useLanguage();
@@ -18,10 +19,16 @@ function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword
         confirmPassword: ""
     });
     const [error, setError] = useState("");
+    const [phoneError, setPhoneError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+    const [emailAlreadyRegistered, setEmailAlreadyRegistered] = useState(false);
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [fromOtp, setFromOtp] = useState(false);
     const [fromPrefill, setFromPrefill] = useState(false);
+    const [countryCode, setCountryCode] = useState("+374");
+    const emailCheckRequest = useRef(0);
 
     useEffect(() => {
         const checkExistingSession = async () => {
@@ -54,8 +61,57 @@ function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword
         return regex.test(password);
     };
 
+    const validateFleetEmail = useCallback(async (email) => {
+        const normalizedEmail = (email || "").trim().toLowerCase();
+        if (!normalizedEmail || fromOtp) return false;
+
+        const requestId = ++emailCheckRequest.current;
+        setIsCheckingEmail(true);
+        setEmailError("");
+
+        try {
+            const { data: existingFleet, error: checkError } = await checkFleetByEmail(normalizedEmail);
+            if (requestId !== emailCheckRequest.current) return false;
+
+            if (checkError && checkError.code !== "PGRST116") {
+                setEmailAlreadyRegistered(false);
+                setEmailError(signupText.messages.emailCheckFailed);
+                return false;
+            }
+
+            const alreadyRegistered = Boolean(existingFleet);
+            setEmailAlreadyRegistered(alreadyRegistered);
+            setEmailError(alreadyRegistered ? signupText.messages.emailExists : "");
+            return alreadyRegistered;
+        } finally {
+            if (requestId === emailCheckRequest.current) {
+                setIsCheckingEmail(false);
+            }
+        }
+    }, [fromOtp, signupText.messages.emailCheckFailed, signupText.messages.emailExists]);
+
+    useEffect(() => {
+        if (fromPrefill && userData.contactEmail) {
+            validateFleetEmail(userData.contactEmail);
+        }
+    }, [fromPrefill, userData.contactEmail, validateFleetEmail]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        if (name === "contactPhone") {
+            const phoneDigits = normalizeLocalPhoneDigits(countryCode, value);
+            setPhoneError(value !== phoneDigits ? signupText.messages.phoneDigitsOnly : "");
+            setUserData(prev => ({ ...prev, contactPhone: phoneDigits }));
+            return;
+        }
+
+        if (name === "contactEmail") {
+            emailCheckRequest.current += 1;
+            setEmailAlreadyRegistered(false);
+            setEmailError("");
+        }
+
         setUserData(prev => ({
             ...prev,
             [name]: value
@@ -66,6 +122,18 @@ function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword
         event.preventDefault();
         setError("");
         setSuccess("");
+
+        if (emailAlreadyRegistered || isCheckingEmail) {
+            return;
+        }
+
+        const phoneDigits = normalizeLocalPhoneDigits(countryCode, userData.contactPhone);
+        if (!phoneDigits) {
+            setPhoneError(signupText.messages.phoneRequired);
+            return;
+        }
+
+        setPhoneError("");
         setIsSubmitting(true);
 
         try {
@@ -145,7 +213,7 @@ function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword
             const { error: insertError } = await insertFleet({
                     userid: userId,
                     email: (userEmail || "").toLowerCase(),
-                    phone: userData.contactPhone,
+                    phone: formatPhoneNumber(countryCode, phoneDigits),
                     fleetname: userData.fleetName,
                     contactpersone: userData.contactPerson,
                     fleetsize: parseInt(userData.fleetSize) || 0,
@@ -216,24 +284,54 @@ function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword
                                 placeholder={signupText.fields.contactEmail.placeholder}
                                 value={userData.contactEmail}
                                 onChange={handleChange}
+                                onBlur={(event) => validateFleetEmail(event.target.value)}
                                 disabled={fromOtp || fromPrefill}
+                                aria-invalid={Boolean(emailError)}
+                                aria-describedby={emailError ? "contact-email-error" : undefined}
                                 required 
                             />
+                            {isCheckingEmail && <p className="fleet-signup__field-note">{signupText.messages.emailChecking}</p>}
+                            {emailError && (
+                                <p id="contact-email-error" className="signup_form__error fleet-signup__email-error">
+                                    {emailError}{" "}
+                                    {emailAlreadyRegistered && (
+                                        <button type="button" className="fleet-signup__login-link" onClick={() => setPage("signin")}>
+                                            {signupText.buttons.loginInstead}
+                                        </button>
+                                    )}
+                                </p>
+                            )}
                         </div>
 
                         <div className="fleet-signup__field">
                             <label className="signup_form__form--label" htmlFor="contact-phone">{signupText.fields.contactPhone.label}</label>
-                            <input 
-                                className="signup_form__form--input" 
-                                id="contact-phone" 
-                                name="contactPhone"
-                                type="tel" 
-                                inputMode="tel" 
-                                placeholder={signupText.fields.contactPhone.placeholder}
-                                value={userData.contactPhone}
-                                onChange={handleChange}
-                                required 
-                            />
+                            <div className="fleet-signup__phone-control">
+                                <select
+                                    className="fleet-signup__country-code"
+                                    aria-label={signupText.fields.countryCode.label}
+                                    value={countryCode}
+                                    onChange={(event) => setCountryCode(event.target.value)}
+                                >
+                                    {COUNTRY_CODES.map((code) => (
+                                        <option key={code} value={code}>{code}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    className="signup_form__form--input"
+                                    id="contact-phone"
+                                    name="contactPhone"
+                                    type="tel"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    placeholder={signupText.fields.contactPhone.placeholder}
+                                    value={userData.contactPhone}
+                                    onChange={handleChange}
+                                    aria-invalid={Boolean(phoneError)}
+                                    aria-describedby={phoneError ? "contact-phone-error" : undefined}
+                                    required
+                                />
+                            </div>
+                            {phoneError && <p id="contact-phone-error" className="signup_form__error fleet-signup__phone-error">{phoneError}</p>}
                         </div>
 
                         <div className="fleet-signup__field fleet-signup__field--full">
@@ -286,7 +384,7 @@ function FleetSignup({ setPage, setFleetPage, prefillEmail = "", prefillPassword
 
                     {error && <p className="signup_form__error fleet-signup__status">{error}</p>}
                     {success && <p className="fleet-signup__status fleet-signup__status--success">{success}</p>}
-                    <button className="signup_form__form--button fleet-signup__submit" type="submit" disabled={isSubmitting}>
+                    <button className="signup_form__form--button fleet-signup__submit" type="submit" disabled={isSubmitting || isCheckingEmail || emailAlreadyRegistered}>
                         {isSubmitting ? signupText.buttons.submitting : signupText.buttons.submit}
                     </button>
                 </form>

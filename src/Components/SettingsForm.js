@@ -3,20 +3,10 @@ import { useState, useEffect } from "react";
 import { getUser, updateProfile, sendEmailOtp, verifyEmailOtp, updateUserEmailImmediate } from "../data/service";
 import { useLanguage } from "../context/LanguageContext";
 import EmailOTP from "./EmailOTP";
+import { COUNTRY_CODES, DEFAULT_COUNTRY_CODE, formatPhoneNumber, normalizeLocalPhoneDigits, splitPhoneNumber } from "../data/phone";
 
 // dbKeys that require re-verification of the account owner via an OTP sent to the current email.
 const SENSITIVE_KEYS = ["email", "phone"];
-
-// Formats digits into "+CCC XX XXXXXX" (3-digit country code, e.g. +374 XX XXXXXX).
-const formatPhoneMask = (value) => {
-    const digits = value.replace(/\D/g, "").slice(0, 11);
-    if (!digits) return "";
-
-    let result = `+${digits.slice(0, 3)}`;
-    if (digits.length > 3) result += ` ${digits.slice(3, 5)}`;
-    if (digits.length > 5) result += ` ${digits.slice(5, 11)}`;
-    return result;
-};
 
 function SettingsForm({title, description, data}) {
     const { data: pageData } = useLanguage();
@@ -27,17 +17,26 @@ function SettingsForm({title, description, data}) {
     const [status, setStatus] = useState(null); // "success" | "error" | null
     const [pendingChange, setPendingChange] = useState(null); // { oldEmail, safeFormValues, emailChanged }
     const [saving, setSaving] = useState(false);
+    const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+    const [phoneNumber, setPhoneNumber] = useState("");
 
     useEffect(() => {
         const initial = {};
         data.forEach(item => { initial[item.dbKey] = item.value || ""; });
+        const savedPhone = splitPhoneNumber(initial.phone);
         setFormValues(initial);
         setInitialValues(initial);
+        setCountryCode(savedPhone.countryCode);
+        setPhoneNumber(savedPhone.localNumber);
     }, [data]);
 
     const handleChange = (dbKey, value) => {
-        const nextValue = dbKey === "phone" ? formatPhoneMask(value) : value;
-        setFormValues(prev => ({ ...prev, [dbKey]: nextValue }));
+        if (dbKey === "phone") {
+            setPhoneNumber(normalizeLocalPhoneDigits(countryCode, value));
+            return;
+        }
+
+        setFormValues(prev => ({ ...prev, [dbKey]: value }));
     };
 
     const applyProfileUpdate = async (safeFormValues) => {
@@ -56,10 +55,16 @@ function SettingsForm({title, description, data}) {
             if (!user) return;
 
             // userid must never be written through this form
-            const { userid: _userid, ...withoutUserId } = formValues;
+            const normalizedFormValues = {
+                ...formValues,
+                ...(Object.prototype.hasOwnProperty.call(formValues, "phone") && {
+                    phone: formatPhoneNumber(countryCode, phoneNumber),
+                }),
+            };
+            const { userid: _userid, ...withoutUserId } = normalizedFormValues;
 
             const hasSensitiveChange = SENSITIVE_KEYS.some(
-                (key) => key in formValues && formValues[key] !== initialValues[key]
+                (key) => key in normalizedFormValues && normalizedFormValues[key] !== initialValues[key]
             );
 
             if (hasSensitiveChange) {
@@ -153,15 +158,25 @@ function SettingsForm({title, description, data}) {
                                     ))}
                                 </select>
                             ) : item.dbKey === "phone" ? (
-                                <input
-                                    type="tel"
-                                    inputMode="tel"
-                                    className="settings-form__input signup_form__form--input"
-                                    placeholder={pageData.content.settings.profileFields.phonePlaceholder}
-                                    value={formValues[item.dbKey] ?? ""}
-                                    onChange={(e) => handleChange(item.dbKey, e.target.value)}
-                                    maxLength={16}
-                                />
+                                <div className="phone-control">
+                                    <select
+                                        className="country-code"
+                                        aria-label={item.title}
+                                        value={countryCode}
+                                        onChange={(event) => setCountryCode(event.target.value)}
+                                    >
+                                        {COUNTRY_CODES.map((code) => <option key={code} value={code}>{code}</option>)}
+                                    </select>
+                                    <input
+                                        type="tel"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        className="settings-form__input signup_form__form--input"
+                                        placeholder={pageData.content.settings.profileFields.phonePlaceholder}
+                                        value={phoneNumber}
+                                        onChange={(e) => handleChange(item.dbKey, e.target.value)}
+                                    />
+                                </div>
                             ) : (
                                 <input
                                     type="text"

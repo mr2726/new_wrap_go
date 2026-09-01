@@ -104,7 +104,7 @@ export const getCampaignNamesByOwner = (ownerId) =>
 export const getCampaignsByIds = (ids) =>
   supabase
     .from("campaigns")
-    .select("id, name, status, created_at, duration")
+    .select("id, name, status, created_at, duration, original_start_at, effective_start_at")
     .in("id", ids);
 
 export const getAllCampaigns = () => supabase.from("campaigns").select("*");

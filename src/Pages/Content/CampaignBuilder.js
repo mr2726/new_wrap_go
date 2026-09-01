@@ -14,6 +14,7 @@ import {
   insertAnalitics,
   insertInvoice,
 } from "../../data/service";
+import { getOriginalCampaignStartDate } from "../../data/campaignDates";
 
 
 function CampaignBuilder({data}) {
@@ -134,6 +135,7 @@ function CampaignBuilder({data}) {
             const { data: { session } } = await getSession();
 
             const userId = session?.user?.id;
+            const createdAt = new Date().toISOString();
             const payload = {
                 ownerid : userId,
                 name: productName,
@@ -147,6 +149,7 @@ function CampaignBuilder({data}) {
                 driverCount: 0,
                 document: fileUrl, // ссылка на файл
                 budget: discountedTotal,
+                original_start_at: getOriginalCampaignStartDate({ created_at: createdAt }).toISOString(),
             };
 
             // ===== 4. Запись в таблицу =====

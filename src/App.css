@@ -57,6 +57,77 @@
   src: url('./Fonts/LufgaExtraBold.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaThin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaMedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaSemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lufga';
+  src: url('./Fonts/LufgaBlack.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Use real Lufga weights for Latin text and figures, with glyph-capable fallbacks for RU and AM. */
+.App,
+.App * {
+  font-family: 'LufgaRegular', 'Inter', 'Noto Sans Armenian', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  /* font-family: "Lufga" !important; */
+  font-synthesis: none;
+}
+
 
 /* Main CSS Reset */
 *{
@@ -257,6 +328,34 @@ body{
 
 .signup_form__form--input::placeholder {
   color: var(--input-border)
+}
+
+.phone-control {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8em;
+}
+
+.country-code {
+  width: 7em;
+  min-height: 3.2em;
+  flex: 0 0 auto;
+  padding: 0 0.6em;
+  border: 1px solid var(--input-border);
+  border-radius: 0.8em;
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 1.4em;
+}
+
+.phone-control .signup_form__form--input,
+.phone-control .editable_input {
+  min-width: 0;
+  flex: 1;
+}
+
+.profile-phone-control {
+  width: 60%;
 }
 
 .inputs__wrapper{
