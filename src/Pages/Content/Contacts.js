@@ -2,6 +2,7 @@ import "../../App.css";
 import { useState } from "react";
 import { MdAlternateEmail, MdOutlineCall } from "react-icons/md";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { sendContactForm } from "../../data/service";
 
 function Contacts({data}) {
     const [formData, setFormData] = useState({
@@ -26,21 +27,16 @@ function Contacts({data}) {
         setSubmitResult({ type: "", message: "" });
 
         try {
-            const BOT_TOKEN = process.env.REACT_APP_TELEGRAM_BOT_TOKEN;
-            const CHAT_ID = process.env.REACT_APP_TELEGRAM_CHAT_ID;
-
-            const messageText = `New Contact Form Submission:\n\nName: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\nMessage: ${formData.message}`;
-
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: messageText
-                })
+            const { error } = await sendContactForm({
+                name: formData.name,
+                email: formData.email,
+                subject: formData.subject,
+                message: formData.message,
             });
+
+            if (error) {
+                throw new Error(error.message || "Unable to send your message");
+            }
 
             setSubmitResult({ type: "success", message: data.form.success });
             setFormData({

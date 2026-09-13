@@ -326,6 +326,10 @@ body{
   border: 1px solid var(--primary-color);
 }
 
+.signup_form__form--input.input-error {
+  border-color: #e53935;
+}
+
 .signup_form__form--input::placeholder {
   color: var(--input-border)
 }

@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WrapGo</title>
+    <meta name="description" content="WrapGo connects brands with drivers and fleet owners through measurable car advertising campaigns.">
+    <title>WrapGo | Moving Billboard Advertising</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // Preserve Supabase auth callbacks that arrive at the public root URL.
+        const authQuery = /(?:^|&)(?:type|code|token|token_hash|access_token|refresh_token|error)=/.test(window.location.search.slice(1));
+        const authHash = /(?:^|&)(?:type|access_token|refresh_token|error)=/.test(window.location.hash.slice(1));
+        if (authQuery || authHash) {
+            window.location.replace('/app' + window.location.search + window.location.hash);
+        }
+    </script>
 </head>
 <body>
     <div class="header-bg-img"></div>
@@ -372,11 +381,6 @@
         const contactPopup = document.getElementById('contact-popup');
         const contactPopupText = document.getElementById('contact-popup-text');
 
-        // Set your Telegram bot settings here.
-        // IMPORTANT: For production use, send through your backend and keep token secret.
-        const TELEGRAM_BOT_TOKEN = '8204330335:AAF1r8x6amHYFOLN0jG11kzZdMkXs2vIoNs';
-        const TELEGRAM_CHAT_ID = '-1003837482797';
-
         const SUPABASE_URL = 'https://rshhhtxokegviwblosur.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaGhodHhva2Vndml3Ymxvc3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0OTYwOTQsImV4cCI6MjA5MTA3MjA5NH0.H9ioTJIOA-baP00ugGkxGWhTP_67oQHu_ZPsuVF4fnc';
 
@@ -451,14 +455,9 @@
             });
         });
 
-        // ── Contact form -> Telegram ──
+        // ── Contact form -> Supabase Edge Function ──
         contactForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-
-            if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-                showContactPopup('Telegram is not configured yet. Add bot token and chat id in script.', 'error');
-                return;
-            }
 
             const submitBtn = contactForm.querySelector('.contact-submit');
             const formData = new FormData(contactForm);
@@ -467,33 +466,27 @@
             const interest = String(formData.get('interest') || '').trim();
             const message = String(formData.get('message') || '').trim();
 
-            const formattedMessage = [
-                'New message from WrapGo landing:',
-                '',
-                `Name: ${name}`,
-                `Email: ${email}`,
-                `Interested in: ${interest}`,
-                `Message: ${message}`,
-            ].join('\n');
-
             submitBtn.disabled = true;
             const originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>Sending...';
 
             try {
-                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/contact-form`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        apikey: SUPABASE_ANON_KEY,
                     },
                     body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: formattedMessage,
+                        name,
+                        email,
+                        subject: interest,
+                        message,
                     }),
                 });
 
                 if (!response.ok) {
-                    throw new Error('Telegram API request failed');
+                    throw new Error('Contact form request failed');
                 }
 
                 showContactPopup('Message was sent successfully.', 'success');
@@ -507,7 +500,7 @@
         });
 
         // ── Fleet email link -> Supabase ──
-        fleetLinkForm.addEventListener('submit', async (event) => {
+        fleetLinkForm?.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             if (!supabaseClient) {

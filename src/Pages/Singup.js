@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import "../App.css";
 import { MdCheckCircleOutline  } from "react-icons/md";
 import { getSession, signUp } from "../data/service";
+import { resolveAuthPage } from "../data/accountRouting";
 import Logo from "../Components/Logo";
 
 function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, setSignupDraft}) {
     const [formData, setFormData] = useState(signupDraft?.formData || {});
     const [error, setError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({});
     const [passNotValid, setPassNotValid] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [tab, setTab] = useState(signupDraft?.tab || "customer");
@@ -17,7 +19,8 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
         // Автоматический вход, если есть сессия
         getSession().then(async ({ data: { session } }) => {
             if (session?.user) {
-                setPage && setPage("content");
+                const nextPage = await resolveAuthPage(session);
+                setPage && setPage(nextPage);
             }
         });
     }, [setPage]);
@@ -47,6 +50,29 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
         return regex.test(password);
     }
 
+    const validationEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
+    const getSignupErrorMessage = (signupError) => {
+        const message = (signupError?.message || "").toLowerCase();
+
+        if (message.includes("anonymous sign-ins are disabled")) {
+            return "Account creation is temporarily unavailable. Please try again later.";
+        }
+
+        if (message.includes("already registered") || message.includes("user already exists")) {
+            return "An account with this email already exists. Please sign in instead.";
+        }
+
+        if (message.includes("invalid email")) {
+            return "Please enter a valid work email address.";
+        }
+
+        return "We couldn't create your account. Please check your details and try again.";
+    }
+
     // Input changes handler
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -56,6 +82,9 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
         };
 
         setFormData(nextFormData);
+        if (fieldErrors[name]) {
+            setFieldErrors(prev => ({ ...prev, [name]: "" }));
+        }
         setSignupDraft?.(draft => ({ ...draft, formData: nextFormData }));
     };
 
@@ -64,15 +93,36 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
         e.preventDefault();
         setError("");
         setPassNotValid(false);
+        setFieldErrors({});
+
+        const normalizedEmail = (formData.email || "").trim().toLowerCase();
+        const nextFieldErrors = {};
+
+        if (!normalizedEmail) {
+            nextFieldErrors.email = "Work email is required.";
+        } else if (!validationEmail(normalizedEmail)) {
+            nextFieldErrors.email = "Please enter a valid work email address.";
+        }
+
+        if (!formData.password) {
+            nextFieldErrors.password = "Password is required.";
+        }
+
+        if (!formData.confirmpassword) {
+            nextFieldErrors.confirmpassword = "Please confirm your password.";
+        }
+
+        if (Object.keys(nextFieldErrors).length > 0) {
+            setFieldErrors(nextFieldErrors);
+            return;
+        }
+
+        if (!termsAccepted) {
+            setError("Please accept the Terms of Service and Privacy Policy.");
+            return;
+        }
 
         if (tab === "fleet_owner") {
-            const normalizedEmail = (formData.email || "").trim().toLowerCase();
-
-            if (!normalizedEmail) {
-                setError("Email is required.");
-                return;
-            }
-
             if (!validationPassword(formData.password)) {
                 setError(data.signup_form.inputErrors.notvalidPassword);
                 setPassNotValid(true);
@@ -114,15 +164,18 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
 
         setIsSubmitting(true);
 
-        const normalizedEmail = (formData.email || "").trim().toLowerCase();
+        try {
+            const { error: signUpError } = await signUp(normalizedEmail, formData.password, resolveEmailRedirectTo());
 
-        const { error: signUpError } = await signUp(normalizedEmail, formData.password, resolveEmailRedirectTo());
-
-        setIsSubmitting(false);
-
-        if (signUpError) {
-            setError(signUpError.message || "Signup failed.");
+            if (signUpError) {
+                setError(getSignupErrorMessage(signUpError));
+                return;
+            }
+        } catch (signupError) {
+            setError(getSignupErrorMessage(signupError));
             return;
+        } finally {
+            setIsSubmitting(false);
         }
 
         if (setEmail) {
@@ -170,7 +223,7 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
                     <button className={tab === "customer" ? "active_tab" : ""} onClick={() => handleTabChange("customer")}>Customer</button>
                     <button className={tab === "fleet_owner" ? "active_tab" : ""} onClick={() => handleTabChange("fleet_owner")}>Fleet owner</button>
                 </div>
-                <form className="signup_form__form" onSubmit={handleSubmite}>
+                <form className="signup_form__form" onSubmit={handleSubmite} noValidate>
                     {
                         data.signup_form.signup_form_inputs.map((input, index) => (
                             <div key={index}>
@@ -180,11 +233,14 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
                                     name={input.name}
                                     type={input.type}
                                     placeholder={input.placeholder}
-                                    className="signup_form__form--input"
                                     value={formData[input.name] || ""}
                                     onChange={handleChange}
-                                    style={(input.name === "password" || input.name === "confirmpassword" ) && passNotValid ? {border: "1px solid red"}: {}}
+                                    required
+                                    aria-invalid={Boolean(fieldErrors[input.name])}
+                                    aria-describedby={fieldErrors[input.name] ? `${input.name}-error` : undefined}
+                                    className={`signup_form__form--input${fieldErrors[input.name] || ((input.name === "password" || input.name === "confirmpassword") && passNotValid) ? " input-error" : ""}`}
                                 />
+                                {fieldErrors[input.name] && <p id={`${input.name}-error`} className="signup_form__error">{fieldErrors[input.name]}</p>}
                             </div>
                         ))
                     }

@@ -1,39 +1,16 @@
-import React, { useEffect } from 'react';
-import { getSession } from "../../data/service";
-import './landing.css';
+import { useEffect } from 'react';
 
 /**
  * LandingPage компонент
- * Загружает HTML landing page из public/landing/index.html
+ * Development fallback for the static landing document served by Vercel.
  */
 
 const LandingPage = () => {
   useEffect(() => {
-    const noRedirect = new URLSearchParams(window.location.search).has('landing');
-    if (noRedirect) return;
-
-    getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        window.location.replace('/app');
-      }
-    });
+    window.location.replace('/landing/index.html');
   }, []);
 
-  return (
-    <div className="landing-page-container">
-      <iframe
-        src="/landing/index.html"
-        title="Landing Page"
-        className="landing-iframe"
-        style={{
-          width: '100%',
-          height: '100vh',
-          border: 'none',
-          display: 'block'
-        }}
-      />
-    </div>
-  );
+  return null;
 };
 
 export default LandingPage;

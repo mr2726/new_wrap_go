@@ -24,8 +24,6 @@ function Profile({ setFleetPage }) {
     const profileText = pageData.fleet.profile;
     const fallbackEmailRequired = "Email is required";
     const fallbackEmailInvalid = "Please enter a valid email address";
-    const fallbackEmailDomain = "Email must end with .ru or .com";
-    const fallbackGmailDomain = "Gmail addresses must end with .com";
     const [formData, setFormData] = useState({
         contactpersone: "",
         fleetname: "",
@@ -60,25 +58,12 @@ function Profile({ setFleetPage }) {
             return profileText.messages.emailInvalid || fallbackEmailInvalid;
         }
 
-        if (!normalizedValue.endsWith(".ru") && !normalizedValue.endsWith(".com")) {
-            return profileText.messages.emailDomainInvalid || fallbackEmailDomain;
-        }
-
-        const domainPart = normalizedValue.split("@")[1] || "";
-        if (domainPart.startsWith("gmail.") && !domainPart.endsWith(".com")) {
-            return profileText.messages.gmailDomainInvalid || fallbackGmailDomain;
-        }
-
         return "";
     }, [
         profileText.messages.emailRequired,
         profileText.messages.emailInvalid,
-        profileText.messages.emailDomainInvalid,
-        profileText.messages.gmailDomainInvalid,
         fallbackEmailRequired,
         fallbackEmailInvalid,
-        fallbackEmailDomain,
-        fallbackGmailDomain,
     ]);
 
     const withAuthLockRetry = useCallback(async (callback, retries = 1) => {
@@ -383,7 +368,7 @@ function Profile({ setFleetPage }) {
                     <button 
                         className="save_btn cta" 
                         onClick={handleSaveClick}
-                        disabled={saving || Boolean(emailError)}
+                        disabled={saving}
                     >
                         {saving ? profileText.buttons.saving : profileText.buttons.save}
                     </button>

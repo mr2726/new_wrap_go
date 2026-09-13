@@ -117,6 +117,15 @@ REACT_APP_MAPBOX_STYLE_URL_LITE=
 - Без Supabase URL/KEY авторизация и запросы к БД работать не будут.
 - Без Mapbox токена/стилей раздел Live Map не отобразится корректно.
 
+Для contact формы задайте секреты Supabase Edge Function:
+
+```bash
+supabase secrets set TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=...
+supabase functions deploy contact-form --no-verify-jwt
+```
+
+Форма отправляет POST-запрос в `contact-form`, а Telegram credentials не попадают в браузер.
+
 ## 7. Локальный запуск
 
 1. Установить зависимости:
@@ -169,7 +178,7 @@ Vercel конфигурация:
 
 ## 10. Ограничения и важные заметки
 
-- Папки supabase/functions/* и supabase/migrations в текущем состоянии пустые (заготовки под серверную часть и миграции).
+- Contact форма отправляется через `supabase/functions/contact-form`.
 - Для production рекомендуется вынести все чувствительные ключи из клиентского кода лендинга в backend/edge слой.
 - Некоторые финансовые сценарии имеют мок-или частично интегрированную логику и требуют финализации под реальный процессинг.
 

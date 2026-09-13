@@ -7,10 +7,8 @@ import {
   mfaListFactors,
   mfaChallenge,
   mfaVerify,
-  checkFleetByUserId,
-  getDriverByUserId,
-  getDriverByEmail,
 } from "../data/service";
+import { resolveAuthPage, getAccountDestination } from "../data/accountRouting";
 import Logo from "../Components/Logo";
 
 function Singin({data, setPage}) {
@@ -33,7 +31,8 @@ function Singin({data, setPage}) {
     useEffect(() => {
         getSession().then(async ({ data: { session } }) => {
             if (session?.user) {
-                setPage && setPage("content");
+                const nextPage = await resolveAuthPage(session);
+                setPage && setPage(nextPage);
             }
         });
     }, [setPage]);
@@ -76,11 +75,6 @@ function Singin({data, setPage}) {
             return;
         }
 
-        const isMissingColumnError = (queryError) => {
-            const message = (queryError?.message || "").toLowerCase();
-            return message.includes("column") || message.includes("does not exist");
-        };
-
         const { data: profile, error: profileError } = await getProfileField(user.id, "auntufication");
 
         if (profileError) {
@@ -89,8 +83,7 @@ function Singin({data, setPage}) {
             return;
         }
 
-        if (profile) {
-            if (profile?.auntufication) {
+        if (profile?.auntufication) {
                 const { data: factorsData, error: factorsError } = await mfaListFactors();
 
                 if (factorsError) {
@@ -119,62 +112,12 @@ function Singin({data, setPage}) {
                 setRequires2FA(true);
                 setIsSubmitting(false);
                 return;
-            }
-
-            setError("");
-            setIsSubmitting(false);
-            setPage("content");
-            return;
         }
 
-        const { data: fleet, error: fleetError } = await checkFleetByUserId(user.id);
-
-        if (fleetError) {
-            setError(fleetError.message || "Failed to load fleet account.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        if (fleet) {
-            setError("");
-            setIsSubmitting(false);
-            setPage("fleet-content");
-            return;
-        }
-
-        const { data: driverByUserId, error: driverByUserIdError } = await getDriverByUserId(user.id);
-
-        if (!driverByUserIdError && driverByUserId) {
-            setError("");
-            setIsSubmitting(false);
-            setPage("drivers-download");
-            return;
-        }
-
-        if (driverByUserIdError && !isMissingColumnError(driverByUserIdError)) {
-            setError(driverByUserIdError.message || "Failed to load driver account.");
-            setIsSubmitting(false);
-            return;
-        }
-
-        const { data: driverByEmail, error: driverByEmailError } = await getDriverByEmail((user.email || "").toLowerCase());
-
-        if (!driverByEmailError && driverByEmail) {
-            setError("");
-            setIsSubmitting(false);
-            setPage("drivers-download");
-            return;
-        }
-
-        if (driverByEmailError && !isMissingColumnError(driverByEmailError)) {
-            setError(driverByEmailError.message || "Failed to load driver account.");
-            setIsSubmitting(false);
-            return;
-        }
-
+        const nextPage = await getAccountDestination(user);
         setError("");
         setIsSubmitting(false);
-        setPage("company-info");
+        setPage(nextPage);
     };
 
     const handleVerify2FA = async (event) => {
