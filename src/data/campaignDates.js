@@ -25,6 +25,12 @@ export const getOriginalCampaignStartDate = (campaign) => {
 };
 
 export const getEffectiveCampaignStartDate = (campaign, now = new Date()) => {
+  // Early wrap always wins: an actual wrap date overrides the locked booking date.
+  const actualWrap = new Date(campaign?.actual_wrap_at);
+  if (campaign?.actual_wrap_at && isValidDate(actualWrap)) {
+    return startOfDay(actualWrap);
+  }
+
   const frozenStart = new Date(campaign?.effective_start_at);
   if (campaign?.effective_start_at && isValidDate(frozenStart)) {
     return startOfDay(frozenStart);
@@ -60,4 +66,29 @@ export const getCampaignEndDate = (campaign, now) => {
   else endDate.setHours(endDate.getHours() + value);
 
   return endDate;
+};
+
+// Progress % strictly bounded between 0-100, measured against fixed effective start/finish dates.
+export const getCampaignProgressPercent = (campaign, now = new Date()) => {
+  const startDate = getEffectiveCampaignStartDate(campaign, now);
+  const endDate = getCampaignEndDate(campaign, now);
+  if (!startDate || !endDate) return 0;
+
+  const total = endDate.getTime() - startDate.getTime();
+  if (total <= 0) return 100;
+
+  const elapsed = now.getTime() - startDate.getTime();
+  if (elapsed <= 0) return 0;
+  if (elapsed >= total) return 100;
+
+  return Math.min(100, Math.max(0, Math.floor((elapsed / total) * 100)));
+};
+
+// Whole days remaining until the fixed finish date, floored at 0.
+export const getCampaignDaysRemaining = (campaign, now = new Date()) => {
+  const endDate = getCampaignEndDate(campaign, now);
+  if (!endDate) return 0;
+
+  const remainingMs = endDate.getTime() - now.getTime();
+  return Math.max(Math.ceil(remainingMs / 86400000), 0);
 };

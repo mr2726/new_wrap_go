@@ -101,6 +101,7 @@ function Billing({setPage}) {
                     campaignDuration: campaignMap[row.campaign_id]?.duration || null,
                     campaignOriginalStartAt: campaignMap[row.campaign_id]?.original_start_at || null,
                     campaignEffectiveStartAt: campaignMap[row.campaign_id]?.effective_start_at || null,
+                    campaignActualWrapAt: campaignMap[row.campaign_id]?.actual_wrap_at || null,
                 }));
 
                 setInvoices(normalizedInvoices);
@@ -173,6 +174,7 @@ function Billing({setPage}) {
             duration: invoice?.campaignDuration,
             original_start_at: invoice?.campaignOriginalStartAt,
             effective_start_at: invoice?.campaignEffectiveStartAt,
+            actual_wrap_at: invoice?.campaignActualWrapAt,
         };
         const startDate = getEffectiveCampaignStartDate(campaign);
         const endDate = getCampaignEndDate(campaign);

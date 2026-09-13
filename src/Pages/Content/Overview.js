@@ -10,38 +10,12 @@ import OverviewInfo from "../../Components/overviewInfo";
 import CampaignTable from "../../Components/CampaignTable";
 import Loader from "../../Components/Loader";
 import CampaignsVehicleDetailsPopup from "../../Components/CampaignsVehicleDetailsPopup";
+import { getCampaignDaysRemaining, getCampaignProgressPercent } from "../../data/campaignDates";
 import { useEffect, useState } from "react";
 
-// Parse duration strings like "3m", "7d", "2w"
-const parseDurationMs = (duration) => {
-    const match = (duration || "").match(/^(\d+)([mdhw])$/i);
-    if (!match) return null;
-    const val = parseInt(match[1]);
-    const unit = match[2].toLowerCase();
-    const msMap = { m: 30 * 24 * 60 * 60 * 1000, d: 24 * 60 * 60 * 1000, h: 60 * 60 * 1000, w: 7 * 24 * 60 * 60 * 1000 };
-    return val * (msMap[unit] || 0);
-};
+const getCampaignProgress = (campaign) => getCampaignProgressPercent(campaign);
+const getCampaignDaysLeft = (campaign) => getCampaignDaysRemaining(campaign);
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-
-const getCampaignProgress = (campaign) => {
-    const durationMs = parseDurationMs(campaign.duration);
-    if (!durationMs || !campaign.created_at) return 0;
-    const start = new Date(campaign.created_at).getTime() + WEEK_MS;
-    const end = start + durationMs;
-    const now = Date.now();
-    if (now <= start) return 0;
-    if (now >= end) return 100;
-    return Math.round(((now - start) / durationMs) * 100);
-};
-
-const getCampaignDaysLeft = (campaign) => {
-    const durationMs = parseDurationMs(campaign.duration);
-    if (!durationMs || !campaign.created_at) return 0;
-    const end = new Date(campaign.created_at).getTime() + WEEK_MS + durationMs;
-    const remaining = end - Date.now();
-    return Math.max(Math.ceil(remaining / (24 * 60 * 60 * 1000)), 0);
-};
 
 function Overview ({data, setPage}) {
     const [campaignData, setCampaignData] = useState([]);
