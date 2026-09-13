@@ -23,6 +23,14 @@ export const resetPasswordForEmail = (email, redirectTo) =>
 export const onAuthStateChange = (callback) =>
   supabase.auth.onAuthStateChange(callback);
 
+// Verifies the signup confirmation code sent to the user's email after signUp().
+export const verifySignupEmailOtp = (email, token) =>
+  supabase.auth.verifyOtp({ email, token, type: "signup" });
+
+// Resends the signup confirmation email/code for a not-yet-confirmed account.
+export const resendSignupEmail = (email) =>
+  supabase.auth.resend({ type: "signup", email });
+
 // Sends a 6-digit OTP code to an existing email via Supabase Auth (no new user created).
 export const sendEmailOtp = (email) =>
   supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });

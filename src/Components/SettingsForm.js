@@ -111,7 +111,8 @@ function SettingsForm({title, description, data}) {
             if (emailChanged) {
                 const { error: authError } = await updateUserEmailImmediate(safeFormValues.email);
                 if (authError) {
-                    throw new Error(authError.message || otpText.errors.updateFailed);
+                    const isEmailInUse = (authError.message || "").toLowerCase().includes("already in use");
+                    throw new Error(isEmailInUse ? otpText.errors.emailInUse : (authError.message || otpText.errors.updateFailed));
                 }
             }
 

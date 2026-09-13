@@ -241,8 +241,22 @@
     },
     "confirmEmail" : {
         "title" : "Confirm Email",
-        "descriptionStart" : "We’ve sent a confirmation email to",
-        "descriptionEnd" : ". Please check your inbox and follow the link to verify your email address.",
+        "descriptionStart" : "We’ve sent a confirmation code to",
+        "descriptionEnd" : ". Please check your inbox and enter the 8-digit code below to verify your email address.",
+        "codeLabel" : "Confirmation code",
+        "codePlaceholder" : "Enter 8-digit code",
+        "verify" : "Verify Email",
+        "verifying" : "Verifying...",
+        "resend" : "Resend code",
+        "resending" : "Sending...",
+        "status" : {
+            "sent" : "A new code has been sent to your email."
+        },
+        "errors" : {
+            "invalidCode" : "Please enter the 8-digit code sent to your email.",
+            "verifyFailed" : "Invalid or expired code. Please try again.",
+            "sendFailed" : "Couldn't resend the code. Please try again."
+        },
         "back" : "Go back"
     },
     "companyInfo" : {
@@ -1074,7 +1088,8 @@
                     "sendFailed" : "Failed to send verification code.",
                     "verifyFailed" : "Invalid or expired code.",
                     "sessionMissing" : "Your session has expired. Please sign in again.",
-                    "updateFailed" : "Failed to save changes."
+                    "updateFailed" : "Failed to save changes.",
+                    "emailInUse" : "This email is already used by another account. Please use a different email."
                 }
             },
             "profileFields" : {

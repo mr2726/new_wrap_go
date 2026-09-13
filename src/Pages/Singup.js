@@ -5,7 +5,7 @@ import { getSession, signUp } from "../data/service";
 import { resolveAuthPage } from "../data/accountRouting";
 import Logo from "../Components/Logo";
 
-function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, setSignupDraft}) {
+function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, setSignupDraft, setPendingEmailConfirmation}) {
     const [formData, setFormData] = useState(signupDraft?.formData || {});
     const [error, setError] = useState("");
     const [fieldErrors, setFieldErrors] = useState({});
@@ -163,23 +163,37 @@ function Signup({data, setPage, setEmail, setFleetSignupPrefill, signupDraft, se
         }
 
         setIsSubmitting(true);
+        // Set before the call: Supabase can emit SIGNED_IN as soon as signUp()
+        // resolves, before this function gets to run its next line.
+        setPendingEmailConfirmation?.(true);
 
         try {
-            const { error: signUpError } = await signUp(normalizedEmail, formData.password, resolveEmailRedirectTo());
+            const { data: signUpData, error: signUpError } = await signUp(normalizedEmail, formData.password, resolveEmailRedirectTo());
 
             if (signUpError) {
+                setPendingEmailConfirmation?.(false);
                 setError(getSignupErrorMessage(signUpError));
                 return;
             }
+
+            if (setEmail) {
+                setEmail(signUpData?.user?.email || normalizedEmail);
+            }
+
+            // With email confirmation disabled, Supabase returns a session and
+            // does not send a confirmation message. Continue into the app.
+            if (signUpData?.session) {
+                setPendingEmailConfirmation?.(false);
+                const nextPage = await resolveAuthPage(signUpData.session);
+                setPage(nextPage);
+                return;
+            }
         } catch (signupError) {
+            setPendingEmailConfirmation?.(false);
             setError(getSignupErrorMessage(signupError));
             return;
         } finally {
             setIsSubmitting(false);
-        }
-
-        if (setEmail) {
-            setEmail(normalizedEmail);
         }
 
         setPage("confirm-email");

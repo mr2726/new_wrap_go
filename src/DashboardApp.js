@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { useLanguage } from './context/LanguageContext';
 import LanguageSelector from './Components/LanguageSelector';
@@ -68,6 +68,9 @@ function DashboardApp() {
   const [signupDraft, setSignupDraft] = useState({ formData: {}, tab: "customer", termsAccepted: false });
   const [legalReturnPage, setLegalReturnPage] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Suppresses the auth listener's auto-redirect for the SIGNED_IN event Supabase
+  // fires right after signUp(), so the confirm-email screen isn't skipped.
+  const pendingEmailConfirmationRef = useRef(false);
 
   const setAppPage = (nextPage) => {
     if (nextPage === "terms" || nextPage === "privacy") {
@@ -172,6 +175,13 @@ function DashboardApp() {
         }
 
         if (event === "SIGNED_IN" && session?.user) {
+          // Suppressed until the user manually verifies the 8-digit code on the
+          // confirm-email screen, so Supabase's own auto SIGNED_IN events can't
+          // skip past it.
+          if (pendingEmailConfirmationRef.current) {
+            return;
+          }
+
           setEmail(session.user.email ?? "");
           resolveAuthPage(session).then((nextPage) => setPage(nextPage));
         }
@@ -186,7 +196,7 @@ function DashboardApp() {
   const renderPage = () => {
     switch(page){
       case "signup":
-        return <Signup data={data.signup} setPage={setAppPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} signupDraft={signupDraft} setSignupDraft={setSignupDraft} />
+        return <Signup data={data.signup} setPage={setAppPage} setEmail={setEmail} setFleetSignupPrefill={setFleetSignupPrefill} signupDraft={signupDraft} setSignupDraft={setSignupDraft} setPendingEmailConfirmation={(value) => { pendingEmailConfirmationRef.current = value; }} />
       case "signin":
         return <Singin data={data.signin} setPage={setAppPage} />
       case "terms":
@@ -213,7 +223,7 @@ function DashboardApp() {
       case "check-email":
         return <ResetPasswordEmail data={data.resetPass.resetPasswordEmail} setPage={setPage} email={email}/>
       case "confirm-email":
-        return <ConfirmEmail data={data.confirmEmail} setPage={setPage} email={email} />
+        return <ConfirmEmail data={data.confirmEmail} setPage={setPage} email={email} onConfirmed={() => { pendingEmailConfirmationRef.current = false; }} />
       case "company-info":
         return <CompanyInfo data={data.companyInfo} setPage={setPage} email={email} />
       case "drivers-download":
