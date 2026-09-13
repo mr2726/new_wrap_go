@@ -687,7 +687,8 @@
             "contractFallback" : "Contract",
             "alerts" : {
                 "assignFailed" : "Failed to assign contract. Please try again.",
-                "assigned" : "Contract assigned successfully!"
+                "assigned" : "Contract assigned successfully!",
+                "noDriverAssigned" : "This vehicle has no confirmed driver yet."
             }
         },
         "tableRow" : {

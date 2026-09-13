@@ -76,13 +76,13 @@ function SignContract({ onClose, drivers = [], vehicles = [], contracts = [], on
       (driver) => String(driver.carid) === String(selectedVehicle?.invite_code)
     );
     const driverEmail = (selectedDriver?.email || "").trim().toLowerCase();
+    if (!selectedDriver || !driverEmail) {
+      setAssignStatus({ type: "error", text: signText.alerts.noDriverAssigned });
+      return;
+    }
 
     setIsSubmitting(true);
-
-    let error = null;
-    if (selectedDriver) {
-      ({ error } = await updateDriverContract(selectedDriver.id, selectedContractId));
-    }
+    const { error } = await updateDriverContract(selectedDriver.id, selectedContractId);
 
     if (!error) {
       const { data: authData, error: authError } = await getUser();
