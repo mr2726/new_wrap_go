@@ -31,7 +31,7 @@ function TableTr({ vehicleData, contractData, driverData }) {
         </td>
         <td>
             <div>
-                <img src={contract.image_link || "https://placehold.co/50x50.png"} alt="Contract Logo" className='table_img' />
+                <img src={contract.document || "https://placehold.co/50x50.png"} alt={contract.name || "Contract Logo"} className='table_img' />
                 <div>
                     <p className='table_title'>{contract.name || tableText.noContract}</p>
                     <p className='plate'>{contract.reclamtype === "side" ? tableText.oneSide : tableText.fullWrap}</p>

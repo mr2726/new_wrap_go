@@ -45,7 +45,7 @@ function SignContract({ onClose, drivers = [], vehicles = [], contracts = [], on
             label: contract.name || `${signText.contractFallback} ${contract.id}`,
             logo: (
                 <img
-                src={contract.image_link || "https://placehold.co/50x50.png"}
+                src={contract.document || "https://placehold.co/50x50.png"}
                 alt={contract.name || signText.contractFallback}
                 style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 8 }}
                 />

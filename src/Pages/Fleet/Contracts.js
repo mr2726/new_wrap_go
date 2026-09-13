@@ -150,7 +150,7 @@ function Contracts({setFleetPage}) {
                         filteredContracts.map((item)=> (
                             <div className="contracts__block" key={item.id}>
                                 <div style={{display: "flex"}}>
-                                    <div className="contracts__block--image"><img src={item.image_link} alt="Contract" /></div>
+                                    <div className="contracts__block--image"><img src={item.document} alt={item.name || "Contract"} /></div>
 
                                     <div className="contracts__block--main">
 
@@ -163,7 +163,8 @@ function Contracts({setFleetPage}) {
                                                 }
                                             </div>
                                             <div>
-                                                <h2 className="company__name">{profilesByUserId[String(item.ownerid)]?.companyname || contractsText.companyFallback}</h2>
+                                                <p className="contract__name">{profilesByUserId[String(item.ownerid)]?.companyname || contractsText.companyFallback}</p>
+                                                <h2 className="company__name">{item.name || contractsText.modalFallbackTitle}</h2>
                                                 <div className="contracts__tags">
                                                     <p className="company__industry company__info--details">{contractsText.details.industry} {profilesByUserId[String(item.ownerid)]?.industry || contractsText.na}</p>
                                                     <p className="company__size company__info--details">{contractsText.details.locationMeta} {profilesByUserId[String(item.ownerid)]?.city || item.city || contractsText.na}</p>
@@ -228,7 +229,7 @@ function Contracts({setFleetPage}) {
                                 <div className="contract__details--popup__content">
 
                                     <div style={{margin: "-2em -2em 1.6em -2em", height: "160px", overflow: "hidden", borderRadius: "0 0 0 0", flexShrink: 0}}>
-                                        <img src={selectedContract.image_link} alt="Contract" style={{width: "100%", height: "100%", objectFit: "cover", display: "block"}} />
+                                        <img src={selectedContract.document} alt={selectedContract.name || "Contract"} style={{width: "100%", height: "100%", objectFit: "cover", display: "block"}} />
                                     </div>
 
                                     <div style={{display: "flex", alignItems: "center", gap: "0.8em", marginBottom: "1.2em"}}>
