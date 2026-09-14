@@ -412,7 +412,8 @@
                 "signContract" : "Sign Contract"
             },
             "table" : {
-                "headers" : ["Vehicle", "Contact", "Driver Status", "Driver", "Start Date", "Weekly KM", "Zone Hourse"]
+                "headers" : ["Vehicle", "Contact", "Driver Status", "Driver", "Start Date", "Weekly KM", "Zone Hourse"],
+                "empty" : "You don't have an added Vehicle"
             }
         },
         "contracts" : {

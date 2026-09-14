@@ -1,4 +1,5 @@
 import TopMenu from '../../Components/TopMenu';
+import Loader from '../../Components/Loader';
 import "../../App.css";
 import DashInfo from './components/DashInfo';
 import TableTr from './components/table_tr';
@@ -28,6 +29,7 @@ function Dashboard({ setFleetPage }) {
     const [drivers, setDrivers] = useState([]);
     const [contracts, setContracts] = useState([]);
     const [earnTransactions, setEarnTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fetchDrivers = useCallback(async (inviteCodes) => {
         if (!inviteCodes || inviteCodes.length === 0) return;
@@ -74,8 +76,9 @@ function Dashboard({ setFleetPage }) {
 
         if (error) {
             console.error("Error fetching vehicles:", error);
+            setVehicles([]);
         } else {
-            setVehicles(data);
+            setVehicles(data || []);
             const inviteCodes = (data || []).map(v => v.invite_code).filter(Boolean);
             await fetchDrivers(inviteCodes);
         }
@@ -95,9 +98,29 @@ function Dashboard({ setFleetPage }) {
     }, []);
 
     useEffect(() => {
-        fetchVehicles();
-        fetchFleets();
-        fetchTransactions();
+        let isMounted = true;
+        const loadDashboardData = async () => {
+            setLoading(true);
+            try {
+                await Promise.all([
+                    fetchVehicles(),
+                    fetchFleets(),
+                    fetchTransactions(),
+                ]);
+            } catch (err) {
+                console.error("Error loading dashboard data:", err);
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        loadDashboardData();
+
+        return () => {
+            isMounted = false;
+        };
     }, [fetchVehicles, fetchFleets, fetchTransactions]);
 
     // Calculate total km from all drivers
@@ -108,6 +131,7 @@ function Dashboard({ setFleetPage }) {
 
     return (
         <div className="fleet-dashboard">
+            {loading && <Loader />}
             <TopMenu setFleetPage={setFleetPage} currentPage="dashboard" sendto="dashboard" />
             <div className='fleet__content'>
                 <div className='fleet-dashboard__header'>
@@ -129,10 +153,10 @@ function Dashboard({ setFleetPage }) {
                 </div>
 
                 {addDriverModal && (
-                    <AddDriverForm onClose={() => setAddDriverModal(false)} vehicles={vehicles}/>
+                    <AddDriverForm onClose={() => { setAddDriverModal(false); fetchVehicles(); }} vehicles={vehicles}/>
                 )}
                 {addVehicleModal && (
-                    <AddForm onClose={() => setAddVehicleModal(false)} />
+                    <AddForm onClose={() => { setAddVehicleModal(false); fetchVehicles(); }} />
                 )}
                 {signContractPopup && (
                     <SignContract
@@ -154,17 +178,34 @@ function Dashboard({ setFleetPage }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {vehicles.map((vehicle) => (
-                                <TableTr
-                                    key={vehicle.id}
-                                    vehicleData={vehicle}
-                                    driverData={drivers.find((driver) => String(driver.carid) === String(vehicle.invite_code))}
-                                    contractData={contracts.find((contract) => {
-                                        const matchedDriver = drivers.find((driver) => String(driver.carid) === String(vehicle.invite_code));
-                                        return matchedDriver && String(contract.id) === String(matchedDriver.contractid);
-                                    })}
-                                />
-                            ))}
+                            {vehicles && vehicles.length > 0 ? (
+                                vehicles.map((vehicle) => (
+                                    <TableTr
+                                        key={vehicle.id}
+                                        vehicleData={vehicle}
+                                        driverData={drivers.find((driver) => String(driver.carid) === String(vehicle.invite_code))}
+                                        contractData={contracts.find((contract) => {
+                                            const matchedDriver = drivers.find((driver) => String(driver.carid) === String(vehicle.invite_code));
+                                            return matchedDriver && String(contract.id) === String(matchedDriver.contractid);
+                                        })}
+                                    />
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan={dashboardText.table?.headers?.length || 7}
+                                        style={{
+                                            textAlign: "center",
+                                            padding: "3em 1.5em",
+                                            color: "var(--sign-secondary-color)",
+                                            fontSize: "1em",
+                                            fontFamily: "LufgaMedium, sans-serif"
+                                        }}
+                                    >
+                                        {dashboardText.table?.empty || "You don't have an added Vehicle"}
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
