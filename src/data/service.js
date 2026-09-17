@@ -59,6 +59,9 @@ export const updateUserEmailImmediate = async (newEmail) => {
 export const sendContactForm = (payload) =>
   supabase.functions.invoke("contact-form", { body: payload });
 
+export const sendInviteCodeEmail = (payload) =>
+  supabase.functions.invoke("send-invite-code", { body: payload });
+
 // ==================== MFA ====================
 
 export const mfaListFactors = () => supabase.auth.mfa.listFactors();

@@ -1,7 +1,7 @@
 import "../../../App.css";
 import { useState } from "react";
 import { useLanguage } from "../../../context/LanguageContext";
-import { updateVehicle } from "../../../data/service";
+import { updateVehicle, sendInviteCodeEmail } from "../../../data/service";
 
 function AddDriverForm({ onClose, vehicles }) {
     const { data: pageData } = useLanguage();
@@ -43,16 +43,27 @@ function AddDriverForm({ onClose, vehicles }) {
             return;
         }
         else{
+            const driverEmail = document.getElementById("email").value;
             const { error } = await updateVehicle(vehicleId, {
                     invite_code: inviteCode,
-                    signeddriveremail: document.getElementById("email").value,
+                    signeddriveremail: driverEmail,
                 });
 
                 if (error) {
                     console.error("Failed to update vehicle with invite code:", error);
-                } else {
-                    onClose();
+                    return;
                 }
+
+                const { error: emailError } = await sendInviteCodeEmail({
+                    email: driverEmail,
+                    inviteCode,
+                });
+
+                if (emailError) {
+                    console.error("Failed to send invite code email:", emailError);
+                }
+
+                onClose();
         }
     }
 
