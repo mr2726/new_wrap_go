@@ -98,6 +98,9 @@ function Billing({ setFleetPage }) {
         return digits.replace(/(.{4})/g, "$1 ").trim();
     };
 
+    const getCardNumber = (card) =>
+        String(card?.card_number || card?.cardNumber || card?.card_numbers || "").replace(/\D/g, "");
+
     useEffect(() => {
         
         // Simulate fetching fleet data
@@ -254,7 +257,11 @@ function Billing({ setFleetPage }) {
                 return;
             }
 
-            const appended = [...bankData, { ...data, isDefault: false }];
+            const appended = [...bankData, {
+                ...data,
+                card_number: getCardNumber(data) || sanitizedNumber,
+                isDefault: false,
+            }];
             const nextRows = appended.some((row) => row.isDefault)
                 ? appended
                 : applyDefaultByCardId(appended, data.cardid);
@@ -306,6 +313,7 @@ function Billing({ setFleetPage }) {
                 type: "Withdrawal",
                 method: `${selectedMethod.type} •••• ${selectedMethod.tail}`,
                 description: `Balance withdrawal to ${selectedMethod.type} •••• ${selectedMethod.tail}`,
+                card_numbers: getCardNumber(selectedMethod),
                 amount: -amountToWithdraw,
                 status: "in process",
             };
