@@ -8,7 +8,6 @@ import {
   getUser,
   getCampaignNamesByOwner,
   getDriversByContractIds,
-  getLatestDriverLocations,
   getLatestDriverLocationsByEmails,
   getVehicleImagesBySignedDriverEmails,
   subscribeToDriversAndCampaigns,
@@ -370,17 +369,8 @@ export default function Map() {
           } else {
             locationRows = data || [];
           }
-        } else {
-          const { data, error } = await getLatestDriverLocations();
-
-          if (!isActive) return;
-
-          if (error) {
-            console.error("Failed to load fallback driver locations:", error);
-          } else {
-            locationRows = data || [];
-          }
         }
+        // No fallback to getLatestDriverLocations(): without signed drivers we must show none, not everyone.
 
         // console.log("driver_location_updates:", locationRows);
 
