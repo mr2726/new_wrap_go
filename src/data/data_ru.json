@@ -522,6 +522,18 @@
         "profile" : {
             "title" : "Профиль автопарка",
             "description" : "Здесь вы можете управлять профилем своего автопарка, обновлять информацию и настраивать параметры.",
+            "additionaldetails" : {
+                "profileDetails" : "Profile Details",
+                "preferences" : "Preferences",
+                "language" : "Language",
+                "strengthenAccount" : "Strengthen your account",
+                "actionNeeded" : "Action needed",
+                "two-factor" : "Enable two-factor authentication for\nan extra layer of protection.",
+                "password" : "Password",
+                "passwordDescription" : "Use a unique password for this account.",
+                "recoveryCodes" : "Recovery Codes",
+                "availableAfterTwoFactorSetup" : "Available after two-factor setup (Coming soon)"
+            },
             "fields" : {
                 "fullName" : "Полное имя",
                 "companyName" : "Название компании",

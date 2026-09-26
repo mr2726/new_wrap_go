@@ -520,8 +520,20 @@
             }
         },
         "profile" : {
-            "title" : "Fleet Profile",
-            "description" : "Here you can manage your fleet profile, update your information, and customize your settings.",
+            "title" : "Profile & Security",
+            "description" : "Manage your fleet identity and control access to your account.",
+            "additionaldetails" : {
+                "profileDetails" : "Profile Details",
+                "preferences" : "Preferences",
+                "language" : "Language",
+                "strengthenAccount" : "Strengthen your account",
+                "actionNeeded" : "Action needed",
+                "two-factor" : "Enable two-factor authentication for\nan extra layer of protection.",
+                "password" : "Password",
+                "passwordDescription" : "Use a unique password for this account.",
+                "recoveryCodes" : "Recovery Codes",
+                "availableAfterTwoFactorSetup" : "Available after two-factor setup (Coming soon)"
+            },
             "fields" : {
                 "fullName" : "Full Name",
                 "companyName" : "Company Name",

@@ -614,6 +614,18 @@
     "profile": {
       "title": "Ավտոպարկի պրոֆիլ",
       "description": "Այստեղ դուք կարող եք կառավարել ձեր ավտոպարկի պրոֆիլը, թարմացնել տեղեկությունները և հարմարեցնել կարգավորումները:",
+      "additionaldetails" : {
+          "profileDetails" : "Profile Details",
+          "preferences" : "Preferences",
+          "language" : "Language",
+          "strengthenAccount" : "Strengthen your account",
+          "actionNeeded" : "Action needed",
+          "two-factor" : "Enable two-factor authentication for\nan extra layer of protection.",
+          "password" : "Password",
+          "passwordDescription" : "Use a unique password for this account.",
+          "recoveryCodes" : "Recovery Codes",
+          "availableAfterTwoFactorSetup" : "Available after two-factor setup (Coming soon)"
+      },
       "fields": {
         "fullName": "Անուն Ազգանուն",
         "companyName": "Ընկերության անվանում",
