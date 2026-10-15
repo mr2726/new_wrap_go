@@ -192,3 +192,13 @@ Vercel конфигурация:
 	"eject": "react-scripts eject"
 }
 ```
+
+## Architecture and delivery review
+
+See [docs/review/README.md](docs/review/README.md) for the GitHub-based architecture/IT PM assessment, MAVI matrix, SWOT, fishbone, diagrams, risk analysis, release gates and Jira traceability.
+
+
+
+## Product and engineering handbook
+
+See [docs/handbook/README.md](docs/handbook/README.md) for the PRD, engineering contracts, QA/operations/release runbooks and published Confluence links.
