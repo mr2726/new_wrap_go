@@ -60,3 +60,8 @@ Definition of Ready: approved outcome and business rule, owner role/person, depe
 ## Pilot dashboard specification
 
 Track funded campaigns, reserved/bound/approved/installed/active vehicles, activation lead time, route completeness, eligible zone hours, suspicious sample rate, review queue age, ledger exceptions, unknown payouts, bank/ledger variance, disputes, support load and contribution/cash exposure. Segment by release, campaign and period without revealing home locations. Thresholds are decided in G0, not invented here.
+
+
+## Capacity reconciliation after Confluence review
+
+The existing Confluence Jira guide records one developer at about 12 hours/week and one product owner, Kanban WIP≤2. This verified documented baseline supersedes the earlier illustrative multi-role staffing assumption; roles do not imply additional hires. Use the [handbook delivery model](../handbook/delivery-governance.md). No launch date is committed.

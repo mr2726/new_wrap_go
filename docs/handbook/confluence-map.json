@@ -1,0 +1,164 @@
+{
+  "hub": {
+    "id": "27951108",
+    "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27951108"
+  },
+  "pages": [
+    {
+      "slug": "prd",
+      "id": "27885572",
+      "title": "PRD — WrapGo Controlled Pilot",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27885572/PRD+WrapGo+Controlled+Pilot"
+    },
+    {
+      "slug": "srs-nfr",
+      "id": "28180481",
+      "title": "SRS — Non-functional Requirements & Quality Attributes",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28180481/SRS+Non-functional+Requirements+Quality+Attributes"
+    },
+    {
+      "slug": "data-model",
+      "id": "28049412",
+      "title": "Data Model, Dictionary & Migration Design",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28049412/Data+Model+Dictionary+Migration+Design"
+    },
+    {
+      "slug": "api-contracts",
+      "id": "27918340",
+      "title": "API & Event Contracts — Proposed Command Boundary",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27918340/API+Event+Contracts+Proposed+Command+Boundary"
+    },
+    {
+      "slug": "security-privacy",
+      "id": "28213249",
+      "title": "Security, Access Control & Privacy Engineering",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28213249/Security+Access+Control+Privacy+Engineering"
+    },
+    {
+      "slug": "telemetry",
+      "id": "27951135",
+      "title": "Telemetry, Geofencing & Anti-fraud Specification",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27951135/Telemetry+Geofencing+Anti-fraud+Specification"
+    },
+    {
+      "slug": "finance",
+      "id": "28246017",
+      "title": "Funding, Ledger, Earnings & Settlement Specification",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28246017/Funding+Ledger+Earnings+Settlement+Specification"
+    },
+    {
+      "slug": "integrations",
+      "id": "28278785",
+      "title": "Integration Catalog & Ownership",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28278785/Integration+Catalog+Ownership"
+    },
+    {
+      "slug": "qa-uat",
+      "id": "28311553",
+      "title": "QA Strategy, Test Catalog & UAT Acceptance",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28311553/QA+Strategy+Test+Catalog+UAT+Acceptance"
+    },
+    {
+      "slug": "release-runbook",
+      "id": "28344321",
+      "title": "Deployment, Rollback & Disaster Recovery Runbook",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28344321/Deployment+Rollback+Disaster+Recovery+Runbook"
+    },
+    {
+      "slug": "operations",
+      "id": "28377089",
+      "title": "Marketplace Operations & Support Runbooks",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28377089/Marketplace+Operations+Support+Runbooks"
+    },
+    {
+      "slug": "decisions",
+      "id": "27820034",
+      "title": "Architecture Decisions, Assumptions & Open Questions",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27820034/Architecture+Decisions+Assumptions+Open+Questions"
+    },
+    {
+      "slug": "delivery-governance",
+      "id": "28409857",
+      "title": "Delivery Roadmap, Capacity, RACI & Jira Governance",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28409857/Delivery+Roadmap+Capacity+RACI+Jira+Governance"
+    },
+    {
+      "slug": "ux-spec",
+      "id": "28442625",
+      "title": "UX, Interaction, Localization & Content Specification",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28442625/UX+Interaction+Localization+Content+Specification"
+    },
+    {
+      "slug": "analytics",
+      "id": "28475393",
+      "title": "Analytics, KPI Dictionary & Measurement Plan",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28475393/Analytics+KPI+Dictionary+Measurement+Plan"
+    },
+    {
+      "slug": "traceability",
+      "id": "27820079",
+      "title": "Requirements Traceability & Documentation Control",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27820079/Requirements+Traceability+Documentation+Control"
+    },
+    {
+      "slug": "diagram-atlas",
+      "id": "28180508",
+      "title": "Architecture & Workflow Diagram Atlas",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/28180508/Architecture+Workflow+Diagram+Atlas"
+    }
+  ],
+  "existing": [
+    {
+      "id": "1114291",
+      "title": "Wrapgo Home",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/1114291"
+    },
+    {
+      "id": "26869761",
+      "title": "Glossary",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/26869761"
+    },
+    {
+      "id": "26902529",
+      "title": "Business Rules – Contracts & Campaigns",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/26902529"
+    },
+    {
+      "id": "26935297",
+      "title": "How We Work in Jira",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/26935297"
+    },
+    {
+      "id": "26968065",
+      "title": "Architecture & Tech Stack",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/26968065"
+    },
+    {
+      "id": "27000833",
+      "title": "Legal Documents",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27000833"
+    },
+    {
+      "id": "27033601",
+      "title": "Jira Board Health Audit – October 2026",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27033601"
+    },
+    {
+      "id": "27328514",
+      "title": "Product Overview",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27328514"
+    },
+    {
+      "id": "27361281",
+      "title": "Functional Requirements (FRD)",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27361281"
+    },
+    {
+      "id": "27394049",
+      "title": "Strategy – SWOT, MAVI & Root Cause Analysis",
+      "url": "https://wrapgo.atlassian.net/wiki/spaces/W/pages/27394049"
+    }
+  ],
+  "jira": "https://wrapgo.atlassian.net/browse/WEB-56",
+  "reviewPR": "https://github.com/mr2726/new_wrap_go/pull/1"
+}
